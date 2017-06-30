@@ -1,0 +1,29 @@
+# coverage
+.nyc_output
+.github
+coverage
+
+# dev
+.vscode
+.ideas
+flow-typed
+node_modules
+
+# logs
+npm-debug.log
+
+# build
+src
+test
+dist
+
+.babelrc
+.coveralls.yml
+.eslintignore
+.eslintrc
+.flowconfig
+.gitignore
+.npmignore
+.travis.yml
+
+CONTRIBUTING.md
