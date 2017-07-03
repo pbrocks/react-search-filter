@@ -9,9 +9,9 @@ import type { Callback } from '../types';
 import {
   addRSF,
   removeRSF,
-  setFilters,
-  traverseFiltersUp,
-  traverseFiltersDown,
+  initializeList,
+  traverseListUp,
+  traverseListDown,
   setCombinationFilter,
   setListVisibility,
   setCombinationFilterOnClick,
@@ -19,6 +19,7 @@ import {
   setCombinationSearch,
   setCurrentInput,
   incrementCurrentCombination,
+  filterList,
 } from '../redux/actions';
 
 type SearchFilterProps = {
@@ -29,15 +30,17 @@ type SearchFilterProps = {
   isTraversingList: boolean,
   combinations: List,
   currentInput: string,
+  currentListOption: Number,
   currentCombination: Number,
+  list: List,
 
   // methods
   addRSF: Callback,
   removeRSF: Callback,
   handleSearch: Callback,
-  setFilters: Callback,
-  traverseFiltersDown: Callback,
-  traverseFiltersUp: Callback,
+  initializeList: Callback,
+  traverseListDown: Callback,
+  traverseListUp: Callback,
   setCombinationFilter: Callback,
   setCombinationFilterOnClick: Callback,
   setCombinationSearch: Callback,
@@ -45,6 +48,7 @@ type SearchFilterProps = {
   setCurrentInput: Callback,
   incrementCurrentCombination: Callback,
   setListTraversal: Callback,
+  filterList: Callback,
 };
 
 export class SearchFilterComponent extends Component {
@@ -53,7 +57,7 @@ export class SearchFilterComponent extends Component {
   componentDidMount() {
     const { filters, id } = this.props;
     this.props.addRSF({ id });
-    this.props.setFilters({ id, filters });
+    this.props.initializeList({ id, filters });
   }
 
   componentWillUnmount() {
@@ -66,16 +70,19 @@ export class SearchFilterComponent extends Component {
 
   onChange = (e: Object) => {
     this.props.setCurrentInput({ id: this.props.id, currentInput: e.target.value });
+    if (this.props.isTraversingList) {
+      // this.props.filterList({ id: this.props.id, currentInput: e.target.value });
+    }
   }
 
   onKeyDown = (e: Object) => {
     const { id } = this.props;
     if (e.which === 40) { // DOWN
-      this.props.traverseFiltersDown({ id: this.props.id });
+      this.props.traverseListDown({ id: this.props.id });
       this.props.setListTraversal({ id, isTraversing: true });
     }
     if (e.which === 38) { // UP
-      this.props.traverseFiltersUp({ id: this.props.id });
+      this.props.traverseListUp({ id: this.props.id });
       this.props.setListTraversal({ id, isTraversingList: true });
     }
     if (e.which === 13) { // ENTER
@@ -102,30 +109,34 @@ export class SearchFilterComponent extends Component {
   }
 
   onClick = () => {
-    this.props.setListVisibility({ id: this.props.id, isListVisible: true });
+    const { id } = this.props;
+    this.props.setListVisibility({ id, isListVisible: true });
+    // this.props.setCombinationStep({ id, step:})
   }
 
   handleFilterItemClick = (filter, index: Number) => () => {
-    this.props.setCombinationFilterOnClick({ id: this.props.id, filter, index });
-    this.props.setListVisibility({ id: this.props.id, isListVisible: false });
+    const { id } = this.props;
+    this.props.setCombinationFilterOnClick({ id, filter, index });
+    this.props.setListVisibility({ id, isListVisible: false });
     this.input.focus();
   }
 
   generateFilterStyle = (index: Number) => {
-    const current = this.props.searchFilter
-     ? this.props.searchFilter.get('hover')
-     : 0;
+    const { currentListOption } = this.props;
 
     const filterStyles = {
       'rsf__filters-item': true,
-      'rsf__filters-item--active': index === current,
+      'rsf__filters-item--active': index === currentListOption,
     };
     const styles = classNames(filterStyles);
     return styles;
   }
 
   render() {
-    const { filters, combinations, isListVisible, currentInput } = this.props;
+    const { list, combinations, isListVisible, currentInput } = this.props;
+
+    console.log('🗝🗝🗝🗝🗝🗝🗝🗝🗝🗝🗝🗝🗝🗝🗝🗝🗝🗝🗝🗝');
+    console.log('filterList:', filterList);
 
     return (
       <div className="rsf__wrapper">
@@ -160,12 +171,12 @@ export class SearchFilterComponent extends Component {
         {isListVisible
         ?
           <div className="rsf__filters-container">
-            {filters.map((f, index) => (
+            {list.map((f, index) => (
               <div
                 className={this.generateFilterStyle(index)}
                 onClick={this.handleFilterItemClick(f, index)}
               >
-                {`${f.get('display')} : `}
+                {`${f.get('display')} :`}
               </div>
             ))}
           </div>
@@ -180,9 +191,8 @@ export class SearchFilterComponent extends Component {
 const mapStateToProps = (state, ownProps) => ({
   isTraversingList: state.searchFilter.getIn([ownProps.id, 'isTraversingList']),
   isListVisible: state.searchFilter.getIn([ownProps.id, 'isListVisible']),
-  hover: state.searchFilter.getIn([ownProps.id, 'hover']),
-  searchFilter: state.searchFilter.get(ownProps.id),
-  filterList: state.searchFilter.getIn([ownProps.id, 'filterList']),
+  currentListOption: state.searchFilter.getIn([ownProps.id, 'currentListOption']),
+  list: state.searchFilter.getIn([ownProps.id, 'list']),
   combinations: state.searchFilter.getIn([ownProps.id, 'combinations']),
   currentCombination: state.searchFilter.getIn([ownProps.id, 'currentCombination']),
   currentInput: state.searchFilter.getIn([ownProps.id, 'currentInput']),
@@ -191,9 +201,9 @@ const mapStateToProps = (state, ownProps) => ({
 const mapDispatchToProps = {
   addRSF,
   removeRSF,
-  setFilters,
-  traverseFiltersUp,
-  traverseFiltersDown,
+  initializeList,
+  traverseListUp,
+  traverseListDown,
   setCombinationFilter,
   setListVisibility,
   setCombinationFilterOnClick,
@@ -201,6 +211,7 @@ const mapDispatchToProps = {
   setCurrentInput,
   incrementCurrentCombination,
   setListTraversal,
+  filterList,
 };
 
 const Wrapped = wrapWithClickout(SearchFilterComponent, {

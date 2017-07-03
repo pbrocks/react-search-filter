@@ -10,18 +10,18 @@ const addRSF: ActionCreator = (data: Object) => ({
 });
 
 // Save filters
-const setFilters: ActionCreator = (data: Object) => ({
-  type: C.RSF_SET_FILTERS,
+const initializeList: ActionCreator = (data: Object) => ({
+  type: C.RSF_INITIALIZE_LIST,
   data,
 });
 
-const traverseFiltersUp: ActionCreator = (data: Object) => ({
-  type: C.RSF_TRAVERSE_FILTERS_UP,
+const traverseListUp: ActionCreator = (data: Object) => ({
+  type: C.RSF_TRAVERSE_LIST_UP,
   data,
 });
 
-const traverseFiltersDown: ActionCreator = (data: Object) => ({
-  type: C.RSF_TRAVERSE_FILTERS_DOWN,
+const traverseListDown: ActionCreator = (data: Object) => ({
+  type: C.RSF_TRAVERSE_LIST_DOWN,
   data,
 });
 
@@ -55,6 +55,11 @@ const setCurrentInput: ActionCreator = (data: Object) => ({
   data,
 });
 
+const filterList: ActionCreator = (data: Object) => ({
+  type: C.RSF_FILTER_LIST,
+  data,
+});
+
 const incrementCurrentCombination: ActionCreator = (data: Object) => ({
   type: C.RSF_INCREMENT_CURRENT_COMBINATION,
   data,
@@ -72,9 +77,9 @@ module.exports = {
   addRSF,
   removeRSF,
 
-  setFilters,
-  traverseFiltersUp,
-  traverseFiltersDown,
+  initializeList,
+  traverseListUp,
+  traverseListDown,
 
   setCombinationFilter,
   setCombinationFilterOnClick,
@@ -83,6 +88,8 @@ module.exports = {
   setListVisibility,
   setListTraversal,
   setCurrentInput,
+
+  filterList,
 
   incrementCurrentCombination,
 };

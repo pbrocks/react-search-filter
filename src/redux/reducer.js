@@ -26,27 +26,37 @@ const reducer: Reducer = (state: DataState = fromJS(initialState), action: Actio
       return state.delete(id);
     }
 
-    case C.RSF_TRAVERSE_FILTERS_UP: {
+    case C.RSF_TRAVERSE_LIST_UP: {
       const { id } = action.data;
-      const hover = state.getIn([id, 'hover']);
-      const size = state.getIn([id, 'filterList']).size;
+      const currentListOption = state.getIn([id, 'currentListOption']);
+      const size = state.getIn([id, 'list']).size;
       console.log('size:', size);
-      let newHover = hover - 1;
-      if (newHover < 0) {
-        newHover = size - 1;
+      let updatedListOption = currentListOption - 1;
+      if (updatedListOption < 0) {
+        updatedListOption = size - 1;
       }
-      return state.setIn([id, 'hover'], newHover);
+      return state.setIn([id, 'currentListOption'], updatedListOption);
     }
 
-    case C.RSF_TRAVERSE_FILTERS_DOWN: {
+    case C.RSF_TRAVERSE_LIST_DOWN: {
       const { id } = action.data;
-      const hover = state.getIn([id, 'hover']);
-      const size = state.getIn([id, 'filterList']).size;
-      let newHover = hover + 1;
-      if (newHover > (size - 1)) {
-        newHover = 0;
+      const currentListOption = state.getIn([id, 'currentListOption']);
+      const size = state.getIn([id, 'list']).size;
+      let updatedListOption = currentListOption + 1;
+      if (updatedListOption > (size - 1)) {
+        updatedListOption = 0;
       }
-      return state.setIn([id, 'hover'], newHover);
+      return state.setIn([id, 'currentListOption'], updatedListOption);
+    }
+
+    case C.RSF_FILTER_LIST: {
+      const { id, currentInput } = action.data;
+      const filters = state.getIn([id, 'list']) || [];
+      const filtered = filters.filter(f => f.get('display').includes(currentInput));
+      console.log('🌶🌶🌶🌶🌶🌶🌶🌶🌶🌶🌶🌶🌶🌶🌶🌶🌶🌶');
+      console.log('filtered:', filtered);
+      const updatedState = state.setIn([id, 'list'], filtered);
+      return updatedState;
     }
 
     case C.RSF_SET_LIST_TRAVERSAL: {
@@ -57,8 +67,8 @@ const reducer: Reducer = (state: DataState = fromJS(initialState), action: Actio
     case C.RSF_SET_COMBINATION_FILTER: {
       const { id } = action.data;
       const current = state.getIn([id, 'currentCombination']);
-      const hover = state.getIn([id, 'hover']);
-      const filter = state.getIn([id, 'filterList', hover]);
+      const currentListOption = state.getIn([id, 'currentListOption']);
+      const filter = state.getIn([id, 'list', currentListOption]);
       const updatedState = state.setIn([id, 'combinations', current, 'filter'], filter);
       return updatedState;
     }
@@ -68,7 +78,7 @@ const reducer: Reducer = (state: DataState = fromJS(initialState), action: Actio
       const current = state.getIn([id, 'currentCombination']);
       const updatedState = state
         .setIn([id, 'combinations', current, 'filter'], filter)
-        .setIn([id, 'hover'], index);
+        .setIn([id, 'currentListOption'], index);
       return updatedState;
     }
 
@@ -94,7 +104,7 @@ const reducer: Reducer = (state: DataState = fromJS(initialState), action: Actio
     }
 
     //
-    case C.RSF_SET_FILTERS: {
+    case C.RSF_INITIALIZE_LIST: {
       const { id, filters } = action.data;
       const data = filters.map(f => fromJS({
         id: uuid.v4(),
@@ -102,10 +112,8 @@ const reducer: Reducer = (state: DataState = fromJS(initialState), action: Actio
         value: f.get('value'),
       }));
 
-      const first = data.getIn(['0', 'id']);
-
-      return state.setIn([id, 'filterList'], data)
-        .setIn([id, 'hover'], 0)
+      return state.setIn([id, 'list'], data)
+        .setIn([id, 'currentListOption'], 0)
         .setIn([id, 'currentCombination'], 0);
     }
 
