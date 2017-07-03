@@ -15,13 +15,13 @@ const setFilters: ActionCreator = (data: Object) => ({
   data,
 });
 
-const moveHoverUp: ActionCreator = (data: Object) => ({
-  type: C.RSF_MOVE_HOVER_UP,
+const traverseFiltersUp: ActionCreator = (data: Object) => ({
+  type: C.RSF_TRAVERSE_FILTERS_UP,
   data,
 });
 
-const moveHoverDown: ActionCreator = (data: Object) => ({
-  type: C.RSF_MOVE_HOVER_DOWN,
+const traverseFiltersDown: ActionCreator = (data: Object) => ({
+  type: C.RSF_TRAVERSE_FILTERS_DOWN,
   data,
 });
 
@@ -45,8 +45,18 @@ const setListVisibility: ActionCreator = (data: Object) => ({
   data,
 });
 
+const setListTraversal: ActionCreator = (data: Object) => ({
+  type: C.RSF_SET_LIST_TRAVERSAL,
+  data,
+});
+
 const setCurrentInput: ActionCreator = (data: Object) => ({
   type: C.RSF_SET_CURRENT_INPUT,
+  data,
+});
+
+const incrementCurrentCombination: ActionCreator = (data: Object) => ({
+  type: C.RSF_INCREMENT_CURRENT_COMBINATION,
   data,
 });
 
@@ -63,13 +73,16 @@ module.exports = {
   removeRSF,
 
   setFilters,
-  moveHoverUp,
-  moveHoverDown,
+  traverseFiltersUp,
+  traverseFiltersDown,
 
   setCombinationFilter,
   setCombinationFilterOnClick,
   setCombinationSearch,
 
   setListVisibility,
+  setListTraversal,
   setCurrentInput,
+
+  incrementCurrentCombination,
 };

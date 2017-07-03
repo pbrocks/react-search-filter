@@ -10,13 +10,15 @@ import {
   addRSF,
   removeRSF,
   setFilters,
-  moveHoverUp,
-  moveHoverDown,
+  traverseFiltersUp,
+  traverseFiltersDown,
   setCombinationFilter,
   setListVisibility,
   setCombinationFilterOnClick,
+  setListTraversal,
   setCombinationSearch,
   setCurrentInput,
+  incrementCurrentCombination,
 } from '../redux/actions';
 
 type SearchFilterProps = {
@@ -24,6 +26,7 @@ type SearchFilterProps = {
   id: string,
   filters: List,
   isListVisible: boolean,
+  isTraversingList: boolean,
   combinations: List,
   currentInput: string,
   currentCombination: Number,
@@ -33,13 +36,15 @@ type SearchFilterProps = {
   removeRSF: Callback,
   handleSearch: Callback,
   setFilters: Callback,
-  moveHoverDown: Callback,
-  moveHoverUp: Callback,
+  traverseFiltersDown: Callback,
+  traverseFiltersUp: Callback,
   setCombinationFilter: Callback,
   setCombinationFilterOnClick: Callback,
   setCombinationSearch: Callback,
   setListVisibility: Callback,
   setCurrentInput: Callback,
+  incrementCurrentCombination: Callback,
+  setListTraversal: Callback,
 };
 
 export class SearchFilterComponent extends Component {
@@ -64,24 +69,34 @@ export class SearchFilterComponent extends Component {
   }
 
   onKeyDown = (e: Object) => {
+    const { id } = this.props;
     if (e.which === 40) { // DOWN
-      this.props.moveHoverDown({ id: this.props.id });
+      this.props.traverseFiltersDown({ id: this.props.id });
+      this.props.setListTraversal({ id, isTraversing: true });
     }
     if (e.which === 38) { // UP
-      this.props.moveHoverUp({ id: this.props.id });
+      this.props.traverseFiltersUp({ id: this.props.id });
+      this.props.setListTraversal({ id, isTraversingList: true });
     }
     if (e.which === 13) { // ENTER
-      const { id, currentCombination, currentInput } = this.props;
+      const { currentCombination, currentInput, isTraversingList } = this.props;
+
       const currentFilter = this.props.combinations.getIn([currentCombination, 'filter']);
-      const currentSearch = this.props.combinations.getIn([currentCombination, 'search']);
-      if (!currentFilter) {
+
+      this.props.setListVisibility({ id, isListVisible: false });
+      // if traversing List (ie. creating combinationFilter)
+      // 1. set combinationFilter
+      if (isTraversingList) {
         this.props.setCombinationFilter({ id });
-        this.props.setListVisibility({ id, isListVisible: false });
-      } else if (!currentSearch) {
+        this.props.setListTraversal({ id, isTraversingList: false });
+      } else {
+        // if not traversing List
+        // 1. set combinationSearch
+        // 2. hit this.props.handleSearch
         this.props.setCombinationSearch({ id, search: currentInput });
         this.props.setCurrentInput({ id, currentInput: '' });
-      } else {
-        this.props.handleSearch({ filter: currentFilter, search: currentSearch });
+        this.props.incrementCurrentCombination({ id });
+        this.props.handleSearch({ filter: currentFilter, search: this.input.value });
       }
     }
   }
@@ -163,6 +178,7 @@ export class SearchFilterComponent extends Component {
 }
 
 const mapStateToProps = (state, ownProps) => ({
+  isTraversingList: state.searchFilter.getIn([ownProps.id, 'isTraversingList']),
   isListVisible: state.searchFilter.getIn([ownProps.id, 'isListVisible']),
   hover: state.searchFilter.getIn([ownProps.id, 'hover']),
   searchFilter: state.searchFilter.get(ownProps.id),
@@ -176,13 +192,15 @@ const mapDispatchToProps = {
   addRSF,
   removeRSF,
   setFilters,
-  moveHoverUp,
-  moveHoverDown,
+  traverseFiltersUp,
+  traverseFiltersDown,
   setCombinationFilter,
   setListVisibility,
   setCombinationFilterOnClick,
   setCombinationSearch,
   setCurrentInput,
+  incrementCurrentCombination,
+  setListTraversal,
 };
 
 const Wrapped = wrapWithClickout(SearchFilterComponent, {
