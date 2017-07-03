@@ -1,5 +1,7 @@
 export default {
-  searchTerm: '',
+  isListVisible: true,
   filters: [],
   combinations: [],
+  currentCombination: 0,
+  currentInput: '',
 };

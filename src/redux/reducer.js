@@ -58,6 +58,28 @@ const reducer: Reducer = (state: DataState = fromJS(initialState), action: Actio
       return updatedState;
     }
 
+    case C.RSF_SET_COMBINATION_FILTER_ON_CLICK: {
+      const { id, filter, index } = action.data;
+      const current = state.getIn([id, 'currentCombination']);
+      const updatedState = state
+        .setIn([id, 'combinations', current, 'filter'], filter)
+        .setIn([id, 'hover'], index);
+      return updatedState;
+    }
+
+    case C.RSF_SET_COMBINATION_SEARCH: {
+      const { id, search } = action.data;
+      const current = state.getIn([id, 'currentCombination']);
+      const updatedState = state.setIn([id, 'combinations', current, 'search'], search);
+      return updatedState;
+    }
+
+    case C.RSF_SET_CURRENT_INPUT: {
+      const { id, currentInput } = action.data;
+      const updatedState = state.setIn([id, 'currentInput'], currentInput);
+      return updatedState;
+    }
+
     //
     case C.RSF_SET_FILTERS: {
       const { id, filters } = action.data;

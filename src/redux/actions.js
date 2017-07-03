@@ -30,8 +30,23 @@ const setCombinationFilter: ActionCreator = (data: Object) => ({
   data,
 });
 
+const setCombinationSearch: ActionCreator = (data: Object) => ({
+  type: C.RSF_SET_COMBINATION_SEARCH,
+  data,
+});
+
+const setCombinationFilterOnClick: ActionCreator = (data: Object) => ({
+  type: C.RSF_SET_COMBINATION_FILTER_ON_CLICK,
+  data,
+});
+
 const setListVisibility: ActionCreator = (data: Object) => ({
   type: C.RSF_SET_LIST_VISIBILITY,
+  data,
+});
+
+const setCurrentInput: ActionCreator = (data: Object) => ({
+  type: C.RSF_SET_CURRENT_INPUT,
   data,
 });
 
@@ -50,6 +65,11 @@ module.exports = {
   setFilters,
   moveHoverUp,
   moveHoverDown,
+
   setCombinationFilter,
+  setCombinationFilterOnClick,
+  setCombinationSearch,
+
   setListVisibility,
+  setCurrentInput,
 };
