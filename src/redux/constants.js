@@ -5,6 +5,9 @@ const ACTIONS = [
   'RSF_SET_FILTERS',
   'RSF_MOVE_HOVER_UP',
   'RSF_MOVE_HOVER_DOWN',
+  'RSF_SET_COMBINATION_FILTER',
+
+  'RSF_SET_LIST_VISIBILITY',
 ];
 
 const populatedActions = {};

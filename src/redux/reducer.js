@@ -49,6 +49,15 @@ const reducer: Reducer = (state: DataState = fromJS(initialState), action: Actio
       return state.setIn([id, 'hover'], newHover);
     }
 
+    case C.RSF_SET_COMBINATION_FILTER: {
+      const { id } = action.data;
+      const current = state.getIn([id, 'currentCombination']);
+      const hover = state.getIn([id, 'hover']);
+      const filter = state.getIn([id, 'filterList', hover]);
+      const updatedState = state.setIn([id, 'combinations', current, 'filter'], filter);
+      return updatedState;
+    }
+
     //
     case C.RSF_SET_FILTERS: {
       const { id, filters } = action.data;
@@ -61,7 +70,13 @@ const reducer: Reducer = (state: DataState = fromJS(initialState), action: Actio
       const first = data.getIn(['0', 'id']);
 
       return state.setIn([id, 'filterList'], data)
-        .setIn([id, 'hover'], 0);
+        .setIn([id, 'hover'], 0)
+        .setIn([id, 'currentCombination'], 0);
+    }
+
+    case C.RSF_SET_LIST_VISIBILITY: {
+      const { id, isListVisible } = action.data;
+      return state.setIn([id, 'isListVisible'], isListVisible);
     }
 
     default: {

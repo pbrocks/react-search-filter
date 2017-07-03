@@ -25,6 +25,16 @@ const moveHoverDown: ActionCreator = (data: Object) => ({
   data,
 });
 
+const setCombinationFilter: ActionCreator = (data: Object) => ({
+  type: C.RSF_SET_COMBINATION_FILTER,
+  data,
+});
+
+const setListVisibility: ActionCreator = (data: Object) => ({
+  type: C.RSF_SET_LIST_VISIBILITY,
+  data,
+});
+
 
 // Remove a React Search Filter
 const removeRSF: ActionCreator = (data: Object) => ({
@@ -40,4 +50,6 @@ module.exports = {
   setFilters,
   moveHoverUp,
   moveHoverDown,
+  setCombinationFilter,
+  setListVisibility,
 };
