@@ -3,26 +3,36 @@ import React, { Component } from 'react';
 import { List } from 'immutable';
 import { connect } from 'react-redux';
 import wrapWithClickout from 'react-clickout';
+import classNames from 'classnames';
 
 import type { Callback } from '../types';
-import { addRSF, removeRSF } from '../redux/actions';
+import {
+  addRSF,
+  removeRSF,
+  setFilters,
+  moveHoverUp,
+  moveHoverDown,
+} from '../redux/actions';
 
 type SearchFilterProps = {
   // data
   id: string,
+  filters: List,
 
   // methods
-  handleSearch: Callback,
   addRSF: Callback,
   removeRSF: Callback,
-  filters: List,
+  handleSearch: Callback,
+  setFilters: Callback,
 };
 
 export class SearchFilterComponent extends Component {
   props: SearchFilterProps;
 
-  componentDidMount() {
-    this.props.addRSF({ id: this.props.id });
+  componentWillMount() {
+    const { filters, id } = this.props;
+    this.props.addRSF({ id });
+    this.props.setFilters({ id, filters });
   }
 
   componentWillUnmount() {
@@ -34,13 +44,26 @@ export class SearchFilterComponent extends Component {
   }
 
   onKeyDown = (e: Object) => {
-    console.log('e.which:', e.which);
-    if (e.which === 40) {
-      console.log('OK, ARROW DOWN');
+    if (e.which === 40) { // DOWN
+      this.props.moveHoverDown({ id: this.props.id });
     }
-    if (e.which === 38) {
-      console.log('OK, ARROW UP');
+    if (e.which === 38) { // UP
+      this.props.moveHoverUp({ id: this.props.id });
     }
+    if (e.which === 13) { // ENTER
+
+    }
+  }
+
+  generateFilterStyle = (index) => {
+    const current = this.props.searchFilter.get('hover');
+
+    const filterStyles = {
+      'rsf__filters-item': true,
+      'rsf__filters-item--active': index === current,
+    };
+    const styles = classNames(filterStyles);
+    return styles;
   }
 
   render() {
@@ -59,8 +82,8 @@ export class SearchFilterComponent extends Component {
         </div>
 
         <div className="rsf__filters-container">
-          {filters.map(f => (
-            <div className="rsf__filters-item">
+          {filters.map((f, index) => (
+            <div className={this.generateFilterStyle(index)}>
               {`${f.get('display')} : `}
             </div>
           ))}
@@ -70,13 +93,24 @@ export class SearchFilterComponent extends Component {
   }
 }
 
+const mapStateToProps = (state, ownProps) => {
+  return ({
+    hover: state.searchFilter.getIn([ownProps.id, 'hover']),
+  searchFilter: state.searchFilter.get(ownProps.id),
+  filterList: state.searchFilter.getIn([ownProps.id, 'filterList']),
+});
+};
+
 const mapDispatchToProps = {
   addRSF,
   removeRSF,
+  setFilters,
+  moveHoverUp,
+  moveHoverDown,
 };
 
 // const Wrapped = wrapWithClickout(SearchFilterComponent);
 
-const connected = connect(null, mapDispatchToProps)(SearchFilterComponent);
+const connected = connect(mapStateToProps, mapDispatchToProps)(SearchFilterComponent);
 
 export default connected;

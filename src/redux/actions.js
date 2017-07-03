@@ -9,6 +9,23 @@ const addRSF: ActionCreator = (data: Object) => ({
   data,
 });
 
+// Save filters
+const setFilters: ActionCreator = (data: Object) => ({
+  type: C.RSF_SET_FILTERS,
+  data,
+});
+
+const moveHoverUp: ActionCreator = (data: Object) => ({
+  type: C.RSF_MOVE_HOVER_UP,
+  data,
+});
+
+const moveHoverDown: ActionCreator = (data: Object) => ({
+  type: C.RSF_MOVE_HOVER_DOWN,
+  data,
+});
+
+
 // Remove a React Search Filter
 const removeRSF: ActionCreator = (data: Object) => ({
   type: C.RSF_REMOVE_RSF,
@@ -19,4 +36,8 @@ const removeRSF: ActionCreator = (data: Object) => ({
 module.exports = {
   addRSF,
   removeRSF,
+
+  setFilters,
+  moveHoverUp,
+  moveHoverDown,
 };
