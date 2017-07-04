@@ -40,6 +40,11 @@ const setCombinationFilterOnClick: ActionCreator = (data: Object) => ({
   data,
 });
 
+const setCombinationDefaultFilter: ActionCreator = (data: Object) => ({
+  type: C.RSF_SET_COMBINATION_DEFAULT_FILTER,
+  data,
+});
+
 const setListVisibility: ActionCreator = (data: Object) => ({
   type: C.RSF_SET_LIST_VISIBILITY,
   data,
@@ -65,6 +70,16 @@ const incrementCurrentCombination: ActionCreator = (data: Object) => ({
   data,
 });
 
+const deleteCombination: ActionCreator = (data: Object) => ({
+  type: C.RSF_DELETE_COMBINATION,
+  data,
+});
+
+const resetList: ActionCreator = (data: Object) => ({
+  type: C.RSF_RESET_LIST,
+  data,
+});
+
 
 // Remove a React Search Filter
 const removeRSF: ActionCreator = (data: Object) => ({
@@ -83,13 +98,16 @@ module.exports = {
 
   setCombinationFilter,
   setCombinationFilterOnClick,
+  setCombinationDefaultFilter,
   setCombinationSearch,
 
   setListVisibility,
   setListTraversal,
   setCurrentInput,
+  deleteCombination,
 
   filterList,
+  resetList,
 
   incrementCurrentCombination,
 };

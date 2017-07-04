@@ -51,10 +51,10 @@ const reducer: Reducer = (state: DataState = fromJS(initialState), action: Actio
 
     case C.RSF_FILTER_LIST: {
       const { id, currentInput } = action.data;
-      const filters = state.getIn([id, 'list']) || [];
-      const filtered = filters.filter(f => f.get('display').includes(currentInput));
-      console.log('🌶🌶🌶🌶🌶🌶🌶🌶🌶🌶🌶🌶🌶🌶🌶🌶🌶🌶');
-      console.log('filtered:', filtered);
+      const options = state.getIn([id, 'options']) || [];
+      // TODO: either lowercase / regex case insensitive
+      const filtered = options.filter(f => f.get('display').includes(currentInput));
+
       const updatedState = state.setIn([id, 'list'], filtered);
       return updatedState;
     }
@@ -70,6 +70,16 @@ const reducer: Reducer = (state: DataState = fromJS(initialState), action: Actio
       const currentListOption = state.getIn([id, 'currentListOption']);
       const filter = state.getIn([id, 'list', currentListOption]);
       const updatedState = state.setIn([id, 'combinations', current, 'filter'], filter);
+      return updatedState;
+    }
+
+    case C.RSF_SET_COMBINATION_DEFAULT_FILTER: {
+      const { id } = action.data;
+      const current = state.getIn([id, 'currentCombination']);
+      const defaultFilter = state.getIn([id, 'options', 0]);
+      console.log('🗝🗝🗝🗝🗝🗝🗝🗝🗝🗝🗝🗝🗝🗝🗝🗝🗝🗝🗝🗝');
+      console.log('defaultFilter:', defaultFilter);
+      const updatedState = state.setIn([id, 'combinations', current, 'filter'], defaultFilter);
       return updatedState;
     }
 
@@ -103,18 +113,36 @@ const reducer: Reducer = (state: DataState = fromJS(initialState), action: Actio
       return updatedState;
     }
 
+    case C.RSF_DELETE_COMBINATION: {
+      const { id, index } = action.data;
+      const updatedState = state.deleteIn([id, 'combinations', index]);
+      return updatedState;
+    }
+
     //
     case C.RSF_INITIALIZE_LIST: {
-      const { id, filters } = action.data;
-      const data = filters.map(f => fromJS({
+      const { id, data } = action.data;
+      const options = data.map(f => fromJS({
         id: uuid.v4(),
         display: f.get('display'),
         value: f.get('value'),
       }));
 
       return state.setIn([id, 'list'], data)
-        .setIn([id, 'currentListOption'], 0)
+        .setIn([id, 'options'], options)
+        .setIn([id, 'currentListOption'], null)
         .setIn([id, 'currentCombination'], 0);
+    }
+
+    case C.RSF_RESET_LIST: {
+      const { id } = action.data;
+      const options = state.getIn([id, 'options']);
+      const size = state.getIn([id, 'combinations']).size;
+
+      const updatedState = state.setIn([id, 'list'], options)
+        .setIn([id, 'currentListOption'], null)
+        .setIn([id, 'currentCombination'], size);
+      return updatedState;
     }
 
     case C.RSF_SET_LIST_VISIBILITY: {

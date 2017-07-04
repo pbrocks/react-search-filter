@@ -1,6 +1,6 @@
 export default {
   isListVisible: false,
-  filters: [],
+  options: [],
   list: [],
   combinations: [],
   currentCombination: 0,
