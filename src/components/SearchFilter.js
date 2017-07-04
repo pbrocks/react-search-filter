@@ -82,8 +82,10 @@ export class SearchFilterComponent extends Component {
   }
 
   handleSearch = () => {
-    const { combinations } = this.props;
-    console.log('combinations.toJS():', combinations.toJS());
+    this.setState({ searchSent: true }, () => {
+      const { combinations } = this.props;
+      console.log('combinations.toJS():', combinations.toJS());
+    });
     // maybe save to state, so we can access the callback functionality
     // this.props.handleSearch({ filter: currentFilter, search: this.input.value });
   }
@@ -99,7 +101,7 @@ export class SearchFilterComponent extends Component {
       this.props.setListTraversal({ id, isTraversingList: true });
     }
     if (e.which === 13) { // ENTER
-      const { options, currentCombination, currentInput, isTraversingList } = this.props;
+      const { currentCombination, currentInput, isTraversingList } = this.props;
 
       const currentFilter = this.props.combinations.getIn([currentCombination, 'filter']);
 
@@ -119,7 +121,8 @@ export class SearchFilterComponent extends Component {
         }
         this.props.setCombinationSearch({ id, search: currentInput });
         this.props.incrementCurrentCombination({ id });
-        setTimeout(() => this.handleSearch(), 1000);
+        // setTimeout(() => this.handleSearch(), 1000);
+        this.handleSearch();
       }
     }
   }
