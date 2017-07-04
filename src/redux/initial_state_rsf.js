@@ -1,12 +1,13 @@
 export default {
-  isListVisible: false,
   options: [],
   list: [],
   combinations: [],
+
   currentCombination: 0,
   currentInput: '',
   currentListOption: 0,
+  currentStep: '',
 
+  isListVisible: false,
   isTraversingList: false,
-  currentFilterIndex: 0,
 };

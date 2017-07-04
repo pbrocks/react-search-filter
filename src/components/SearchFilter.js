@@ -82,10 +82,10 @@ export class SearchFilterComponent extends Component {
   }
 
   handleSearch = () => {
-    this.setState({ searchSent: true }, () => {
-      const { combinations } = this.props;
-      console.log('combinations.toJS():', combinations.toJS());
-    });
+    // this.setState({ searchSent: true }, () => {
+    //   const { combinations } = this.props;
+    //   console.log('combinations.toJS():', combinations.toJS());
+    // });
     // maybe save to state, so we can access the callback functionality
     // this.props.handleSearch({ filter: currentFilter, search: this.input.value });
   }
@@ -141,6 +141,30 @@ export class SearchFilterComponent extends Component {
   }
 
   handleCombinationItemClick = (id, index) => () => {
+    console.log('COMBINATION ITEM CLICKED');
+    // this.props.deleteCombination({ id, index });
+    // this.props.resetList({ id });
+  }
+
+  handleCombinationFilterClick = (id: string, index: Number) => () => {
+    console.log('COMBINATION FILTER CLICKED');
+    // set currentCombination
+    // set currentStep to 'filter'
+    // show list
+    // set currentListOption to the one already chosen?
+    // figure out how to set listOpen on hover?
+
+  }
+
+  handleCombinationSearchClick = (id: string, index: Number) => () => {
+    console.log('COMBINATION FILTER CLICKED');
+    // set currentCOmbination to index
+    // set currentStep to 'search'
+    // remove combinationSearch??
+    // set currentInput to search
+  }
+
+  handleCombinationDelete = (id: string, index: Number) => () => {
     this.props.deleteCombination({ id, index });
     this.props.resetList({ id });
   }
@@ -169,14 +193,34 @@ export class SearchFilterComponent extends Component {
               className="rsf__combination-item"
               onClick={this.handleCombinationItemClick(id, index)}
             >
-              <span className="rsf__combination-filter">
-                {`${c.getIn(['filter', 'display'])} :`}
+              <span
+                className="rsf__combination-filter"
+                onClick={this.handleCombinationFilterClick}
+              >
+                {c.getIn(['filter', 'display'])}
+                <span
+                  className="om-icon-descending rsf__icon-down"
+                />
               </span>
+
+
               {c.get('search')
               ?
-                <span className="rsf__combination-search">
+                <span
+                  className="rsf__combination-search"
+                  onClick={this.handleCombinationSearchClick(id, index)}
+                >
                   {c.get('search')}
                 </span>
+              : null
+              }
+
+              {c.get('search')
+              ?
+                <span
+                  className="rsf__combination-delete"
+                  onClick={this.handleCombinationDelete(id, index)}
+                />
               : null
               }
 

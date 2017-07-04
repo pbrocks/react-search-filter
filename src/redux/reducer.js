@@ -105,6 +105,16 @@ const reducer: Reducer = (state: DataState = fromJS(initialState), action: Actio
       return updatedState;
     }
 
+    case C.RSF_SET_CURRENT_STEP: {
+      const { id, currentStep } = action.data;
+      return state.setIn([id, 'currentStep'], currentStep);
+    }
+
+    case C.RSF_SET_CURRENT_COMBINATION: {
+      const { id, currentCombination } = action.data;
+      return state.setIn([id, 'currentCombination'], currentCombination);
+    }
+
     case C.RSF_INCREMENT_CURRENT_COMBINATION: {
       const { id } = action.data;
       const current = state.getIn([id, 'currentCombination']);
