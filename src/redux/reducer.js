@@ -117,9 +117,8 @@ const reducer: Reducer = (state: DataState = fromJS(initialState), action: Actio
     }
 
     case C.RSF_SET_COMBINATION_EDITING: {
-      const { id, isEditing } = action.data;
-      const current = state.getIn([id, 'currentCombination']);
-      const updatedState = state.setIn([id, 'combinations', current, 'isEditing'], isEditing);
+      const { id, index, isEditing } = action.data;
+      const updatedState = state.setIn([id, 'combinations', index, 'isEditing'], isEditing);
       return updatedState;
     }
 

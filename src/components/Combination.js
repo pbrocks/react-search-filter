@@ -90,7 +90,7 @@ export class CombinationComponent extends Component {
   }
 
   handleInputKeyDown = (e: Object) => {
-    const { id } = this.props;
+    const { id, index } = this.props;
     if (e.which === 40) { // DOWN
       this.props.traverseListDown({ id: this.props.id });
       this.props.setListTraversal({ id, isTraversing: true });
@@ -119,7 +119,7 @@ export class CombinationComponent extends Component {
           this.props.setCombinationDefaultFilter({ id });
         }
         this.props.setCombinationSearch({ id, search: currentInput });
-        this.props.setCombinationEditing({ id, isEditing: false });
+        this.props.setCombinationEditing({ id, index, isEditing: false });
         this.props.incrementCurrentCombination({ id });
         this.props.setCurrentStep({ id, currentStep: 'filter' });
         this.props.resetList({ id });
@@ -173,14 +173,15 @@ export class CombinationComponent extends Component {
 
   }
 
-  handleCombinationSearchClick = (id: string, index: Number) => () => {
+  handleCombinationSearchClick = (id: string) => () => {
     console.log('COMBINATION SEARCH CLICKED');
+    const { index } = this.props;
     const search = this.props.combinations.getIn([index, 'search']);
     this.props.setCurrentCombination({ id, currentCombination: index });
     this.props.setCombinationSearch({ id, search: '' });
     this.props.setCurrentStep({ id, currentStep: 'search' });
     this.props.setCurrentInput({ id, currentInput: search });
-    this.props.setCombinationEditing({ id, isEditing: true });
+    this.props.setCombinationEditing({ id, index, isEditing: true });
     // this.input.focus();
 
 
@@ -245,7 +246,7 @@ export class CombinationComponent extends Component {
             {combination.get('search')}
           </span>
         : null
-        }
+      }
 
         {combination.get('search')
         ?
