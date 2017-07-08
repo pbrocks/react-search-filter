@@ -32,9 +32,11 @@ const reducer: Reducer = (state: DataState = fromJS(initialState), action: Actio
       const size = state.getIn([id, 'list']).size;
       console.log('size:', size);
       let updatedListOption = currentListOption - 1;
+      console.log('updatedListOption:', updatedListOption);
       if (updatedListOption < 0) {
         updatedListOption = size - 1;
       }
+      console.log('updatedListOption:', updatedListOption);
       return state.setIn([id, 'currentListOption'], updatedListOption);
     }
 
@@ -42,10 +44,16 @@ const reducer: Reducer = (state: DataState = fromJS(initialState), action: Actio
       const { id } = action.data;
       const currentListOption = state.getIn([id, 'currentListOption']);
       const size = state.getIn([id, 'list']).size;
-      let updatedListOption = currentListOption + 1;
+      let updatedListOption;
+      if (currentListOption === null) {
+        updatedListOption = 0;
+      } else {
+        updatedListOption = currentListOption + 1;
+      }
       if (updatedListOption > (size - 1)) {
         updatedListOption = 0;
       }
+      console.log('updatedListOption:', updatedListOption);
       return state.setIn([id, 'currentListOption'], updatedListOption);
     }
 
@@ -60,14 +68,15 @@ const reducer: Reducer = (state: DataState = fromJS(initialState), action: Actio
     }
 
     case C.RSF_SET_LIST_TRAVERSAL: {
-      const { id, isTraversing } = action.data;
-      return state.setIn([id, 'isTraversingList'], isTraversing);
+      const { id, isTraversingList } = action.data;
+      return state.setIn([id, 'isTraversingList'], isTraversingList);
     }
 
     case C.RSF_SET_COMBINATION_FILTER: {
       const { id } = action.data;
       const current = state.getIn([id, 'currentCombination']);
       const currentListOption = state.getIn([id, 'currentListOption']);
+      console.log('currentListOption:', currentListOption);
       const filter = state.getIn([id, 'list', currentListOption]);
       const updatedState = state.setIn([id, 'combinations', current, 'filter'], filter);
       return updatedState;

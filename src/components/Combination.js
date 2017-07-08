@@ -94,12 +94,14 @@ export class CombinationComponent extends Component {
   }
 
   handleInputKeyDown = (e: Object) => {
-    const { id, index } = this.props;
+    const { id, index, currentStep } = this.props;
     if (e.which === 40) { // DOWN
+      if (currentStep === 'search') return;
       this.props.traverseListDown({ id: this.props.id });
-      this.props.setListTraversal({ id, isTraversing: true });
+      this.props.setListTraversal({ id, isTraversingList: true });
     }
     if (e.which === 38) { // UP
+      if (currentStep === 'search') return;
       this.props.traverseListUp({ id: this.props.id });
       this.props.setListTraversal({ id, isTraversingList: true });
     }
@@ -112,13 +114,12 @@ export class CombinationComponent extends Component {
       this.props.setCurrentInput({ id, currentInput: '' });
       // if traversing List (ie. creating combinationFilter)
       // 1. set combinationFilter
-      if (isTraversingList) {
+      if (currentStep === 'filter') { // step === 'filter'
+        console.log('just checking we is here');
         this.props.setCombinationFilter({ id });
+        this.props.setCurrentStep({ id, currentStep: 'search' });
         this.props.setListTraversal({ id, isTraversingList: false });
-      } else {
-        // if not traversing List
-        // 1. set combinationSearch
-        // 2. hit this.props.handleSearch
+      } else { // step === 'search'
         if (!currentFilter) {
           this.props.setCombinationDefaultFilter({ id });
         }
