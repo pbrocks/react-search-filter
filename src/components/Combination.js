@@ -5,6 +5,8 @@ import { connect } from 'react-redux';
 import wrapWithClickout from 'react-clickout';
 import classNames from 'classnames';
 
+import ListOptions from './ListOptions';
+
 import type { Callback } from '../types';
 import {
   addRSF,
@@ -31,6 +33,7 @@ import {
 type SearchFilterProps = {
   // data
   id: string,
+  index: Number,
   data: List,
   isListVisible: boolean,
   isTraversingList: boolean,
@@ -70,7 +73,8 @@ export class CombinationComponent extends Component {
 
 
   handleClickout = () => {
-    this.props.setCombinationListVisibility({ id: this.props.id, isListVisible: false });
+    const { id, index } = this.props;
+    this.props.setCombinationListVisibility({ id, index, isListVisible: false });
   }
 
   handleInputChange = (e: Object) => {
@@ -104,7 +108,7 @@ export class CombinationComponent extends Component {
 
       const currentFilter = this.props.combinations.getIn([currentCombination, 'filter']);
 
-      this.props.setCombinationListVisibility({ id, isListVisible: false });
+      this.props.setCombinationListVisibility({ id, index, isListVisible: false });
       this.props.setCurrentInput({ id, currentInput: '' });
       // if traversing List (ie. creating combinationFilter)
       // 1. set combinationFilter
@@ -153,28 +157,14 @@ export class CombinationComponent extends Component {
     }
   }
 
-  handleCombinationItemClick = (id, index) => () => {
-    // console.log('COMBINATION ITEM CLICKED');
-    // this.props.deleteCombination({ id, index });
-    // this.props.resetList({ id });
-  }
-
   handleCombinationFilterClick = (id: string) => () => {
-    console.log('COMBINATION FILTER CLICKED');
-    // set currentCombination
     const { index } = this.props;
     this.props.setCurrentCombination({ id, currentCombination: index });
     this.props.setCurrentStep({ id, currentStep: 'filter' });
     this.props.setCombinationListVisibility({ id, index, isListVisible: true });
-    // set currentStep to 'filter'
-    // show list
-    // set currentListOption to the one already chosen?
-    // figure out how to set listOpen on hover?
-
   }
 
   handleCombinationSearchClick = (id: string) => () => {
-    console.log('COMBINATION SEARCH CLICKED');
     const { index } = this.props;
     const search = this.props.combinations.getIn([index, 'search']);
     this.props.setCurrentCombination({ id, currentCombination: index });
@@ -182,30 +172,11 @@ export class CombinationComponent extends Component {
     this.props.setCurrentStep({ id, currentStep: 'search' });
     this.props.setCurrentInput({ id, currentInput: search });
     this.props.setCombinationEditing({ id, index, isEditing: true });
-    // this.input.focus();
-
-
-    // setTimeout(() => this.input.focus(), 1000);
-    // set currentCOmbination to index
-    // set currentStep to 'search'
-    // remove combinationSearch??
-    // set currentInput to search
   }
 
   handleCombinationDelete = (id: string, index: Number) => () => {
     this.props.deleteCombination({ id, index });
     this.props.resetList({ id });
-  }
-
-  generateFilterStyle = (index: Number) => {
-    const { currentListOption } = this.props;
-
-    const filterStyles = {
-      'rsf__filters-item': true,
-      'rsf__filters-item--active': index === currentListOption,
-    };
-    const styles = classNames(filterStyles);
-    return styles;
   }
 
   generateInputStyle = () => {
@@ -218,7 +189,6 @@ export class CombinationComponent extends Component {
 
   render() {
     const { id, index, list, combination, isListVisible, currentInput = '' } = this.props;
-
 
     return (
       <div className="rsf__combination-container">
@@ -259,32 +229,27 @@ export class CombinationComponent extends Component {
 
         {combination.get('isEditing')
         ?
-        <input
-          ref={(r) => { this.input = r; }}
-          className={this.generateInputStyle()}
-          type="text"
-          onChange={this.handleInputChange}
-          onKeyDown={this.handleInputKeyDown}
-          onClick={this.handleInputClick}
-          value={currentInput}
-          autoFocus
-        />
+          <input
+            ref={(r) => { this.input = r; }}
+            className={this.generateInputStyle()}
+            type="text"
+            onChange={this.handleInputChange}
+            onKeyDown={this.handleInputKeyDown}
+            onClick={this.handleInputClick}
+            value={currentInput}
+            autoFocus
+          />
         : null }
 
 
         {combination.get('isListVisible')
         ?
-          <div className="rsf__filters-container">
-            {list.map((f, i) => (
-              <div
-                key={f.get('id')}
-                className={this.generateFilterStyle(i)}
-                onClick={this.handleListItemClick(f, i)}
-              >
-                {f.get('display')}
-              </div>
-            ))}
-          </div>
+          <ListOptions
+            list={list}
+            handleClickout={this.handleClickout}
+            handleListItemClick={this.handleListItemClick}
+            currentListOption={this.props.currentListOption}
+          />
         : null
         }
 
