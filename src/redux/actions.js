@@ -65,7 +65,7 @@ const setCurrentStep: ActionCreator = (data: Object) => ({
   data,
 });
 
-const setCurrentCurrentCombination: ActionCreator = (data: Object) => ({
+const setCurrentCombination: ActionCreator = (data: Object) => ({
   type: C.RSF_SET_CURRENT_COMBINATION,
   data,
 });
@@ -115,7 +115,7 @@ module.exports = {
   setListTraversal,
   setCurrentInput,
   setCurrentStep,
-  setCurrentCurrentCombination,
+  setCurrentCombination,
   deleteCombination,
 
   filterList,

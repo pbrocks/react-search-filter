@@ -23,6 +23,8 @@ import {
   filterList,
   deleteCombination,
   resetList,
+  setCurrentCombination,
+  setCurrentStep,
 } from '../redux/actions';
 
 type SearchFilterProps = {
@@ -33,6 +35,7 @@ type SearchFilterProps = {
   isTraversingList: boolean,
   combinations: List,
   currentInput: string,
+  currentStep: string,
   currentListOption: Number,
   currentCombination: Number,
   list: List,
@@ -55,6 +58,8 @@ type SearchFilterProps = {
   filterList: Callback,
   deleteCombination: Callback,
   resetList: Callback,
+  setCurrentCombination: Callback,
+  setCurrentStep: Callback,
 };
 
 export class SearchFilterComponent extends Component {
@@ -121,6 +126,8 @@ export class SearchFilterComponent extends Component {
         }
         this.props.setCombinationSearch({ id, search: currentInput });
         this.props.incrementCurrentCombination({ id });
+        this.props.setCurrentStep({ id, currentStep: 'filter' });
+        this.props.resetList({ id });
         // setTimeout(() => this.handleSearch(), 1000);
         this.handleSearch();
       }
@@ -128,7 +135,8 @@ export class SearchFilterComponent extends Component {
   }
 
   onClick = () => {
-    const { id } = this.props;
+    const { id, currentStep } = this.props;
+    if (currentStep === 'search') return;
     this.props.setListVisibility({ id, isListVisible: true });
     // this.props.setCombinationStep({ id, step:})
   }
@@ -136,12 +144,13 @@ export class SearchFilterComponent extends Component {
   handleFilterItemClick = (filter, index: Number) => () => {
     const { id } = this.props;
     this.props.setCombinationFilterOnClick({ id, filter, index });
+    this.props.setCurrentStep({ id, currentStep: 'search' })
     this.props.setListVisibility({ id, isListVisible: false });
     this.input.focus();
   }
 
   handleCombinationItemClick = (id, index) => () => {
-    console.log('COMBINATION ITEM CLICKED');
+    // console.log('COMBINATION ITEM CLICKED');
     // this.props.deleteCombination({ id, index });
     // this.props.resetList({ id });
   }
@@ -149,6 +158,7 @@ export class SearchFilterComponent extends Component {
   handleCombinationFilterClick = (id: string, index: Number) => () => {
     console.log('COMBINATION FILTER CLICKED');
     // set currentCombination
+    this.props.setCurrentCombination({ id, currentCombination: index });
     // set currentStep to 'filter'
     // show list
     // set currentListOption to the one already chosen?
@@ -181,7 +191,7 @@ export class SearchFilterComponent extends Component {
   }
 
   render() {
-    const { id, list, combinations, isListVisible, currentInput } = this.props;
+    const { id, list, combinations, isListVisible, currentInput = '' } = this.props;
 
 
     return (
@@ -190,14 +200,15 @@ export class SearchFilterComponent extends Component {
 
           {combinations && combinations.map((c, index) => (
             <div
+              key={index}
               className="rsf__combination-item"
               onClick={this.handleCombinationItemClick(id, index)}
             >
               <span
                 className="rsf__combination-filter"
-                onClick={this.handleCombinationFilterClick}
+                onClick={this.handleCombinationFilterClick(id, index)}
               >
-                {c.getIn(['filter', 'display'])}
+                {`${c.getIn(['filter', 'display'])} :`}
                 <span
                   className="om-icon-descending rsf__icon-down"
                 />
@@ -247,7 +258,7 @@ export class SearchFilterComponent extends Component {
                 className={this.generateFilterStyle(index)}
                 onClick={this.handleFilterItemClick(f, index)}
               >
-                {`${f.get('display')} :`}
+                {f.get('display')}
               </div>
             ))}
           </div>
@@ -268,6 +279,7 @@ const mapStateToProps = (state, ownProps) => ({
   combinations: state.searchFilter.getIn([ownProps.id, 'combinations']),
   currentCombination: state.searchFilter.getIn([ownProps.id, 'currentCombination']),
   currentInput: state.searchFilter.getIn([ownProps.id, 'currentInput']),
+  currentStep: state.searchFilter.getIn([ownProps.id, 'currentStep']),
 });
 
 const mapDispatchToProps = {
@@ -281,6 +293,8 @@ const mapDispatchToProps = {
   setCombinationFilterOnClick,
   setCombinationDefaultFilter,
   setCombinationSearch,
+  setCurrentCombination,
+  setCurrentStep,
   setCurrentInput,
   incrementCurrentCombination,
   setListTraversal,

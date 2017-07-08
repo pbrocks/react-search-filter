@@ -6,7 +6,7 @@ export default {
   currentCombination: 0,
   currentInput: '',
   currentListOption: 0,
-  currentStep: '',
+  currentStep: 'filter',
 
   isListVisible: false,
   isTraversingList: false,
