@@ -79,7 +79,7 @@ export class SearchFilterComponent extends Component {
     this.props.setListVisibility({ id: this.props.id, isListVisible: false });
   }
 
-  onChange = (e: Object) => {
+  handleInputChange = (e: Object) => {
     this.props.setCurrentInput({ id: this.props.id, currentInput: e.target.value });
     this.props.filterList({ id: this.props.id, currentInput: e.target.value });
     if (this.props.isTraversingList) {
@@ -95,7 +95,7 @@ export class SearchFilterComponent extends Component {
     // this.props.handleSearch({ filter: currentFilter, search: this.input.value });
   }
 
-  onKeyDown = (e: Object) => {
+  handleInputKeyDown = (e: Object) => {
     const { id } = this.props;
     if (e.which === 40) { // DOWN
       this.props.traverseListDown({ id: this.props.id });
@@ -134,17 +134,23 @@ export class SearchFilterComponent extends Component {
     }
   }
 
-  onClick = () => {
+  handleInputClick = () => {
     const { id, currentStep } = this.props;
     if (currentStep === 'search') return;
     this.props.setListVisibility({ id, isListVisible: true });
     // this.props.setCombinationStep({ id, step:})
   }
 
-  handleFilterItemClick = (filter, index: Number) => () => {
-    const { id } = this.props;
+  handleListItemClick = (filter, index: Number) => () => {
+    const { id, combinations, currentCombination } = this.props;
     this.props.setCombinationFilterOnClick({ id, filter, index });
-    this.props.setCurrentStep({ id, currentStep: 'search' })
+    if (!combinations.getIn([currentCombination, 'search'])) {
+      // skip this when editing filter for existing combination
+      this.props.setCurrentStep({ id, currentStep: 'search' });
+    } else {
+      // after editing filter for existing combination, jump to next combination
+      this.props.resetList({ id });
+    }
     this.props.setListVisibility({ id, isListVisible: false });
     this.input.focus();
   }
@@ -159,6 +165,8 @@ export class SearchFilterComponent extends Component {
     console.log('COMBINATION FILTER CLICKED');
     // set currentCombination
     this.props.setCurrentCombination({ id, currentCombination: index });
+    this.props.setCurrentStep({ id, currentStep: 'filter' });
+    this.props.setListVisibility({ id, isListVisible: true });
     // set currentStep to 'filter'
     // show list
     // set currentListOption to the one already chosen?
@@ -242,9 +250,9 @@ export class SearchFilterComponent extends Component {
             ref={(r) => { this.input = r; }}
             className="rsf__search-input"
             type="text"
-            onChange={this.onChange}
-            onKeyDown={this.onKeyDown}
-            onClick={this.onClick}
+            onChange={this.handleInputChange}
+            onKeyDown={this.handleInputKeyDown}
+            onClick={this.handleInputClick}
             value={currentInput}
           />
         </div>
@@ -256,7 +264,7 @@ export class SearchFilterComponent extends Component {
               <div
                 key={f.get('id')}
                 className={this.generateFilterStyle(index)}
-                onClick={this.handleFilterItemClick(f, index)}
+                onClick={this.handleListItemClick(f, index)}
               >
                 {f.get('display')}
               </div>
