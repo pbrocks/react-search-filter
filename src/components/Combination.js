@@ -1,11 +1,9 @@
 // @flow
 import React, { Component } from 'react';
-import { List, fromJS } from 'immutable';
+import { List } from 'immutable';
 import { connect } from 'react-redux';
 import wrapWithClickout from 'react-clickout';
 import classNames from 'classnames';
-
-import Combination from './Combination';
 
 import type { Callback } from '../types';
 import {
@@ -15,7 +13,7 @@ import {
   traverseListUp,
   traverseListDown,
   setCombinationFilter,
-  setListVisibility,
+  setCombinationListVisibility,
   setCombinationDefaultFilter,
   setCombinationFilterOnClick,
   setListTraversal,
@@ -27,7 +25,7 @@ import {
   resetList,
   setCurrentCombination,
   setCurrentStep,
-  addCombination,
+  setCombinationEditing,
 } from '../redux/actions';
 
 type SearchFilterProps = {
@@ -42,6 +40,7 @@ type SearchFilterProps = {
   currentListOption: Number,
   currentCombination: Number,
   list: List,
+  combination: Map,
 
   // methods
   addRSF: Callback,
@@ -54,7 +53,7 @@ type SearchFilterProps = {
   setCombinationDefaultFilter: Callback,
   setCombinationFilterOnClick: Callback,
   setCombinationSearch: Callback,
-  setListVisibility: Callback,
+  setCombinationListVisibility: Callback,
   setCurrentInput: Callback,
   incrementCurrentCombination: Callback,
   setListTraversal: Callback,
@@ -63,24 +62,15 @@ type SearchFilterProps = {
   resetList: Callback,
   setCurrentCombination: Callback,
   setCurrentStep: Callback,
-  addCombination: Callback,
+  setCombinationEditing: Callback,
 };
 
-export class SearchFilterComponent extends Component {
+export class CombinationComponent extends Component {
   props: SearchFilterProps;
 
-  componentDidMount() {
-    const { data, id } = this.props;
-    this.props.addRSF({ id });
-    this.props.initializeList({ id, data });
-  }
-
-  componentWillUnmount() {
-    this.props.removeRSF({ id: this.props.id });
-  }
 
   handleClickout = () => {
-    this.props.setListVisibility({ id: this.props.id, isListVisible: false });
+    this.props.setCombinationListVisibility({ id: this.props.id, isListVisible: false });
   }
 
   handleInputChange = (e: Object) => {
@@ -114,7 +104,7 @@ export class SearchFilterComponent extends Component {
 
       const currentFilter = this.props.combinations.getIn([currentCombination, 'filter']);
 
-      this.props.setListVisibility({ id, isListVisible: false });
+      this.props.setCombinationListVisibility({ id, isListVisible: false });
       this.props.setCurrentInput({ id, currentInput: '' });
       // if traversing List (ie. creating combinationFilter)
       // 1. set combinationFilter
@@ -129,6 +119,7 @@ export class SearchFilterComponent extends Component {
           this.props.setCombinationDefaultFilter({ id });
         }
         this.props.setCombinationSearch({ id, search: currentInput });
+        this.props.setCombinationEditing({ id, isEditing: false });
         this.props.incrementCurrentCombination({ id });
         this.props.setCurrentStep({ id, currentStep: 'filter' });
         this.props.resetList({ id });
@@ -139,14 +130,15 @@ export class SearchFilterComponent extends Component {
   }
 
   handleInputClick = () => {
-    const { id, currentStep } = this.props;
+    const { id, index, currentStep } = this.props;
     if (currentStep === 'search') return;
-    this.props.setListVisibility({ id, isListVisible: true });
+    this.props.setCombinationListVisibility({ id, index, isListVisible: true });
     // this.props.setCombinationStep({ id, step:})
   }
 
-  handleListItemClick = (filter, index: Number) => () => {
-    const { id, combinations, currentCombination } = this.props;
+  handleListItemClick = (filter) => () => {
+    const { id, combinations, combination, currentCombination, index } = this.props;
+    this.props.setCurrentCombination({ id, currentCombination: index });
     this.props.setCombinationFilterOnClick({ id, filter, index });
     if (!combinations.getIn([currentCombination, 'search'])) {
       // skip this when editing filter for existing combination
@@ -155,8 +147,10 @@ export class SearchFilterComponent extends Component {
       // after editing filter for existing combination, jump to next combination
       this.props.resetList({ id });
     }
-    this.props.setListVisibility({ id, isListVisible: false });
-    this.input.focus();
+    this.props.setCombinationListVisibility({ id, index, isListVisible: false });
+    if (!combination.get('search')) {
+      this.input.focus();
+    }
   }
 
   handleCombinationItemClick = (id, index) => () => {
@@ -165,12 +159,13 @@ export class SearchFilterComponent extends Component {
     // this.props.resetList({ id });
   }
 
-  handleCombinationFilterClick = (id: string, index: Number) => () => {
+  handleCombinationFilterClick = (id: string) => () => {
     console.log('COMBINATION FILTER CLICKED');
     // set currentCombination
+    const { index } = this.props;
     this.props.setCurrentCombination({ id, currentCombination: index });
     this.props.setCurrentStep({ id, currentStep: 'filter' });
-    this.props.setListVisibility({ id, isListVisible: true });
+    this.props.setCombinationListVisibility({ id, index, isListVisible: true });
     // set currentStep to 'filter'
     // show list
     // set currentListOption to the one already chosen?
@@ -179,11 +174,17 @@ export class SearchFilterComponent extends Component {
   }
 
   handleCombinationSearchClick = (id: string, index: Number) => () => {
-    console.log('COMBINATION FILTER CLICKED');
+    console.log('COMBINATION SEARCH CLICKED');
     const search = this.props.combinations.getIn([index, 'search']);
     this.props.setCurrentCombination({ id, currentCombination: index });
+    this.props.setCombinationSearch({ id, search: '' });
     this.props.setCurrentStep({ id, currentStep: 'search' });
     this.props.setCurrentInput({ id, currentInput: search });
+    this.props.setCombinationEditing({ id, isEditing: true });
+    // this.input.focus();
+
+
+    // setTimeout(() => this.input.focus(), 1000);
     // set currentCOmbination to index
     // set currentStep to 'search'
     // remove combinationSearch??
@@ -206,47 +207,85 @@ export class SearchFilterComponent extends Component {
     return styles;
   }
 
-  addCombination = () => {
-    const { id, combinations } = this.props;
-    const newFilter = fromJS({});
-    const size = combinations.size;
-    // this.props.setCombinationFilterOnClick({ id, filter: newFilter, index: size, isEditing: true });
-    this.props.addCombination({ id });
+  generateInputStyle = () => {
+    const styles = {
+      'rsf__search-input': true,
+      'rsf__search-input--hidden': !this.props.combination.get('isEditing'),
+    };
+    return classNames(styles);
   }
 
   render() {
-    const { id, list, combinations, isListVisible, currentInput = '' } = this.props;
+    const { id, index, list, combination, isListVisible, currentInput = '' } = this.props;
 
 
     return (
-      <div className="rsf__wrapper">
-        <div className="rsf__search-container">
+      <div className="rsf__combination-container">
 
-          {combinations && combinations.map((c, index) => (
-            <Combination
-              id={id}
-              key={index}
-              index={index}
-              combination={c}
-              className="rsf__combination-item"
-              handleInputChange={this.handleInputChange}
-              handleInputKeyDown={this.handleInputKeyDown}
-              handleInputClick={this.handleInputClick}
-              isListVisible={isListVisible}
-              list={list}
-              generateFilterStyle={this.generateFilterStyle}
-              handleListItemClick={this.handleListItemClick}
-            />
-          ))}
-
-          <div
-            className="rsf__add"
-            onClick={this.addCombination}
+        {combination.getIn(['filter', 'display'])
+        ?
+          <span
+            className="rsf__combination-filter"
+            onClick={this.handleCombinationFilterClick(id, index)}
           >
-            ADD
-          </div>
+            {`${combination.getIn(['filter', 'display'])} :`}
+            <span
+              className="om-icon-descending rsf__icon-down"
+            />
+          </span>
+        : null
+        }
 
-        </div>
+        {combination.get('search')
+        ?
+          <span
+            className="rsf__combination-search"
+            onClick={this.handleCombinationSearchClick(id, index)}
+          >
+            {combination.get('search')}
+          </span>
+        : null
+        }
+
+        {combination.get('search')
+        ?
+          <span
+            className="rsf__combination-delete"
+            onClick={this.handleCombinationDelete(id, index)}
+          />
+        : null
+        }
+
+        {combination.get('isEditing')
+        ?
+        <input
+          ref={(r) => { this.input = r; }}
+          className={this.generateInputStyle()}
+          type="text"
+          onChange={this.handleInputChange}
+          onKeyDown={this.handleInputKeyDown}
+          onClick={this.handleInputClick}
+          value={currentInput}
+          autoFocus
+        />
+        : null }
+
+
+        {combination.get('isListVisible')
+        ?
+          <div className="rsf__filters-container">
+            {list.map((f, i) => (
+              <div
+                key={f.get('id')}
+                className={this.generateFilterStyle(i)}
+                onClick={this.handleListItemClick(f, i)}
+              >
+                {f.get('display')}
+              </div>
+            ))}
+          </div>
+        : null
+        }
 
       </div>
     );
@@ -255,7 +294,6 @@ export class SearchFilterComponent extends Component {
 
 const mapStateToProps = (state, ownProps) => ({
   isTraversingList: state.searchFilter.getIn([ownProps.id, 'isTraversingList']),
-  isListVisible: state.searchFilter.getIn([ownProps.id, 'isListVisible']),
   currentListOption: state.searchFilter.getIn([ownProps.id, 'currentListOption']),
   list: state.searchFilter.getIn([ownProps.id, 'list']),
   options: state.searchFilter.getIn([ownProps.id, 'options']),
@@ -272,7 +310,7 @@ const mapDispatchToProps = {
   traverseListUp,
   traverseListDown,
   setCombinationFilter,
-  setListVisibility,
+  setCombinationListVisibility,
   setCombinationFilterOnClick,
   setCombinationDefaultFilter,
   setCombinationSearch,
@@ -284,14 +322,14 @@ const mapDispatchToProps = {
   filterList,
   deleteCombination,
   resetList,
-  addCombination,
+  setCombinationEditing,
 };
 
-const Wrapped = wrapWithClickout(SearchFilterComponent, {
+const Wrapped = wrapWithClickout(CombinationComponent, {
   wrapperStyle: 'rsf__clickout-wrapper',
 });
 
-const connected = connect(mapStateToProps, mapDispatchToProps)(SearchFilterComponent);
-// const connected = connect(mapStateToProps, mapDispatchToProps)(Wrapped);
+const connected = connect(mapStateToProps, mapDispatchToProps)(CombinationComponent);
+
 
 export default connected;

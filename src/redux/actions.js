@@ -35,6 +35,16 @@ const setCombinationSearch: ActionCreator = (data: Object) => ({
   data,
 });
 
+const setCombinationListVisibility: ActionCreator = (data: Object) => ({
+  type: C.RSF_SET_COMBINATION_LIST_VISIBILITY,
+  data,
+});
+
+const setCombinationEditing: ActionCreator = (data: Object) => ({
+  type: C.RSF_SET_COMBINATION_EDITING,
+  data,
+});
+
 const setCombinationFilterOnClick: ActionCreator = (data: Object) => ({
   type: C.RSF_SET_COMBINATION_FILTER_ON_CLICK,
   data,
@@ -67,6 +77,11 @@ const setCurrentStep: ActionCreator = (data: Object) => ({
 
 const setCurrentCombination: ActionCreator = (data: Object) => ({
   type: C.RSF_SET_CURRENT_COMBINATION,
+  data,
+});
+
+const addCombination: ActionCreator = (data: Object) => ({
+  type: C.RSF_ADD_COMBINATION,
   data,
 });
 
@@ -110,6 +125,9 @@ module.exports = {
   setCombinationFilterOnClick,
   setCombinationDefaultFilter,
   setCombinationSearch,
+  setCombinationEditing,
+  setCombinationListVisibility,
+  addCombination,
 
   setListVisibility,
   setListTraversal,
