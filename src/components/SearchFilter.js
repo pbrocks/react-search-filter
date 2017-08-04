@@ -42,6 +42,7 @@ type SearchFilterProps = {
   currentListOption: Number,
   currentCombination: Number,
   list: List,
+  options: List,
 
   // methods
   addRSF: Callback,
@@ -91,51 +92,13 @@ export class SearchFilterComponent extends Component {
   }
 
   handleSearch = () => {
+    console.log('handlesearch fire');
     // this.setState({ searchSent: true }, () => {
     //   const { combinations } = this.props;
     //   console.log('combinations.toJS():', combinations.toJS());
     // });
     // maybe save to state, so we can access the callback functionality
     // this.props.handleSearch({ filter: currentFilter, search: this.input.value });
-  }
-
-  handleInputKeyDown = (e: Object) => {
-    const { id } = this.props;
-    if (e.which === 40) { // DOWN
-      this.props.traverseListDown({ id: this.props.id });
-      this.props.setListTraversal({ id, isTraversing: true });
-    }
-    if (e.which === 38) { // UP
-      this.props.traverseListUp({ id: this.props.id });
-      this.props.setListTraversal({ id, isTraversingList: true });
-    }
-    if (e.which === 13) { // ENTER
-      const { currentCombination, currentInput, isTraversingList } = this.props;
-
-      const currentFilter = this.props.combinations.getIn([currentCombination, 'filter']);
-
-      this.props.setListVisibility({ id, isListVisible: false });
-      this.props.setCurrentInput({ id, currentInput: '' });
-      // if traversing List (ie. creating combinationFilter)
-      // 1. set combinationFilter
-      if (isTraversingList) {
-        this.props.setCombinationFilter({ id });
-        this.props.setListTraversal({ id, isTraversingList: false });
-      } else {
-        // if not traversing List
-        // 1. set combinationSearch
-        // 2. hit this.props.handleSearch
-        if (!currentFilter) {
-          this.props.setCombinationDefaultFilter({ id });
-        }
-        this.props.setCombinationSearch({ id, search: currentInput });
-        this.props.incrementCurrentCombination({ id });
-        this.props.setCurrentStep({ id, currentStep: 'filter' });
-        this.props.resetList({ id });
-        // setTimeout(() => this.handleSearch(), 1000);
-        this.handleSearch();
-      }
-    }
   }
 
   handleInputClick = () => {
@@ -206,11 +169,29 @@ export class SearchFilterComponent extends Component {
     return styles;
   }
 
+  isEditing = () => {
+    const { combinations } = this.props;
+    console.log('\n\n\n\ncombinations:', combinations);
+    for (const combination of combinations) {
+      if (combination.get('isEditing')) return true;
+    }
+    return false;
+  }
+
   addCombination = () => {
-    const { id, combinations } = this.props;
+    console.log('YOYOYO:');
+    const { id, combinations, data } = this.props;
+    if (!this.props.options.size) {
+      this.props.addRSF({ id });
+      this.props.initializeList({ id, data });
+    }
+    if (this.isEditing()) {
+      return;
+    }
     const newFilter = fromJS({});
     const size = combinations.size;
     // this.props.setCombinationFilterOnClick({ id, filter: newFilter, index: size, isEditing: true });
+    console.log('about to add a thing');
     this.props.addCombination({ id });
   }
 
@@ -220,8 +201,10 @@ export class SearchFilterComponent extends Component {
 
     return (
       <div className="rsf__wrapper">
-        <div className="rsf__search-container">
-
+        <div
+          className="rsf__search-container"
+          onClick={this.addCombination}
+        >
           {combinations && combinations.map((c, index) => (
             <Combination
               id={id}
@@ -230,24 +213,16 @@ export class SearchFilterComponent extends Component {
               combination={c}
               className="rsf__combination-item"
               handleInputChange={this.handleInputChange}
-              handleInputKeyDown={this.handleInputKeyDown}
               handleInputClick={this.handleInputClick}
               isListVisible={isListVisible}
               list={list}
               generateFilterStyle={this.generateFilterStyle}
               handleListItemClick={this.handleListItemClick}
+              handleSearch={this.handleSearch}
+              addCombination={this.addCombination}
             />
           ))}
-
-          <div
-            className="rsf__add"
-            onClick={this.addCombination}
-          >
-            ADD
-          </div>
-
         </div>
-
       </div>
     );
   }

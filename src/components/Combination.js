@@ -77,36 +77,38 @@ export class CombinationComponent extends Component {
     this.props.setCombinationListVisibility({ id, index, isListVisible: false });
   }
 
-  handleInputChange = (e: Object) => {
+  handleInputChange = async (e: Object) => {
     this.props.setCurrentInput({ id: this.props.id, currentInput: e.target.value });
     this.props.filterList({ id: this.props.id, currentInput: e.target.value });
     if (this.props.isTraversingList) {
     }
   }
 
-  handleSearch = () => {
-    // this.setState({ searchSent: true }, () => {
-    //   const { combinations } = this.props;
-    //   console.log('combinations.toJS():', combinations.toJS());
-    // });
-    // maybe save to state, so we can access the callback functionality
-    // this.props.handleSearch({ filter: currentFilter, search: this.input.value });
-  }
-
-  handleInputKeyDown = (e: Object) => {
-    const { id, index, currentStep } = this.props;
-    if (e.which === 40) { // DOWN
+  handleInputKeyDown = async (e: Object) => {
+    const { id, index, combination, currentInput, currentStep } = this.props;
+    if (e.which === 27 || e.keyCode === 27) { // ESC
+      if (combination.get('isEditing')) {
+        this.handleCombinationDelete(id, index)();
+        this.props.setCombinationListVisibility({ id, isListVisible: false });
+        await this.props.setCombinationEditing({ id, index, isEditing: false })
+        this.props.addCombination();
+      }
+    } else if (e.which === 8) { // BACKSPACE
+      if (currentStep === 'search' && !currentInput) {
+        this.handleCombinationDelete(id, index)();
+        await this.props.setCombinationEditing({ id, index, isEditing: false });
+        this.props.addCombination();
+      }
+    } else if (e.which === 40) { // DOWN
       if (currentStep === 'search') return;
       this.props.traverseListDown({ id: this.props.id });
       this.props.setListTraversal({ id, isTraversingList: true });
-    }
-    if (e.which === 38) { // UP
+    } else if (e.which === 38) { // UP
       if (currentStep === 'search') return;
       this.props.traverseListUp({ id: this.props.id });
       this.props.setListTraversal({ id, isTraversingList: true });
-    }
-    if (e.which === 13) { // ENTER
-      const { currentCombination, currentInput, isTraversingList } = this.props;
+    } else if (e.which === 13) { // ENTER
+      const { currentCombination, isTraversingList } = this.props;
 
       const currentFilter = this.props.combinations.getIn([currentCombination, 'filter']);
 
@@ -129,7 +131,7 @@ export class CombinationComponent extends Component {
         this.props.setCurrentStep({ id, currentStep: 'filter' });
         this.props.resetList({ id });
         // setTimeout(() => this.handleSearch(), 1000);
-        this.handleSearch();
+        this.props.handleSearch();
       }
     }
   }
