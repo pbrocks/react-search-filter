@@ -71,7 +71,6 @@ type SearchFilterProps = {
 export class CombinationComponent extends Component {
   props: SearchFilterProps;
 
-
   handleClickout = () => {
     const { id, index } = this.props;
     this.props.setCombinationListVisibility({ id, index, isListVisible: false });
@@ -82,15 +81,6 @@ export class CombinationComponent extends Component {
     this.props.filterList({ id: this.props.id, currentInput: e.target.value });
     if (this.props.isTraversingList) {
     }
-  }
-
-  handleSearch = () => {
-    // this.setState({ searchSent: true }, () => {
-    //   const { combinations } = this.props;
-    //   console.log('combinations.toJS():', combinations.toJS());
-    // });
-    // maybe save to state, so we can access the callback functionality
-    // this.props.handleSearch({ filter: currentFilter, search: this.input.value });
   }
 
   handleInputKeyDown = (e: Object) => {
@@ -112,10 +102,10 @@ export class CombinationComponent extends Component {
 
       this.props.setCombinationListVisibility({ id, index, isListVisible: false });
       this.props.setCurrentInput({ id, currentInput: '' });
+
       // if traversing List (ie. creating combinationFilter)
       // 1. set combinationFilter
       if (currentStep === 'filter') { // step === 'filter'
-        console.log('just checking we is here');
         this.props.setCombinationFilter({ id });
         this.props.setCurrentStep({ id, currentStep: 'search' });
         this.props.setListTraversal({ id, isTraversingList: false });
@@ -138,10 +128,9 @@ export class CombinationComponent extends Component {
     const { id, index, currentStep } = this.props;
     if (currentStep === 'search') return;
     this.props.setCombinationListVisibility({ id, index, isListVisible: true });
-    // this.props.setCombinationStep({ id, step:})
   }
 
-  handleListItemClick = (filter) => () => {
+  handleListItemClick = filter => () => {
     const { id, combinations, combination, currentCombination, index } = this.props;
     this.props.setCurrentCombination({ id, currentCombination: index });
     this.props.setCombinationFilterOnClick({ id, filter, index });
@@ -189,7 +178,7 @@ export class CombinationComponent extends Component {
   }
 
   render() {
-    const { id, index, list, combination, isListVisible, currentInput = '' } = this.props;
+    const { id, index, list, combination, currentInput = '' } = this.props;
 
     return (
       <div className="rsf__combination-container">

@@ -36,6 +36,7 @@ type SearchFilterProps = {
   data: List,
   isListVisible: boolean,
   isTraversingList: boolean,
+  topLevelIsEditing: boolean,
   combinations: List,
   currentInput: string,
   currentStep: string,
@@ -83,67 +84,6 @@ export class SearchFilterComponent extends Component {
     this.props.setListVisibility({ id: this.props.id, isListVisible: false });
   }
 
-  handleInputChange = (e: Object) => {
-    this.props.setCurrentInput({ id: this.props.id, currentInput: e.target.value });
-    this.props.filterList({ id: this.props.id, currentInput: e.target.value });
-    if (this.props.isTraversingList) {
-    }
-  }
-
-  handleSearch = () => {
-    // this.setState({ searchSent: true }, () => {
-    //   const { combinations } = this.props;
-    //   console.log('combinations.toJS():', combinations.toJS());
-    // });
-    // maybe save to state, so we can access the callback functionality
-    // this.props.handleSearch({ filter: currentFilter, search: this.input.value });
-  }
-
-  handleInputKeyDown = (e: Object) => {
-    const { id } = this.props;
-    if (e.which === 40) { // DOWN
-      this.props.traverseListDown({ id: this.props.id });
-      this.props.setListTraversal({ id, isTraversing: true });
-    }
-    if (e.which === 38) { // UP
-      this.props.traverseListUp({ id: this.props.id });
-      this.props.setListTraversal({ id, isTraversingList: true });
-    }
-    if (e.which === 13) { // ENTER
-      const { currentCombination, currentInput, isTraversingList } = this.props;
-
-      const currentFilter = this.props.combinations.getIn([currentCombination, 'filter']);
-
-      this.props.setListVisibility({ id, isListVisible: false });
-      this.props.setCurrentInput({ id, currentInput: '' });
-      // if traversing List (ie. creating combinationFilter)
-      // 1. set combinationFilter
-      if (isTraversingList) {
-        this.props.setCombinationFilter({ id });
-        this.props.setListTraversal({ id, isTraversingList: false });
-      } else {
-        // if not traversing List
-        // 1. set combinationSearch
-        // 2. hit this.props.handleSearch
-        if (!currentFilter) {
-          this.props.setCombinationDefaultFilter({ id });
-        }
-        this.props.setCombinationSearch({ id, search: currentInput });
-        this.props.incrementCurrentCombination({ id });
-        this.props.setCurrentStep({ id, currentStep: 'filter' });
-        this.props.resetList({ id });
-        // setTimeout(() => this.handleSearch(), 1000);
-        this.handleSearch();
-      }
-    }
-  }
-
-  handleInputClick = () => {
-    const { id, currentStep } = this.props;
-    if (currentStep === 'search') return;
-    this.props.setListVisibility({ id, isListVisible: true });
-    // this.props.setCombinationStep({ id, step:})
-  }
 
   handleListItemClick = (filter, index: Number) => () => {
     const { id, combinations, currentCombination } = this.props;
@@ -159,14 +99,7 @@ export class SearchFilterComponent extends Component {
     this.input.focus();
   }
 
-  handleCombinationItemClick = (id, index) => () => {
-    // console.log('COMBINATION ITEM CLICKED');
-    // this.props.deleteCombination({ id, index });
-    // this.props.resetList({ id });
-  }
-
   handleCombinationFilterClick = (id: string, index: Number) => () => {
-    console.log('COMBINATION FILTER CLICKED');
     // set currentCombination
     this.props.setCurrentCombination({ id, currentCombination: index });
     this.props.setCurrentStep({ id, currentStep: 'filter' });
@@ -175,11 +108,9 @@ export class SearchFilterComponent extends Component {
     // show list
     // set currentListOption to the one already chosen?
     // figure out how to set listOpen on hover?
-
   }
 
   handleCombinationSearchClick = (id: string, index: Number) => () => {
-    console.log('COMBINATION FILTER CLICKED');
     const search = this.props.combinations.getIn([index, 'search']);
     this.props.setCurrentCombination({ id, currentCombination: index });
     this.props.setCurrentStep({ id, currentStep: 'search' });
@@ -207,15 +138,13 @@ export class SearchFilterComponent extends Component {
   }
 
   addCombination = () => {
-    const { id, combinations } = this.props;
-    const newFilter = fromJS({});
-    const size = combinations.size;
-    // this.props.setCombinationFilterOnClick({ id, filter: newFilter, index: size, isEditing: true });
+    const { id, topLevelIsEditing } = this.props;
+    if (topLevelIsEditing) return;
     this.props.addCombination({ id });
   }
 
   render() {
-    const { id, list, combinations, isListVisible, currentInput = '' } = this.props;
+    const { id, list, combinations, isListVisible } = this.props;
 
 
     return (
@@ -243,7 +172,6 @@ export class SearchFilterComponent extends Component {
             className="rsf__add"
             onClick={this.addCombination}
           >
-            ADD
           </div>
 
         </div>
@@ -257,6 +185,7 @@ const mapStateToProps = (state, ownProps) => ({
   isTraversingList: state.searchFilter.getIn([ownProps.id, 'isTraversingList']),
   isListVisible: state.searchFilter.getIn([ownProps.id, 'isListVisible']),
   currentListOption: state.searchFilter.getIn([ownProps.id, 'currentListOption']),
+  topLevelIsEditing: state.searchFilter.getIn([ownProps.id, 'topLevelIsEditing']),
   list: state.searchFilter.getIn([ownProps.id, 'list']),
   options: state.searchFilter.getIn([ownProps.id, 'options']),
   combinations: state.searchFilter.getIn([ownProps.id, 'combinations']),
@@ -291,7 +220,7 @@ const Wrapped = wrapWithClickout(SearchFilterComponent, {
   wrapperStyle: 'rsf__clickout-wrapper',
 });
 
-const connected = connect(mapStateToProps, mapDispatchToProps)(SearchFilterComponent);
-// const connected = connect(mapStateToProps, mapDispatchToProps)(Wrapped);
+// const connected = connect(mapStateToProps, mapDispatchToProps)(SearchFilterComponent);
+const connected = connect(mapStateToProps, mapDispatchToProps)(Wrapped);
 
 export default connected;

@@ -108,7 +108,7 @@ const reducer: Reducer = (state: DataState = fromJS(initialState), action: Actio
         filter: {},
         isEditing: true,
         isListVisible: true,
-      }));
+      })).setIn([id, 'topLevelIsEditing'], true);
       return updatedState;
     }
 
@@ -183,6 +183,7 @@ const reducer: Reducer = (state: DataState = fromJS(initialState), action: Actio
 
       const updatedState = state.setIn([id, 'list'], options)
         .setIn([id, 'currentListOption'], null)
+        .setIn([id, 'topLevelIsEditing'], false)
         .setIn([id, 'currentCombination'], size);
       return updatedState;
     }
