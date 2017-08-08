@@ -115,7 +115,24 @@ const reducer: Reducer = (state: DataState = fromJS(initialState), action: Actio
     case C.RSF_SET_COMBINATION_SEARCH: {
       const { id, search } = action.data;
       const current = state.getIn([id, 'currentCombination']);
-      const updatedState = state.setIn([id, 'combinations', current, 'search'], search);
+      const updatedState = state.setIn([id, 'combinations', current, 'search'], search)
+        .setIn([id, 'isReady'], true);
+
+      const combinations = updatedState.getIn([id, 'combinations']);
+      const combinedSearch = combinations.reduce((result, combo) => {
+        console.log('result:', result);
+        console.log('combo.toJS():', combo.toJS());
+        const key = combo.getIn(['filter', 'value']);
+        const value = combo.get('search');
+        return result.set([key], value);
+      }, fromJS({}));
+      const finalState = updatedState.setIn([id, 'search'], combinedSearch);
+      return finalState;
+    }
+
+    case C.RSF_SET_SEARCH_READY: {
+      const { id, isReady } = action.data;
+      const updatedState = state.setIn([id, 'isReady'], isReady);
       return updatedState;
     }
 

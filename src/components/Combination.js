@@ -28,6 +28,7 @@ import {
   setCurrentCombination,
   setCurrentStep,
   setCombinationEditing,
+  setSearchReady,
 } from '../redux/actions';
 
 type SearchFilterProps = {
@@ -85,6 +86,8 @@ export class CombinationComponent extends Component {
 
   handleInputKeyDown = (e: Object) => {
     const { id, index, currentStep } = this.props;
+    // this.props.setSearchReady({ id, isReady: false });
+
     if (e.which === 40) { // DOWN
       if (currentStep === 'search') return;
       this.props.traverseListDown({ id: this.props.id });
@@ -113,13 +116,16 @@ export class CombinationComponent extends Component {
         if (!currentFilter) {
           this.props.setCombinationDefaultFilter({ id });
         }
+
+        // "update search?"
+        // "set search?"
         this.props.setCombinationSearch({ id, search: currentInput });
         this.props.setCombinationEditing({ id, index, isEditing: false });
         this.props.incrementCurrentCombination({ id });
         this.props.setCurrentStep({ id, currentStep: 'filter' });
         this.props.resetList({ id });
         // setTimeout(() => this.handleSearch(), 1000);
-        this.handleSearch();
+        // this.props.setSearchReady({ id, isReady: true });
       }
     }
   }
@@ -279,6 +285,7 @@ const mapDispatchToProps = {
   deleteCombination,
   resetList,
   setCombinationEditing,
+  setSearchReady,
 };
 
 const Wrapped = wrapWithClickout(CombinationComponent, {

@@ -76,6 +76,11 @@ export class SearchFilterComponent extends Component {
     this.props.initializeList({ id, data });
   }
 
+  componentWillReceiveProps() {
+    console.log('🌶🌶🌶🌶🌶🌶🌶🌶🌶🌶🌶🌶🌶🌶🌶🌶🌶🌶');
+    console.log('arguments:', arguments);
+  }
+
   componentWillUnmount() {
     this.props.removeRSF({ id: this.props.id });
   }
@@ -126,6 +131,20 @@ export class SearchFilterComponent extends Component {
     this.props.resetList({ id });
   }
 
+  handleSearch = () => {
+    const { combinations } = this.props;
+    const search = combinations.reduce((result, combo) => {
+      console.log('result:', result);
+      console.log('combo.toJS():', combo.toJS());
+      const key = combo.getIn(['filter', 'value']);
+      const value = combo.get('search');
+      return result.set([key], value);
+    }, fromJS({}));
+    console.log('🌶🌶🌶🌶🌶🌶🌶🌶🌶🌶🌶🌶🌶🌶🌶🌶🌶🌶');
+    console.log('search:', search);
+    // this.props.handleSearch({ search });
+  }
+
   generateFilterStyle = (index: Number) => {
     const { currentListOption } = this.props;
 
@@ -165,6 +184,7 @@ export class SearchFilterComponent extends Component {
               list={list}
               generateFilterStyle={this.generateFilterStyle}
               handleListItemClick={this.handleListItemClick}
+              handleSearch={this.handleSearch}
             />
           ))}
 
