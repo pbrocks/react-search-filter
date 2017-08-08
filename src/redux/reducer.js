@@ -30,13 +30,10 @@ const reducer: Reducer = (state: DataState = fromJS(initialState), action: Actio
       const { id } = action.data;
       const currentListOption = state.getIn([id, 'currentListOption']);
       const size = state.getIn([id, 'list']).size;
-      console.log('size:', size);
       let updatedListOption = currentListOption - 1;
-      console.log('updatedListOption:', updatedListOption);
       if (updatedListOption < 0) {
         updatedListOption = size - 1;
       }
-      console.log('updatedListOption:', updatedListOption);
       return state.setIn([id, 'currentListOption'], updatedListOption);
     }
 
@@ -53,7 +50,6 @@ const reducer: Reducer = (state: DataState = fromJS(initialState), action: Actio
       if (updatedListOption > (size - 1)) {
         updatedListOption = 0;
       }
-      console.log('updatedListOption:', updatedListOption);
       return state.setIn([id, 'currentListOption'], updatedListOption);
     }
 
@@ -76,7 +72,6 @@ const reducer: Reducer = (state: DataState = fromJS(initialState), action: Actio
       const { id } = action.data;
       const current = state.getIn([id, 'currentCombination']);
       const currentListOption = state.getIn([id, 'currentListOption']);
-      console.log('currentListOption:', currentListOption);
       const filter = state.getIn([id, 'list', currentListOption]);
       const updatedState = state.setIn([id, 'combinations', current, 'filter'], filter);
       return updatedState;
@@ -86,8 +81,6 @@ const reducer: Reducer = (state: DataState = fromJS(initialState), action: Actio
       const { id } = action.data;
       const current = state.getIn([id, 'currentCombination']);
       const defaultFilter = state.getIn([id, 'options', 0]);
-      console.log('🗝🗝🗝🗝🗝🗝🗝🗝🗝🗝🗝🗝🗝🗝🗝🗝🗝🗝🗝🗝');
-      console.log('defaultFilter:', defaultFilter);
       const updatedState = state.setIn([id, 'combinations', current, 'filter'], defaultFilter);
       return updatedState;
     }
@@ -120,8 +113,6 @@ const reducer: Reducer = (state: DataState = fromJS(initialState), action: Actio
 
       const combinations = updatedState.getIn([id, 'combinations']);
       const combinedSearch = combinations.reduce((result, combo) => {
-        console.log('result:', result);
-        console.log('combo.toJS():', combo.toJS());
         const key = combo.getIn(['filter', 'value']);
         const value = combo.get('search');
         return result.set([key], value);
