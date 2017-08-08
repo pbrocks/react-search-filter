@@ -119,7 +119,7 @@ export class CombinationComponent extends Component {
 
         // "update search?"
         // "set search?"
-        this.props.setCombinationSearch({ id, search: currentInput });
+        this.props.setCombinationSearch({ id, search: currentInput, isReady: true });
         this.props.setCombinationEditing({ id, index, isEditing: false });
         this.props.incrementCurrentCombination({ id });
         this.props.setCurrentStep({ id, currentStep: 'filter' });
