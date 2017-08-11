@@ -7,6 +7,11 @@ import uuid from 'uuid';
 
 import type { Action, DataState, Reducer } from '../types';
 
+const defaultFilter = fromJS({
+  id: 0,
+  display: 'Search',
+  value: 'search',
+});
 
 const reducer: Reducer = (state: DataState = fromJS(initialState), action: Action) => {
   switch (action.type) {
@@ -98,11 +103,6 @@ const reducer: Reducer = (state: DataState = fromJS(initialState), action: Actio
       const { id } = action.data;
       const size = state.getIn([id, 'combinations']).size;
       const updatedState = state.setIn([id, 'combinations', size], fromJS({
-        filter: {
-          id: 0,
-          display: 'Search',
-          value: 'search',
-        },
         isEditing: true,
         isListVisible: true,
       })).setIn([id, 'topLevelIsEditing'], true);
@@ -111,8 +111,18 @@ const reducer: Reducer = (state: DataState = fromJS(initialState), action: Actio
 
     case C.RSF_SET_COMBINATION_VALUE: {
       const { id, index, search, isReady = false } = action.data;
-      const updatedState = state.setIn([id, 'combinations', index, 'search'], search)
+      const combination = state.getIn([id, 'combinations', index]);
+      let updatedState = state;
+
+      if (!combination.get('filter')) {
+        updatedState = state.setIn([id, 'combinations', index, 'filter'], defaultFilter)
+        .setIn([id, 'combinations', index, 'search'], search)
         .setIn([id, 'isReady'], isReady);
+      } else {
+        updatedState = state
+        .setIn([id, 'combinations', index, 'search'], search)
+        .setIn([id, 'isReady'], isReady);
+      }
 
       const combinations = updatedState.getIn([id, 'combinations']);
       const combinedSearch = combinations.reduce((result, combo) => {
