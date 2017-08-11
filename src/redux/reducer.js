@@ -98,17 +98,20 @@ const reducer: Reducer = (state: DataState = fromJS(initialState), action: Actio
       const { id } = action.data;
       const size = state.getIn([id, 'combinations']).size;
       const updatedState = state.setIn([id, 'combinations', size], fromJS({
-        filter: {},
+        filter: {
+          id: 0,
+          display: 'Search',
+          value: 'search',
+        },
         isEditing: true,
         isListVisible: true,
       })).setIn([id, 'topLevelIsEditing'], true);
       return updatedState;
     }
 
-    case C.RSF_SET_COMBINATION_SEARCH: {
-      const { id, search, isReady = false } = action.data;
-      const current = state.getIn([id, 'currentCombination']);
-      const updatedState = state.setIn([id, 'combinations', current, 'search'], search)
+    case C.RSF_SET_COMBINATION_VALUE: {
+      const { id, index, search, isReady = false } = action.data;
+      const updatedState = state.setIn([id, 'combinations', index, 'search'], search)
         .setIn([id, 'isReady'], isReady);
 
       const combinations = updatedState.getIn([id, 'combinations']);

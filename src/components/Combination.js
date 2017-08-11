@@ -29,6 +29,7 @@ import {
   setCurrentStep,
   setCombinationEditing,
   setSearchReady,
+  finalizeBar,
 } from '../redux/actions';
 
 type SearchFilterProps = {
@@ -67,10 +68,18 @@ type SearchFilterProps = {
   setCurrentCombination: Callback,
   setCurrentStep: Callback,
   setCombinationEditing: Callback,
+  finalizeBar: Callback,
 };
 
 export class CombinationComponent extends Component {
   props: SearchFilterProps;
+
+  constructor(props, context) {
+    super(props, context);
+    this.state = {
+      search: '',
+    };
+  }
 
   handleClickout = () => {
     const { id, index } = this.props;
@@ -99,34 +108,33 @@ export class CombinationComponent extends Component {
       this.props.setListTraversal({ id, isTraversingList: true });
     }
     if (e.which === 13) { // ENTER
-      const { currentCombination, currentInput, isTraversingList } = this.props;
+      const { currentCombination, currentInput, index, isTraversingList } = this.props;
 
-      const currentFilter = this.props.combinations.getIn([currentCombination, 'filter']);
+      // const currentFilter = this.props.combinations.getIn([currentCombination, 'filter']);
 
-      this.props.setCombinationListVisibility({ id, index, isListVisible: false });
-      this.props.setCurrentInput({ id, currentInput: '' });
+      // this.props.setCombinationListVisibility({ id, index, isListVisible: false });
+      // this.props.setCurrentInput({ id, currentInput: '' });
 
       // if traversing List (ie. creating combinationFilter)
       // 1. set combinationFilter
-      if (currentStep === 'filter') { // step === 'filter'
-        this.props.setCombinationFilter({ id });
-        this.props.setCurrentStep({ id, currentStep: 'search' });
-        this.props.setListTraversal({ id, isTraversingList: false });
-      } else { // step === 'search'
-        if (!currentFilter) {
-          this.props.setCombinationDefaultFilter({ id });
-        }
+      // if (currentStep === 'filter') { // step === 'filter'
+      //   this.props.setCombinationFilter({ id });
+      //   this.props.setCurrentStep({ id, currentStep: 'search' });
+      //   this.props.setListTraversal({ id, isTraversingList: false });
+      // } else { // step === 'search'
+      //   if (!currentFilter) {
+      //     this.props.setCombinationDefaultFilter({ id });
+      //   }
 
         // "update search?"
         // "set search?"
-        this.props.setCombinationSearch({ id, search: currentInput, isReady: true });
-        this.props.setCombinationEditing({ id, index, isEditing: false });
-        this.props.incrementCurrentCombination({ id });
-        this.props.setCurrentStep({ id, currentStep: 'filter' });
-        this.props.resetList({ id });
-        // setTimeout(() => this.handleSearch(), 1000);
-        // this.props.setSearchReady({ id, isReady: true });
-      }
+      this.props.setCombinationSearch({ id, index, search: currentInput, isReady: true });
+      this.props.setCombinationEditing({ id, index, isEditing: false });
+      this.props.incrementCurrentCombination({ id });
+      this.props.setCurrentStep({ id, currentStep: 'filter' });
+
+      this.props.resetList({ id });
+      // }
     }
   }
 
@@ -260,6 +268,7 @@ const mapStateToProps = (state, ownProps) => ({
   list: state.searchFilter.getIn([ownProps.id, 'list']),
   options: state.searchFilter.getIn([ownProps.id, 'options']),
   combinations: state.searchFilter.getIn([ownProps.id, 'combinations']),
+  combination: state.searchFilter.getIn([ownProps.id, 'combinations', ownProps.index]),
   currentCombination: state.searchFilter.getIn([ownProps.id, 'currentCombination']),
   currentInput: state.searchFilter.getIn([ownProps.id, 'currentInput']),
   currentStep: state.searchFilter.getIn([ownProps.id, 'currentStep']),

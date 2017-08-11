@@ -31,7 +31,7 @@ const setCombinationFilter: ActionCreator = (data: Object) => ({
 });
 
 const setCombinationSearch: ActionCreator = (data: Object) => ({
-  type: C.RSF_SET_COMBINATION_SEARCH,
+  type: C.RSF_SET_COMBINATION_VALUE,
   data,
 });
 
@@ -117,6 +117,11 @@ const removeRSF: ActionCreator = (data: Object) => ({
   data,
 });
 
+const finalizeBar: ActionCreator = (data: Object) => ({
+  type: C.RSF_FINALIZE_BAR,
+  data,
+});
+
 
 module.exports = {
   addRSF,
@@ -146,4 +151,6 @@ module.exports = {
   resetList,
 
   incrementCurrentCombination,
+
+  finalizeBar,
 };
