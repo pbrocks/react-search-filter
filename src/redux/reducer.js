@@ -81,13 +81,6 @@ const reducer: Reducer = (state: DataState = fromJS(initialState), action: Actio
       return updatedState;
     }
 
-    case C.RSF_SET_COMBINATION_DEFAULT_FILTER: {
-      const { id } = action.data;
-      const current = state.getIn([id, 'currentCombination']);
-      const updatedState = state.setIn([id, 'combinations', current, 'filter'], defaultFilter);
-      return updatedState;
-    }
-
     case C.RSF_SET_COMBINATION_FILTER_ON_CLICK: {
       const { id, filter, index } = action.data;
       const current = state.getIn([id, 'currentCombination']);

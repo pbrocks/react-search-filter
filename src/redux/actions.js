@@ -55,11 +55,6 @@ const setCombinationFilterOnClick: ActionCreator = (data: Object) => ({
   data,
 });
 
-const setCombinationDefaultFilter: ActionCreator = (data: Object) => ({
-  type: C.RSF_SET_COMBINATION_DEFAULT_FILTER,
-  data,
-});
-
 const setListVisibility: ActionCreator = (data: Object) => ({
   type: C.RSF_SET_LIST_VISIBILITY,
   data,
@@ -123,7 +118,6 @@ module.exports = {
 
   setCombinationFilter,
   setCombinationFilterOnClick,
-  setCombinationDefaultFilter,
   setCombinationSearch,
   setCombinationEditing,
   setCombinationListVisibility,
