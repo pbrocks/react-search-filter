@@ -68,7 +68,7 @@ const reducer: Reducer = (state: DataState = fromJS(initialState), action: Actio
       return updatedState;
     }
 
-    case C.RSF_SET_LIST_TRAVERSAL: {
+    case C.RSF_SET_LIST_BROWSING: {
       const { id, isBrowsingList } = action.data;
       return state.setIn([id, 'isBrowsingList'], isBrowsingList);
     }

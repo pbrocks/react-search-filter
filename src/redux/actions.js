@@ -66,7 +66,7 @@ const setListVisibility: ActionCreator = (data: Object) => ({
 });
 
 const setListBrowsing: ActionCreator = (data: Object) => ({
-  type: C.RSF_SET_LIST_TRAVERSAL,
+  type: C.RSF_SET_LIST_BROWSING,
   data,
 });
 

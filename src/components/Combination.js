@@ -95,7 +95,6 @@ export class CombinationComponent extends Component {
 
   handleInputKeyDown = (e: Object) => {
     const { id, index, currentStep } = this.props;
-    // this.props.setSearchReady({ id, isReady: false });
 
     if (e.which === 40) { // DOWN
       if (currentStep === 'search') return;
@@ -110,7 +109,6 @@ export class CombinationComponent extends Component {
     if (e.which === 13) { // ENTER
       const { currentCombination, currentInput, index, isBrowsingList } = this.props;
 
-      // const currentFilter = this.props.combinations.getIn([currentCombination, 'filter']);
       this.props.setCurrentInput({ id, currentInput: '' });
 
       if (isBrowsingList) {
@@ -120,28 +118,13 @@ export class CombinationComponent extends Component {
         this.input.focus();
         return;
       }
-      // 1. set combinationFilter
-      // if (currentStep === 'filter') { // step === 'filter'
-      //   this.props.setCombinationFilter({ id });
-      //   this.props.setCurrentStep({ id, currentStep: 'search' });
-      //   this.props.setListBrowsing({ id, isBrowsingList: false });
-      // }
-      // else { // step === 'search'
-      //   if (!currentFilter) {
-      //     this.props.setCombinationDefaultFilter({ id });
-      // }
-      // this.props.setCombinationListVisibility({ id, index, isListVisible: false });
 
-
-        // "update search?"
-        // "set search?"
       this.props.setCombinationSearch({ id, index, search: currentInput, isReady: true });
       this.props.setCombinationEditing({ id, index, isEditing: false });
       this.props.incrementCurrentCombination({ id });
       this.props.setCurrentStep({ id, currentStep: 'filter' });
 
       this.props.resetList({ id });
-      // }
     }
 
     if (e.which === 8) { // BACKSPACE
