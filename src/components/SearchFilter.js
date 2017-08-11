@@ -77,8 +77,6 @@ export class SearchFilterComponent extends Component {
   }
 
   componentWillReceiveProps() {
-    console.log('🌶🌶🌶🌶🌶🌶🌶🌶🌶🌶🌶🌶🌶🌶🌶🌶🌶🌶');
-    console.log('arguments:', arguments);
   }
 
   componentWillUnmount() {

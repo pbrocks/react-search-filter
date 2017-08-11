@@ -61,7 +61,8 @@ const reducer: Reducer = (state: DataState = fromJS(initialState), action: Actio
     case C.RSF_FILTER_LIST: {
       const { id, currentInput } = action.data;
       const options = state.getIn([id, 'options']) || [];
-      const filtered = options.filter(f => f.get('display').toLowerCase().includes(currentInput));
+      const filtered = options.filter(option => option.get('display').toLowerCase()
+        .includes(currentInput.toLowerCase()));
 
       const updatedState = state.setIn([id, 'list'], filtered);
       return updatedState;
@@ -83,7 +84,6 @@ const reducer: Reducer = (state: DataState = fromJS(initialState), action: Actio
     case C.RSF_SET_COMBINATION_DEFAULT_FILTER: {
       const { id } = action.data;
       const current = state.getIn([id, 'currentCombination']);
-      const defaultFilter = state.getIn([id, 'options', 0]);
       const updatedState = state.setIn([id, 'combinations', current, 'filter'], defaultFilter);
       return updatedState;
     }
