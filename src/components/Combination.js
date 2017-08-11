@@ -112,7 +112,6 @@ export class CombinationComponent extends Component {
       this.props.setCombinationEditing({ id, index, isEditing: false });
       this.props.incrementCurrentCombination({ id });
       this.props.setCombinationListVisibility({ id, index, isListVisible: false });
-      this.props.setCurrentStep({ id, currentStep: 'filter' });
 
       this.props.resetList({ id });
     }
@@ -134,16 +133,9 @@ export class CombinationComponent extends Component {
   }
 
   handleListItemClick = filter => () => {
-    const { id, combinations, combination, currentCombination, index } = this.props;
+    const { id, combination, index } = this.props;
     this.props.setCurrentCombination({ id, currentCombination: index });
     this.props.setCombinationFilterOnClick({ id, filter, index });
-    if (!combinations.getIn([currentCombination, 'search'])) {
-      // skip this when editing filter for existing combination
-      this.props.setCurrentStep({ id, currentStep: 'search' });
-    } else {
-      // after editing filter for existing combination, jump to next combination
-      this.props.resetList({ id });
-    }
     this.props.setCombinationListVisibility({ id, index, isListVisible: false });
     if (!combination.get('search')) {
       this.input.focus();
