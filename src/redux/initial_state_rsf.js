@@ -9,5 +9,5 @@ export default {
   currentStep: 'filter',
 
 
-  isTraversingList: false,
+  isBrowsingList: false,
 };

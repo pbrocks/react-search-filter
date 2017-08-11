@@ -16,12 +16,12 @@ const initializeList: ActionCreator = (data: Object) => ({
 });
 
 const traverseListUp: ActionCreator = (data: Object) => ({
-  type: C.RSF_TRAVERSE_LIST_UP,
+  type: C.RSF_BROWSE_LIST_UP,
   data,
 });
 
-const traverseListDown: ActionCreator = (data: Object) => ({
-  type: C.RSF_TRAVERSE_LIST_DOWN,
+const browseListDown: ActionCreator = (data: Object) => ({
+  type: C.RSF_BROWSE_LIST_DOWN,
   data,
 });
 
@@ -65,7 +65,7 @@ const setListVisibility: ActionCreator = (data: Object) => ({
   data,
 });
 
-const setListTraversal: ActionCreator = (data: Object) => ({
+const setListBrowsing: ActionCreator = (data: Object) => ({
   type: C.RSF_SET_LIST_TRAVERSAL,
   data,
 });
@@ -129,7 +129,7 @@ module.exports = {
 
   initializeList,
   traverseListUp,
-  traverseListDown,
+  browseListDown,
 
   setCombinationFilter,
   setCombinationFilterOnClick,
@@ -141,7 +141,7 @@ module.exports = {
   setSearchReady,
 
   setListVisibility,
-  setListTraversal,
+  setListBrowsing,
   setCurrentInput,
   setCurrentStep,
   setCurrentCombination,

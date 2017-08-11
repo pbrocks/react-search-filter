@@ -31,7 +31,7 @@ const reducer: Reducer = (state: DataState = fromJS(initialState), action: Actio
       return state.delete(id);
     }
 
-    case C.RSF_TRAVERSE_LIST_UP: {
+    case C.RSF_BROWSE_LIST_UP: {
       const { id } = action.data;
       const currentListOption = state.getIn([id, 'currentListOption']);
       const size = state.getIn([id, 'list']).size;
@@ -42,7 +42,7 @@ const reducer: Reducer = (state: DataState = fromJS(initialState), action: Actio
       return state.setIn([id, 'currentListOption'], updatedListOption);
     }
 
-    case C.RSF_TRAVERSE_LIST_DOWN: {
+    case C.RSF_BROWSE_LIST_DOWN: {
       const { id } = action.data;
       const currentListOption = state.getIn([id, 'currentListOption']);
       const size = state.getIn([id, 'list']).size;
@@ -68,16 +68,15 @@ const reducer: Reducer = (state: DataState = fromJS(initialState), action: Actio
     }
 
     case C.RSF_SET_LIST_TRAVERSAL: {
-      const { id, isTraversingList } = action.data;
-      return state.setIn([id, 'isTraversingList'], isTraversingList);
+      const { id, isBrowsingList } = action.data;
+      return state.setIn([id, 'isBrowsingList'], isBrowsingList);
     }
 
     case C.RSF_SET_COMBINATION_FILTER: {
-      const { id } = action.data;
-      const current = state.getIn([id, 'currentCombination']);
+      const { id, index } = action.data;
       const currentListOption = state.getIn([id, 'currentListOption']);
       const filter = state.getIn([id, 'list', currentListOption]);
-      const updatedState = state.setIn([id, 'combinations', current, 'filter'], filter);
+      const updatedState = state.setIn([id, 'combinations', index, 'filter'], filter);
       return updatedState;
     }
 

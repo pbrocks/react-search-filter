@@ -13,12 +13,12 @@ import {
   removeRSF,
   initializeList,
   traverseListUp,
-  traverseListDown,
+  browseListDown,
   setCombinationFilter,
   setCombinationListVisibility,
   setCombinationDefaultFilter,
   setCombinationFilterOnClick,
-  setListTraversal,
+  setListBrowsing,
   setCombinationSearch,
   setCurrentInput,
   incrementCurrentCombination,
@@ -38,7 +38,7 @@ type SearchFilterProps = {
   index: Number,
   data: List,
   isListVisible: boolean,
-  isTraversingList: boolean,
+  isBrowsingList: boolean,
   combinations: List,
   currentInput: string,
   currentStep: string,
@@ -52,7 +52,7 @@ type SearchFilterProps = {
   removeRSF: Callback,
   handleSearch: Callback,
   initializeList: Callback,
-  traverseListDown: Callback,
+  browseListDown: Callback,
   traverseListUp: Callback,
   setCombinationFilter: Callback,
   setCombinationDefaultFilter: Callback,
@@ -61,7 +61,7 @@ type SearchFilterProps = {
   setCombinationListVisibility: Callback,
   setCurrentInput: Callback,
   incrementCurrentCombination: Callback,
-  setListTraversal: Callback,
+  setListBrowsing: Callback,
   filterList: Callback,
   deleteCombination: Callback,
   resetList: Callback,
@@ -89,7 +89,7 @@ export class CombinationComponent extends Component {
   handleInputChange = (e: Object) => {
     this.props.setCurrentInput({ id: this.props.id, currentInput: e.target.value });
     this.props.filterList({ id: this.props.id, currentInput: e.target.value });
-    if (this.props.isTraversingList) {
+    if (this.props.isBrowsingList) {
     }
   }
 
@@ -99,32 +99,39 @@ export class CombinationComponent extends Component {
 
     if (e.which === 40) { // DOWN
       if (currentStep === 'search') return;
-      this.props.traverseListDown({ id: this.props.id });
-      this.props.setListTraversal({ id, isTraversingList: true });
+      this.props.browseListDown({ id: this.props.id });
+      this.props.setListBrowsing({ id, isBrowsingList: true });
     }
     if (e.which === 38) { // UP
       if (currentStep === 'search') return;
       this.props.traverseListUp({ id: this.props.id });
-      this.props.setListTraversal({ id, isTraversingList: true });
+      this.props.setListBrowsing({ id, isBrowsingList: true });
     }
     if (e.which === 13) { // ENTER
-      const { currentCombination, currentInput, index, isTraversingList } = this.props;
+      const { currentCombination, currentInput, index, isBrowsingList } = this.props;
 
       // const currentFilter = this.props.combinations.getIn([currentCombination, 'filter']);
 
-      // this.props.setCombinationListVisibility({ id, index, isListVisible: false });
-      this.props.setCurrentInput({ id, currentInput: '' });
+      if (isBrowsingList) {
+        this.props.setCombinationFilter({ id, index });
+        this.props.setListBrowsing({ id, isBrowsingList: false });
 
-      // if traversing List (ie. creating combinationFilter)
+        this.input.focus();
+        return;
+      }
       // 1. set combinationFilter
       // if (currentStep === 'filter') { // step === 'filter'
       //   this.props.setCombinationFilter({ id });
       //   this.props.setCurrentStep({ id, currentStep: 'search' });
-      //   this.props.setListTraversal({ id, isTraversingList: false });
-      // } else { // step === 'search'
+      //   this.props.setListBrowsing({ id, isBrowsingList: false });
+      // }
+      // else { // step === 'search'
       //   if (!currentFilter) {
       //     this.props.setCombinationDefaultFilter({ id });
-      //   }
+      // }
+      // this.props.setCombinationListVisibility({ id, index, isListVisible: false });
+      this.props.setCurrentInput({ id, currentInput: '' });
+
 
         // "update search?"
         // "set search?"
@@ -263,7 +270,7 @@ export class CombinationComponent extends Component {
 }
 
 const mapStateToProps = (state, ownProps) => ({
-  isTraversingList: state.searchFilter.getIn([ownProps.id, 'isTraversingList']),
+  isBrowsingList: state.searchFilter.getIn([ownProps.id, 'isBrowsingList']),
   currentListOption: state.searchFilter.getIn([ownProps.id, 'currentListOption']),
   list: state.searchFilter.getIn([ownProps.id, 'list']),
   options: state.searchFilter.getIn([ownProps.id, 'options']),
@@ -279,7 +286,7 @@ const mapDispatchToProps = {
   removeRSF,
   initializeList,
   traverseListUp,
-  traverseListDown,
+  browseListDown,
   setCombinationFilter,
   setCombinationListVisibility,
   setCombinationFilterOnClick,
@@ -289,7 +296,7 @@ const mapDispatchToProps = {
   setCurrentStep,
   setCurrentInput,
   incrementCurrentCombination,
-  setListTraversal,
+  setListBrowsing,
   filterList,
   deleteCombination,
   resetList,
