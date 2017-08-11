@@ -60,7 +60,6 @@ type SearchFilterProps = {
   resetList: Callback,
   setCurrentCombination: Callback,
   setCombinationEditing: Callback,
-  finalizeBar: Callback,
 };
 
 export class CombinationComponent extends Component {

@@ -18,6 +18,7 @@ import {
 type SearchFilterProps = {
   // data
   id: string,
+  data: List,
   topLevelIsEditing: boolean,
   combinations: List,
 

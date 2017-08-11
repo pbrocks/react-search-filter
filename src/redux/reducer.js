@@ -15,7 +15,8 @@ const defaultFilter = fromJS({
 
 const reducer: Reducer = (state: DataState = fromJS(initialState), action: Action) => {
   switch (action.type) {
-    // Add a React Search Filter
+
+    /* --- TOP LEVEL ------------------------ */
     case C.RSF_ADD_RSF: {
       const { id } = action.data;
 
@@ -25,7 +26,6 @@ const reducer: Reducer = (state: DataState = fromJS(initialState), action: Actio
       });
     }
 
-    // Remove a React Search Filter
     case C.RSF_REMOVE_RSF: {
       const { id } = action.data;
       return state.delete(id);
