@@ -1,8 +1,22 @@
+// @flow
 import React, { Component } from 'react';
 import classNames from 'classnames';
 import wrapWithClickout from 'react-clickout';
 
+type ListOptionsProps = {
+  // data
+  id: string,
+  currentListOption: Number,
+  list: List,
+
+  // methods
+  handleClickout: Callback,
+  handleListItemClick: Callback,
+};
+
 class ListOptionsComponent extends Component {
+  props: ListOptionsProps;
+
   handleClickout = () => {
     this.props.handleClickout();
   }
