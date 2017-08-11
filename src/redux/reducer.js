@@ -61,8 +61,7 @@ const reducer: Reducer = (state: DataState = fromJS(initialState), action: Actio
     case C.RSF_FILTER_LIST: {
       const { id, currentInput } = action.data;
       const options = state.getIn([id, 'options']) || [];
-      // TODO: either lowercase / regex case insensitive
-      const filtered = options.filter(f => f.get('display').includes(currentInput));
+      const filtered = options.filter(f => f.get('display').toLowerCase().includes(currentInput));
 
       const updatedState = state.setIn([id, 'list'], filtered);
       return updatedState;
@@ -130,7 +129,10 @@ const reducer: Reducer = (state: DataState = fromJS(initialState), action: Actio
         const value = combo.get('search');
         return result.set([key], value);
       }, fromJS({}));
-      const finalState = updatedState.setIn([id, 'search'], combinedSearch);
+
+      const finalState = updatedState
+        .setIn([id, 'search'], combinedSearch)
+        .setIn([id, 'combinations', index, 'isListVisible'], false);
       return finalState;
     }
 
