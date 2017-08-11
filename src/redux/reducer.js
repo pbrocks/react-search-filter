@@ -107,7 +107,7 @@ const reducer: Reducer = (state: DataState = fromJS(initialState), action: Actio
       return updatedState;
     }
 
-    case C.RSF_SET_COMBINATION_VALUE: {
+    case C.RSF_SET_COMBINATION_SEARCH: {
       const { id, index, search, isReady = false } = action.data;
       const combination = state.getIn([id, 'combinations', index]);
       let updatedState = state;

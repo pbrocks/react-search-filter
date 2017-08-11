@@ -31,7 +31,7 @@ const setCombinationFilter: ActionCreator = (data: Object) => ({
 });
 
 const setCombinationSearch: ActionCreator = (data: Object) => ({
-  type: C.RSF_SET_COMBINATION_VALUE,
+  type: C.RSF_SET_COMBINATION_SEARCH,
   data,
 });
 

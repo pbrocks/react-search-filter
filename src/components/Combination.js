@@ -149,12 +149,11 @@ export class CombinationComponent extends Component {
     this.props.setCombinationListVisibility({ id, index, isListVisible: true });
   }
 
-  handleCombinationSearchClick = (id: string) => () => {
-    const { index } = this.props;
-    const search = this.props.combinations.getIn([index, 'search']);
+  handleCombinationSearchClick = () => {
+    const { id, index, combination } = this.props;
+    const search = combination.get('search');
     this.props.setCurrentCombination({ id, currentCombination: index });
-    this.props.setCombinationSearch({ id, search: '' });
-    this.props.setCurrentStep({ id, currentStep: 'search' });
+    this.props.setCombinationSearch({ id, index, search: '' });
     this.props.setCurrentInput({ id, currentInput: search });
     this.props.setCombinationEditing({ id, index, isEditing: true });
   }
@@ -196,7 +195,7 @@ export class CombinationComponent extends Component {
         ?
           <span
             className="rsf__combination-search"
-            onClick={this.handleCombinationSearchClick(id, index)}
+            onClick={this.handleCombinationSearchClick}
           >
             {combination.get('search')}
           </span>
