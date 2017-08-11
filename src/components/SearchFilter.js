@@ -1,9 +1,8 @@
 // @flow
 import React, { Component } from 'react';
-import { List, fromJS } from 'immutable';
+import { List } from 'immutable';
 import { connect } from 'react-redux';
 import wrapWithClickout from 'react-clickout';
-import classNames from 'classnames';
 
 import Combination from './Combination';
 
@@ -11,59 +10,22 @@ import type { Callback } from '../types';
 import {
   addRSF,
   removeRSF,
-  initializeList,
-  traverseListUp,
-  browseListDown,
-  setCombinationFilter,
   setListVisibility,
-  setCombinationDefaultFilter,
-  setCombinationFilterOnClick,
-  setListBrowsing,
-  setCombinationSearch,
-  setCurrentInput,
-  incrementCurrentCombination,
-  filterList,
-  deleteCombination,
-  resetList,
-  setCurrentCombination,
-  setCurrentStep,
+  initializeList,
   addCombination,
 } from '../redux/actions';
 
 type SearchFilterProps = {
   // data
   id: string,
-  data: List,
-  isListVisible: boolean,
-  isBrowsingList: boolean,
   topLevelIsEditing: boolean,
   combinations: List,
-  currentInput: string,
-  currentStep: string,
-  currentListOption: Number,
-  currentCombination: Number,
-  list: List,
 
   // methods
   addRSF: Callback,
   removeRSF: Callback,
-  handleSearch: Callback,
-  initializeList: Callback,
-  browseListDown: Callback,
-  traverseListUp: Callback,
-  setCombinationFilter: Callback,
-  setCombinationDefaultFilter: Callback,
-  setCombinationFilterOnClick: Callback,
-  setCombinationSearch: Callback,
   setListVisibility: Callback,
-  setCurrentInput: Callback,
-  incrementCurrentCombination: Callback,
-  setListBrowsing: Callback,
-  filterList: Callback,
-  deleteCombination: Callback,
-  resetList: Callback,
-  setCurrentCombination: Callback,
-  setCurrentStep: Callback,
+  initializeList: Callback,
   addCombination: Callback,
 };
 
@@ -94,8 +56,7 @@ export class SearchFilterComponent extends Component {
   }
 
   render() {
-    const { id, list, combinations, isListVisible } = this.props;
-
+    const { id, combinations } = this.props;
 
     return (
       <div className="rsf__wrapper">
@@ -106,15 +67,7 @@ export class SearchFilterComponent extends Component {
               id={id}
               key={index}
               index={index}
-              combination={c}
               className="rsf__combination-item"
-              handleInputChange={this.handleInputChange}
-              handleInputKeyDown={this.handleInputKeyDown}
-              handleInputClick={this.handleInputClick}
-              isListVisible={isListVisible}
-              list={list}
-              generateFilterStyle={this.generateFilterStyle}
-              handleListItemClick={this.handleListItemClick}
             />
           ))}
 
@@ -132,37 +85,15 @@ export class SearchFilterComponent extends Component {
 }
 
 const mapStateToProps = (state, ownProps) => ({
-  isBrowsingList: state.searchFilter.getIn([ownProps.id, 'isBrowsingList']),
-  isListVisible: state.searchFilter.getIn([ownProps.id, 'isListVisible']),
-  currentListOption: state.searchFilter.getIn([ownProps.id, 'currentListOption']),
   topLevelIsEditing: state.searchFilter.getIn([ownProps.id, 'topLevelIsEditing']),
-  list: state.searchFilter.getIn([ownProps.id, 'list']),
-  options: state.searchFilter.getIn([ownProps.id, 'options']),
   combinations: state.searchFilter.getIn([ownProps.id, 'combinations']),
-  currentCombination: state.searchFilter.getIn([ownProps.id, 'currentCombination']),
-  currentInput: state.searchFilter.getIn([ownProps.id, 'currentInput']),
-  currentStep: state.searchFilter.getIn([ownProps.id, 'currentStep']),
 });
 
 const mapDispatchToProps = {
   addRSF,
   removeRSF,
-  initializeList,
-  traverseListUp,
-  browseListDown,
-  setCombinationFilter,
   setListVisibility,
-  setCombinationFilterOnClick,
-  setCombinationDefaultFilter,
-  setCombinationSearch,
-  setCurrentCombination,
-  setCurrentStep,
-  setCurrentInput,
-  incrementCurrentCombination,
-  setListBrowsing,
-  filterList,
-  deleteCombination,
-  resetList,
+  initializeList,
   addCombination,
 };
 
