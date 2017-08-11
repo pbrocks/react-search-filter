@@ -29,7 +29,6 @@ import {
   setCurrentStep,
   setCombinationEditing,
   setSearchReady,
-  finalizeBar,
 } from '../redux/actions';
 
 type SearchFilterProps = {
@@ -50,7 +49,6 @@ type SearchFilterProps = {
   // methods
   addRSF: Callback,
   removeRSF: Callback,
-  handleSearch: Callback,
   initializeList: Callback,
   browseListDown: Callback,
   traverseListUp: Callback,
