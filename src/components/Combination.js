@@ -25,7 +25,6 @@ import {
   deleteCombination,
   resetList,
   setCurrentCombination,
-  setCurrentStep,
   setCombinationEditing,
   setSearchReady,
 } from '../redux/actions';
@@ -39,7 +38,6 @@ type SearchFilterProps = {
   isBrowsingList: boolean,
   combinations: List,
   currentInput: string,
-  currentStep: string,
   currentListOption: Number,
   currentCombination: Number,
   list: List,
@@ -63,7 +61,6 @@ type SearchFilterProps = {
   deleteCombination: Callback,
   resetList: Callback,
   setCurrentCombination: Callback,
-  setCurrentStep: Callback,
   setCombinationEditing: Callback,
   finalizeBar: Callback,
 };
@@ -82,15 +79,13 @@ export class CombinationComponent extends Component {
   }
 
   handleInputKeyDown = (e: Object) => {
-    const { id, index, currentStep } = this.props;
+    const { id, index } = this.props;
 
     if (e.which === 40) { // DOWN
-      if (currentStep === 'search') return;
       this.props.browseListDown({ id: this.props.id });
       this.props.setListBrowsing({ id, isBrowsingList: true });
     }
     if (e.which === 38) { // UP
-      if (currentStep === 'search') return;
       this.props.traverseListUp({ id: this.props.id });
       this.props.setListBrowsing({ id, isBrowsingList: true });
     }
@@ -127,8 +122,7 @@ export class CombinationComponent extends Component {
   }
 
   handleInputClick = () => {
-    const { id, index, currentStep } = this.props;
-    if (currentStep === 'search') return;
+    const { id, index } = this.props;
     this.props.setCombinationListVisibility({ id, index, isListVisible: true });
   }
 
@@ -145,7 +139,6 @@ export class CombinationComponent extends Component {
   handleCombinationFilterClick = (id: string) => () => {
     const { index } = this.props;
     this.props.setCurrentCombination({ id, currentCombination: index });
-    this.props.setCurrentStep({ id, currentStep: 'filter' });
     this.props.setCombinationListVisibility({ id, index, isListVisible: true });
   }
 
@@ -251,7 +244,6 @@ const mapStateToProps = (state, ownProps) => ({
   combination: state.searchFilter.getIn([ownProps.id, 'combinations', ownProps.index]),
   currentCombination: state.searchFilter.getIn([ownProps.id, 'currentCombination']),
   currentInput: state.searchFilter.getIn([ownProps.id, 'currentInput']),
-  currentStep: state.searchFilter.getIn([ownProps.id, 'currentStep']),
 });
 
 const mapDispatchToProps = {
@@ -266,7 +258,6 @@ const mapDispatchToProps = {
   setCombinationDefaultFilter,
   setCombinationSearch,
   setCurrentCombination,
-  setCurrentStep,
   setCurrentInput,
   incrementCurrentCombination,
   setListBrowsing,

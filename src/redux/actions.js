@@ -75,11 +75,6 @@ const setCurrentInput: ActionCreator = (data: Object) => ({
   data,
 });
 
-const setCurrentStep: ActionCreator = (data: Object) => ({
-  type: C.RSF_SET_CURRENT_STEP,
-  data,
-});
-
 const setCurrentCombination: ActionCreator = (data: Object) => ({
   type: C.RSF_SET_CURRENT_COMBINATION,
   data,
@@ -138,7 +133,6 @@ module.exports = {
   setListVisibility,
   setListBrowsing,
   setCurrentInput,
-  setCurrentStep,
   setCurrentCombination,
   deleteCombination,
 

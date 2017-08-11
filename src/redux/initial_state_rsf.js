@@ -6,8 +6,6 @@ export default {
   currentCombination: 0,
   currentInput: '',
   currentListOption: null,
-  currentStep: 'filter',
-
 
   isBrowsingList: false,
 };
