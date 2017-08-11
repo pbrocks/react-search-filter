@@ -111,6 +111,7 @@ export class CombinationComponent extends Component {
       const { currentCombination, currentInput, index, isBrowsingList } = this.props;
 
       // const currentFilter = this.props.combinations.getIn([currentCombination, 'filter']);
+      this.props.setCurrentInput({ id, currentInput: '' });
 
       if (isBrowsingList) {
         this.props.setCombinationFilter({ id, index });
@@ -130,7 +131,6 @@ export class CombinationComponent extends Component {
       //     this.props.setCombinationDefaultFilter({ id });
       // }
       // this.props.setCombinationListVisibility({ id, index, isListVisible: false });
-      this.props.setCurrentInput({ id, currentInput: '' });
 
 
         // "update search?"
