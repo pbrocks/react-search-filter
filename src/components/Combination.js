@@ -2,7 +2,6 @@
 import React, { Component } from 'react';
 import { List } from 'immutable';
 import { connect } from 'react-redux';
-import wrapWithClickout from 'react-clickout';
 import classNames from 'classnames';
 
 import ListOptions from './ListOptions';
@@ -72,13 +71,6 @@ type SearchFilterProps = {
 export class CombinationComponent extends Component {
   props: SearchFilterProps;
 
-  constructor(props, context) {
-    super(props, context);
-    this.state = {
-      search: '',
-    };
-  }
-
   handleClickout = () => {
     const { id, index } = this.props;
     this.props.setCombinationListVisibility({ id, index, isListVisible: false });
@@ -87,8 +79,6 @@ export class CombinationComponent extends Component {
   handleInputChange = (e: Object) => {
     this.props.setCurrentInput({ id: this.props.id, currentInput: e.target.value });
     this.props.filterList({ id: this.props.id, currentInput: e.target.value });
-    if (this.props.isBrowsingList) {
-    }
   }
 
   handleInputKeyDown = (e: Object) => {
@@ -105,7 +95,7 @@ export class CombinationComponent extends Component {
       this.props.setListBrowsing({ id, isBrowsingList: true });
     }
     if (e.which === 13) { // ENTER
-      const { currentCombination, currentInput, index, isBrowsingList } = this.props;
+      const { currentInput, isBrowsingList } = this.props;
 
       this.props.setCurrentInput({ id, currentInput: '' });
 
@@ -293,10 +283,6 @@ const mapDispatchToProps = {
   setCombinationEditing,
   setSearchReady,
 };
-
-const Wrapped = wrapWithClickout(CombinationComponent, {
-  wrapperStyle: 'rsf__clickout-wrapper',
-});
 
 const connected = connect(mapStateToProps, mapDispatchToProps)(CombinationComponent);
 
