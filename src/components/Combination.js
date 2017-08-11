@@ -136,8 +136,8 @@ export class CombinationComponent extends Component {
     }
   }
 
-  handleCombinationFilterClick = (id: string) => () => {
-    const { index } = this.props;
+  handleCombinationFilterClick = () => {
+    const { id, index } = this.props;
     this.props.setCurrentCombination({ id, currentCombination: index });
     this.props.setCombinationListVisibility({ id, index, isListVisible: true });
   }
@@ -151,7 +151,8 @@ export class CombinationComponent extends Component {
     this.props.setCombinationEditing({ id, index, isEditing: true });
   }
 
-  handleCombinationDelete = (id: string, index: Number) => () => {
+  handleCombinationDelete = () => {
+    const { id, index } = this.props;
     this.props.deleteCombination({ id, index });
     this.props.resetList({ id });
   }
@@ -165,7 +166,7 @@ export class CombinationComponent extends Component {
   }
 
   render() {
-    const { id, index, list, combination, currentInput = '' } = this.props;
+    const { list, combination, currentInput = '' } = this.props;
 
     return (
       <div className="rsf__combination-container">
@@ -174,7 +175,7 @@ export class CombinationComponent extends Component {
         ?
           <span
             className="rsf__combination-filter"
-            onClick={this.handleCombinationFilterClick(id, index)}
+            onClick={this.handleCombinationFilterClick}
           >
             {`${combination.getIn(['filter', 'display'])} :`}
             <span
@@ -199,7 +200,7 @@ export class CombinationComponent extends Component {
         ?
           <span
             className="rsf__combination-delete"
-            onClick={this.handleCombinationDelete(id, index)}
+            onClick={this.handleCombinationDelete}
           />
         : null
         }
