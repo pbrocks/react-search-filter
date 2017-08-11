@@ -113,7 +113,7 @@ export class CombinationComponent extends Component {
       // const currentFilter = this.props.combinations.getIn([currentCombination, 'filter']);
 
       // this.props.setCombinationListVisibility({ id, index, isListVisible: false });
-      // this.props.setCurrentInput({ id, currentInput: '' });
+      this.props.setCurrentInput({ id, currentInput: '' });
 
       // if traversing List (ie. creating combinationFilter)
       // 1. set combinationFilter
