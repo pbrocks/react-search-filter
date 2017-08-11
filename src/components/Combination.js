@@ -102,6 +102,7 @@ export class CombinationComponent extends Component {
       if (isBrowsingList) {
         this.props.setCombinationFilter({ id, index });
         this.props.setListBrowsing({ id, isBrowsingList: false });
+        this.props.setCombinationListVisibility({ id, index, isListVisible: false });
 
         this.input.focus();
         return;
@@ -110,6 +111,7 @@ export class CombinationComponent extends Component {
       this.props.setCombinationSearch({ id, index, search: currentInput, isReady: true });
       this.props.setCombinationEditing({ id, index, isEditing: false });
       this.props.incrementCurrentCombination({ id });
+      this.props.setCombinationListVisibility({ id, index, isListVisible: false });
       this.props.setCurrentStep({ id, currentStep: 'filter' });
 
       this.props.resetList({ id });
