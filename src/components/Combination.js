@@ -143,6 +143,15 @@ export class CombinationComponent extends Component {
       this.props.resetList({ id });
       // }
     }
+
+    if (e.which === 8) { // BACKSPACE
+
+    }
+
+    if (e.which === 27) { // ESCAPE
+      this.props.setCurrentInput({ id, currentInput: '' });
+      this.props.setCombinationListVisibility({ id, index, isListVisible: false });
+    }
   }
 
   handleInputClick = () => {
