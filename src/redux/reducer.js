@@ -1,9 +1,9 @@
 // @flow
 import { fromJS } from 'immutable';
-import C from './constants';
+import uuid from 'uuid';
+import C from '../constants';
 import initialState from './initial_state';
 import initialStateRSF from './initial_state_rsf';
-import uuid from 'uuid';
 
 import type { Action, DataState, Reducer } from '../types';
 

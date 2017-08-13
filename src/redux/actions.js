@@ -1,6 +1,6 @@
 /* @flow */
 
-import C from './constants';
+import C from '../constants';
 import type { ActionCreator } from '../types';
 
 // Add a React Search Filter
