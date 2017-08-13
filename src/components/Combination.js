@@ -107,7 +107,9 @@ export class CombinationComponent extends Component {
     }
 
     if (e.which === 8) { // BACKSPACE
-
+      if (this.props.currentInput === '') {
+        this.handleCombinationDelete();
+      }
     }
 
     if (e.which === 27) { // ESCAPE
