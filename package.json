@@ -14,8 +14,7 @@
     "lint": "./node_modules/.bin/eslint --quiet src test",
     "go": "watchexec -e js -w src -r yarn build"
   },
-  "author": "Daniel Moi",
-  "email": "engineering@ordermentum.com",
+  "author": "engineering@ordermentum.com",
   "license": "Apache-2.0",
   "dependencies": {
     "classnames": "^2.2.5",
