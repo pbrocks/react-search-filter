@@ -10,6 +10,6 @@ export type Action = {
 
 export type ActionCreator = (any) => Action;
 
-export type DataState = Map<string, ? any> ;
+export type DataState = Map<string, ? any>;
 
 export type Reducer = (state: DataState, action: Action) => DataState;

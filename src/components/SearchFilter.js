@@ -66,7 +66,7 @@ export class SearchFilterComponent extends Component {
           {combinations && combinations.map((c, index) => (
             <Combination
               id={id}
-              key={index}
+              key={index} // eslint-disable-line react/no-array-index-key
               index={index}
               className="rsf__combination-item"
             />
@@ -75,8 +75,7 @@ export class SearchFilterComponent extends Component {
           <div
             className="rsf__add"
             onClick={this.addCombination}
-          >
-          </div>
+          />
 
         </div>
 
