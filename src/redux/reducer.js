@@ -31,6 +31,112 @@ const reducer: Reducer = (state: DataState = fromJS(initialState), action: Actio
       return state.delete(id);
     }
 
+    /* --- COMBINATION ------------------------ */
+    case C.RSF_SET_COMBINATION_FILTER: {
+      const { id, index } = action.data;
+      const currentListOption = state.getIn([id, 'currentListOption']);
+      const filter = state.getIn([id, 'list', currentListOption]);
+      const updatedState = state.setIn([id, 'combinations', index, 'filter'], filter);
+      return updatedState;
+    }
+
+    case C.RSF_SET_COMBINATION_FILTER_ON_CLICK: {
+      const { id, filter, index } = action.data;
+      const current = state.getIn([id, 'currentCombination']);
+      const updatedState = state
+        .setIn([id, 'combinations', current, 'filter'], filter)
+        .setIn([id, 'currentListOption'], index);
+      return updatedState;
+    }
+
+    case C.RSF_ADD_COMBINATION: {
+      const { id } = action.data;
+      const size = state.getIn([id, 'combinations']).size;
+      const updatedState = state.setIn([id, 'combinations', size], fromJS({
+        isEditing: true,
+        isListVisible: true,
+      })).setIn([id, 'globalIsEditing'], true);
+      return updatedState;
+    }
+
+    case C.RSF_DELETE_COMBINATION: {
+      const { id, index } = action.data;
+      const updatedState = state.deleteIn([id, 'combinations', index]);
+      return updatedState;
+    }
+
+    case C.RSF_SET_COMBINATION_SEARCH: {
+      const { id, index, search, isReady = false } = action.data;
+      const combination = state.getIn([id, 'combinations', index]);
+      let updatedState = state;
+
+      if (!combination.get('filter')) {
+        updatedState = state.setIn([id, 'combinations', index, 'filter'], defaultFilter)
+        .setIn([id, 'combinations', index, 'search'], search)
+        .setIn([id, 'isReady'], isReady);
+      } else {
+        updatedState = state
+        .setIn([id, 'combinations', index, 'search'], search)
+        .setIn([id, 'isReady'], isReady);
+      }
+
+      const combinations = updatedState.getIn([id, 'combinations']);
+      const combinedSearch = combinations.reduce((result, combo) => {
+        const key = combo.getIn(['filter', 'value']);
+        const value = combo.get('search');
+        return result.set([key], value);
+      }, fromJS({}));
+
+      const finalState = updatedState
+        .setIn([id, 'search'], combinedSearch)
+        .setIn([id, 'combinations', index, 'isListVisible'], false);
+      return finalState;
+    }
+
+    case C.RSF_SET_COMBINATION_LIST_VISIBILITY: {
+      const { id, index, isListVisible } = action.data;
+      const updatedState = state.setIn([id, 'combinations', index, 'isListVisible'], isListVisible);
+      return updatedState;
+    }
+
+    case C.RSF_SET_COMBINATION_EDITING: {
+      const { id, index, isEditing } = action.data;
+      const updatedState = state.setIn([id, 'combinations', index, 'isEditing'], isEditing);
+      return updatedState;
+    }
+
+    /* --- LIST ------------------------ */
+    case C.RSF_INITIALIZE_LIST: {
+      const { id, data } = action.data;
+      const options = data.map(f => fromJS({
+        id: uuid.v4(),
+        display: f.get('display'),
+        value: f.get('value'),
+      }));
+
+      return state.setIn([id, 'list'], data)
+        .setIn([id, 'options'], options)
+        .setIn([id, 'currentListOption'], null)
+        .setIn([id, 'currentCombination'], 0);
+    }
+
+    case C.RSF_RESET_LIST: {
+      const { id } = action.data;
+      const options = state.getIn([id, 'options']);
+      const size = state.getIn([id, 'combinations']).size;
+
+      const updatedState = state.setIn([id, 'list'], options)
+        .setIn([id, 'currentListOption'], null)
+        .setIn([id, 'globalIsEditing'], false)
+        .setIn([id, 'currentCombination'], size);
+      return updatedState;
+    }
+
+    case C.RSF_SET_LIST_VISIBILITY: {
+      const { id, isListVisible } = action.data;
+      return state.setIn([id, 'isListVisible'], isListVisible);
+    }
+
     case C.RSF_BROWSE_LIST_UP: {
       const { id } = action.data;
       const currentListOption = state.getIn([id, 'currentListOption']);
@@ -73,76 +179,11 @@ const reducer: Reducer = (state: DataState = fromJS(initialState), action: Actio
       return state.setIn([id, 'isBrowsingList'], isBrowsingList);
     }
 
-    case C.RSF_SET_COMBINATION_FILTER: {
-      const { id, index } = action.data;
-      const currentListOption = state.getIn([id, 'currentListOption']);
-      const filter = state.getIn([id, 'list', currentListOption]);
-      const updatedState = state.setIn([id, 'combinations', index, 'filter'], filter);
-      return updatedState;
-    }
 
-    case C.RSF_SET_COMBINATION_FILTER_ON_CLICK: {
-      const { id, filter, index } = action.data;
-      const current = state.getIn([id, 'currentCombination']);
-      const updatedState = state
-        .setIn([id, 'combinations', current, 'filter'], filter)
-        .setIn([id, 'currentListOption'], index);
-      return updatedState;
-    }
-
-    case C.RSF_ADD_COMBINATION: {
-      const { id } = action.data;
-      const size = state.getIn([id, 'combinations']).size;
-      const updatedState = state.setIn([id, 'combinations', size], fromJS({
-        isEditing: true,
-        isListVisible: true,
-      })).setIn([id, 'topLevelIsEditing'], true);
-      return updatedState;
-    }
-
-    case C.RSF_SET_COMBINATION_SEARCH: {
-      const { id, index, search, isReady = false } = action.data;
-      const combination = state.getIn([id, 'combinations', index]);
-      let updatedState = state;
-
-      if (!combination.get('filter')) {
-        updatedState = state.setIn([id, 'combinations', index, 'filter'], defaultFilter)
-        .setIn([id, 'combinations', index, 'search'], search)
-        .setIn([id, 'isReady'], isReady);
-      } else {
-        updatedState = state
-        .setIn([id, 'combinations', index, 'search'], search)
-        .setIn([id, 'isReady'], isReady);
-      }
-
-      const combinations = updatedState.getIn([id, 'combinations']);
-      const combinedSearch = combinations.reduce((result, combo) => {
-        const key = combo.getIn(['filter', 'value']);
-        const value = combo.get('search');
-        return result.set([key], value);
-      }, fromJS({}));
-
-      const finalState = updatedState
-        .setIn([id, 'search'], combinedSearch)
-        .setIn([id, 'combinations', index, 'isListVisible'], false);
-      return finalState;
-    }
-
+    /* --- OVERALL ------------------------ */
     case C.RSF_SET_SEARCH_READY: {
       const { id, isReady } = action.data;
       const updatedState = state.setIn([id, 'isReady'], isReady);
-      return updatedState;
-    }
-
-    case C.RSF_SET_COMBINATION_LIST_VISIBILITY: {
-      const { id, index, isListVisible } = action.data;
-      const updatedState = state.setIn([id, 'combinations', index, 'isListVisible'], isListVisible);
-      return updatedState;
-    }
-
-    case C.RSF_SET_COMBINATION_EDITING: {
-      const { id, index, isEditing } = action.data;
-      const updatedState = state.setIn([id, 'combinations', index, 'isEditing'], isEditing);
       return updatedState;
     }
 
@@ -163,44 +204,6 @@ const reducer: Reducer = (state: DataState = fromJS(initialState), action: Actio
       const next = current + 1;
       const updatedState = state.setIn([id, 'currentCombination'], next);
       return updatedState;
-    }
-
-    case C.RSF_DELETE_COMBINATION: {
-      const { id, index } = action.data;
-      const updatedState = state.deleteIn([id, 'combinations', index]);
-      return updatedState;
-    }
-
-    //
-    case C.RSF_INITIALIZE_LIST: {
-      const { id, data } = action.data;
-      const options = data.map(f => fromJS({
-        id: uuid.v4(),
-        display: f.get('display'),
-        value: f.get('value'),
-      }));
-
-      return state.setIn([id, 'list'], data)
-        .setIn([id, 'options'], options)
-        .setIn([id, 'currentListOption'], null)
-        .setIn([id, 'currentCombination'], 0);
-    }
-
-    case C.RSF_RESET_LIST: {
-      const { id } = action.data;
-      const options = state.getIn([id, 'options']);
-      const size = state.getIn([id, 'combinations']).size;
-
-      const updatedState = state.setIn([id, 'list'], options)
-        .setIn([id, 'currentListOption'], null)
-        .setIn([id, 'topLevelIsEditing'], false)
-        .setIn([id, 'currentCombination'], size);
-      return updatedState;
-    }
-
-    case C.RSF_SET_LIST_VISIBILITY: {
-      const { id, isListVisible } = action.data;
-      return state.setIn([id, 'isListVisible'], isListVisible);
     }
 
     default: {

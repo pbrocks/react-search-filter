@@ -19,7 +19,7 @@ type SearchFilterProps = {
   // data
   id: string,
   data: List,
-  topLevelIsEditing: boolean,
+  globalIsEditing: boolean,
   combinations: List,
 
   // methods
@@ -51,8 +51,8 @@ export class SearchFilterComponent extends Component {
   }
 
   addCombination = () => {
-    const { id, topLevelIsEditing } = this.props;
-    if (topLevelIsEditing) return;
+    const { id, globalIsEditing } = this.props;
+    if (globalIsEditing) return;
     this.props.addCombination({ id });
   }
 
@@ -86,7 +86,7 @@ export class SearchFilterComponent extends Component {
 }
 
 const mapStateToProps = (state, ownProps) => ({
-  topLevelIsEditing: state.searchFilter.getIn([ownProps.id, 'topLevelIsEditing']),
+  globalIsEditing: state.searchFilter.getIn([ownProps.id, 'globalIsEditing']),
   combinations: state.searchFilter.getIn([ownProps.id, 'combinations']),
 });
 

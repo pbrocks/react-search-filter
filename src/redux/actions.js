@@ -15,7 +15,7 @@ const initializeList: ActionCreator = (data: Object) => ({
   data,
 });
 
-const traverseListUp: ActionCreator = (data: Object) => ({
+const browseListUp: ActionCreator = (data: Object) => ({
   type: C.RSF_BROWSE_LIST_UP,
   data,
 });
@@ -113,7 +113,7 @@ module.exports = {
   removeRSF,
 
   initializeList,
-  traverseListUp,
+  browseListUp,
   browseListDown,
 
   setCombinationFilter,

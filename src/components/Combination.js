@@ -8,10 +8,8 @@ import ListOptions from './ListOptions';
 
 import type { Callback } from '../types';
 import {
-  addRSF,
   removeRSF,
-  initializeList,
-  traverseListUp,
+  browseListUp,
   browseListDown,
   setCombinationFilter,
   setCombinationListVisibility,
@@ -35,7 +33,6 @@ type SearchFilterProps = {
   data: List,
   isListVisible: boolean,
   isBrowsingList: boolean,
-  combinations: List,
   currentInput: string,
   currentListOption: Number,
   currentCombination: Number,
@@ -43,23 +40,24 @@ type SearchFilterProps = {
   combination: Map,
 
   // methods
-  addRSF: Callback,
   removeRSF: Callback,
-  initializeList: Callback,
-  browseListDown: Callback,
-  traverseListUp: Callback,
+
   setCombinationFilter: Callback,
   setCombinationFilterOnClick: Callback,
   setCombinationSearch: Callback,
   setCombinationListVisibility: Callback,
+  setCombinationEditing: Callback,
+  deleteCombination: Callback,
+
+  setListBrowsing: Callback,
+  browseListDown: Callback,
+  browseListUp: Callback,
+  filterList: Callback,
+  resetList: Callback,
+
   setCurrentInput: Callback,
   incrementCurrentCombination: Callback,
-  setListBrowsing: Callback,
-  filterList: Callback,
-  deleteCombination: Callback,
-  resetList: Callback,
   setCurrentCombination: Callback,
-  setCombinationEditing: Callback,
 };
 
 export class CombinationComponent extends Component {
@@ -83,7 +81,7 @@ export class CombinationComponent extends Component {
       this.props.setListBrowsing({ id, isBrowsingList: true });
     }
     if (e.which === 38) { // UP
-      this.props.traverseListUp({ id: this.props.id });
+      this.props.browseListUp({ id: this.props.id });
       this.props.setListBrowsing({ id, isBrowsingList: true });
     }
     if (e.which === 13) { // ENTER
@@ -238,31 +236,31 @@ const mapStateToProps = (state, ownProps) => ({
   currentListOption: state.searchFilter.getIn([ownProps.id, 'currentListOption']),
   list: state.searchFilter.getIn([ownProps.id, 'list']),
   options: state.searchFilter.getIn([ownProps.id, 'options']),
-  combinations: state.searchFilter.getIn([ownProps.id, 'combinations']),
   combination: state.searchFilter.getIn([ownProps.id, 'combinations', ownProps.index]),
   currentCombination: state.searchFilter.getIn([ownProps.id, 'currentCombination']),
   currentInput: state.searchFilter.getIn([ownProps.id, 'currentInput']),
 });
 
 const mapDispatchToProps = {
-  addRSF,
   removeRSF,
-  initializeList,
-  traverseListUp,
-  browseListDown,
+
   setCombinationFilter,
   setCombinationListVisibility,
   setCombinationFilterOnClick,
   setCombinationSearch,
-  setCurrentCombination,
-  setCurrentInput,
-  incrementCurrentCombination,
+  deleteCombination,
+  setCombinationEditing,
+
+  browseListUp,
+  browseListDown,
   setListBrowsing,
   filterList,
-  deleteCombination,
   resetList,
-  setCombinationEditing,
+
+  setCurrentInput,
+  setCurrentCombination,
   setSearchReady,
+  incrementCurrentCombination,
 };
 
 const connected = connect(mapStateToProps, mapDispatchToProps)(CombinationComponent);
