@@ -3,6 +3,9 @@
 ## Description
 A versatile React Component providing search and filter capabilities
 
+[![Build Status](https://travis-ci.org/ordermentum/react-search-filter.svg?branch=master)](https://travis-ci.org/ordermentum/react-search-filter)
+
+
 ## Installation
 With Yarn:
 ```
