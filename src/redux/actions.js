@@ -80,6 +80,11 @@ const addCombination: ActionCreator = (data: Object) => ({
   data,
 });
 
+const addCombinationComplete: ActionCreator = (data: Object) => ({
+  type: C.RSF_ADD_COMBINATION_COMPLETE,
+  data,
+});
+
 const filterList: ActionCreator = (data: Object) => ({
   type: C.RSF_FILTER_LIST,
   data,
@@ -122,6 +127,7 @@ module.exports = {
   setCombinationEditing,
   setCombinationListVisibility,
   addCombination,
+  addCombinationComplete,
   setSearchReady,
 
   setListVisibility,

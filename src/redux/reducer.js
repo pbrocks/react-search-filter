@@ -49,6 +49,24 @@ const reducer: Reducer = (state: DataState = fromJS(initialState), action: Actio
       return updatedState;
     }
 
+    case C.RSF_ADD_COMBINATION_COMPLETE: {
+      const { id, filter, search } = action.data;
+      const newPill = fromJS({
+        filter,
+        search,
+        isEditing: false,
+        isListVisible: false,
+      });
+      console.log('newPill:', newPill);
+      const updatedCombinations = state.getIn([id, 'combinations']).push(newPill);
+      const updatedState = state.setIn([id, 'combinations'], updatedCombinations);
+      // const updatedState = state.getIn([id, 'combinations'])
+        // .push(newPill);
+        // console.log('updatedState:', updatedState);
+      return updatedState;
+      // return state;
+    }
+
     case C.RSF_ADD_COMBINATION: {
       const { id } = action.data;
       const size = state.getIn([id, 'combinations']).size;
@@ -128,7 +146,8 @@ const reducer: Reducer = (state: DataState = fromJS(initialState), action: Actio
       const updatedState = state.setIn([id, 'list'], options)
         .setIn([id, 'currentListOption'], null)
         .setIn([id, 'globalIsEditing'], false)
-        .setIn([id, 'currentCombination'], size);
+        .setIn([id, 'currentCombination'], size)
+        .setIn([id, 'isReady'], true);
       return updatedState;
     }
 

@@ -1,6 +1,6 @@
 // @flow
 import React, { Component } from 'react';
-import { List } from 'immutable';
+import Immutable from 'immutable';
 import { connect } from 'react-redux';
 import wrapWithClickout from 'react-clickout';
 
@@ -13,14 +13,16 @@ import {
   setListVisibility,
   initializeList,
   addCombination,
+  addCombinationComplete,
 } from '../redux/actions';
 
 type SearchFilterProps = {
   // data
   id: string,
-  data: List,
+  data: Immutable.List,
   globalIsEditing: boolean,
-  combinations: List,
+  combinations: Immutable.List,
+  currentSearch: Immutable.Map,
 
   // methods
   addRSF: Callback,
@@ -28,6 +30,7 @@ type SearchFilterProps = {
   setListVisibility: Callback,
   initializeList: Callback,
   addCombination: Callback,
+  addCombinationComplete: Callback,
 };
 
 export class SearchFilterComponent extends Component {
@@ -37,13 +40,44 @@ export class SearchFilterComponent extends Component {
     const { data, id } = this.props;
     this.props.addRSF({ id });
     this.props.initializeList({ id, data });
+
+    // generate combinations from current search here
   }
 
-  componentWillReceiveProps() {
+
+  componentWillReceiveProps(nextProps) {
+
+    console.log('nextProps.currentSearch:', nextProps.currentSearch);
+    console.log('this.props.currentSearch:', this.props.currentSearch);
+    const { combinations } = this.props;
+    const { currentSearch } = nextProps;
+
+
+      // if combinations is empty, then make combinations from currentSearch
+
+    // make new combinations only if currentSearch keys aren't in combinations already
+
+    if (nextProps.options.size > 0
+      && combinations && combinations.size === 0) {
+      console.log('LETS MAKE NEW COMBINATIONS');
+      this.generateInitialCombinations();
+    }
   }
 
   componentWillUnmount() {
     this.props.removeRSF({ id: this.props.id });
+  }
+
+  generateInitialCombinations = () => {
+    const { id, currentSearch, options } = this.props;
+
+    const keys = Object.keys(currentSearch);
+    for (const key of keys) {
+      console.log('🌳🌳🌳🌳🌳🌳🌳🌳🌳🌳🌳🌳🌳🌳🌳🌳🌳🌳🌳🌳🌳🌳🌳🌳🌳🌳🌳');
+      const filter = options && options.size && options.find(o => o.get('value') === key);
+      const search = currentSearch[key];
+      this.props.addCombinationComplete({ id, filter, search });
+    }
   }
 
   handleClickout = () => {
@@ -87,6 +121,7 @@ export class SearchFilterComponent extends Component {
 const mapStateToProps = (state, ownProps) => ({
   globalIsEditing: state.searchFilter.getIn([ownProps.id, 'globalIsEditing']),
   combinations: state.searchFilter.getIn([ownProps.id, 'combinations']),
+  options: state.searchFilter.getIn([ownProps.id, 'options']),
 });
 
 const mapDispatchToProps = {
@@ -95,6 +130,7 @@ const mapDispatchToProps = {
   setListVisibility,
   initializeList,
   addCombination,
+  addCombinationComplete,
 };
 
 const Wrapped = wrapWithClickout(SearchFilterComponent, {

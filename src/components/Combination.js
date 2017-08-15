@@ -152,6 +152,10 @@ export class CombinationComponent extends Component {
     const { id, index } = this.props;
     this.props.deleteCombination({ id, index });
     this.props.resetList({ id });
+
+    // figure out what resetList does
+    // trigger search again
+    // ensure that this (deleted) query is stripped from URL
   }
 
   generateInputStyle = () => {
