@@ -1,5 +1,5 @@
 // @flow
-import { fromJS } from 'immutable';
+import Immutable, { fromJS } from 'immutable';
 import uuid from 'uuid';
 import C from '../constants';
 import initialState from './initial_state';
@@ -50,19 +50,23 @@ const reducer: Reducer = (state: DataState = fromJS(initialState), action: Actio
     }
 
     case C.RSF_ADD_COMBINATION_COMPLETE: {
-      const { id, filter, search } = action.data;
-      const newPill = fromJS({
-        filter,
-        search,
-        isEditing: false,
-        isListVisible: false,
-      });
-      console.log('newPill:', newPill);
-      const updatedCombinations = state.getIn([id, 'combinations']).push(newPill);
-      const updatedState = state.setIn([id, 'combinations'], updatedCombinations);
-      // const updatedState = state.getIn([id, 'combinations'])
-        // .push(newPill);
-        // console.log('updatedState:', updatedState);
+      const { id, currentSearch } = action.data;
+      console.log('🍌🍌🍌🍌🍌🍌🍌🍌🍌🍌🍌🍌🍌🍌🍌🍌🍌🍌');
+      console.log('currentSearch:', currentSearch);
+      const options = state.getIn([id, 'options']);
+      console.log('options:', options);
+
+      const filteredOptions = options.filter(option => currentSearch.has(option.get('value')));
+
+      const combos = filteredOptions.reduce((result, option, index, original) => {
+        const combo = Immutable.Map()
+          .set('filter', original.get(index))
+          .set('search', currentSearch.get(option.get('value')));
+        return result.push(combo);
+      }, fromJS([]));
+      console.log('combos:', combos);
+      const updatedState = state.setIn([id, 'combinations'], combos)
+        .setIn([id, 'combinationsReady'], true);
       return updatedState;
       // return state;
     }

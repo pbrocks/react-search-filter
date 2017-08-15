@@ -1,6 +1,6 @@
 // @flow
 import React, { Component } from 'react';
-import Immutable from 'immutable';
+import Immutable, { fromJS } from 'immutable';
 import { connect } from 'react-redux';
 import wrapWithClickout from 'react-clickout';
 
@@ -35,6 +35,12 @@ type SearchFilterProps = {
 
 export class SearchFilterComponent extends Component {
   props: SearchFilterProps;
+  constructor(props, context) {
+    super(props, context);
+    this.state = {
+      creatingCombinations: false,
+    };
+  }
 
   componentDidMount() {
     const { data, id } = this.props;
@@ -47,21 +53,53 @@ export class SearchFilterComponent extends Component {
 
   componentWillReceiveProps(nextProps) {
 
-    console.log('nextProps.currentSearch:', nextProps.currentSearch);
-    console.log('this.props.currentSearch:', this.props.currentSearch);
-    const { combinations } = this.props;
-    const { currentSearch } = nextProps;
+    const search = nextProps.search;
+    const { id, combinations } = this.props;
+    const currentSearch = fromJS(nextProps.currentSearch);
+    console.log('currentSearch:', currentSearch);
+    console.log('search:', search);
+
+    // ensure that options have populated into application state first
+
+    // if (nextProps.location.pathname !== this.props.location.pathname) {
+    //   console.log('OMGOMGOMGOMGOMG');
+    //   console.log('OMGOMGOMGOMGOMG');
+    //   console.log('OMGOMGOMGOMGOMG');
+    // }
+    if (nextProps.options.size > 0 && !currentSearch.equals(search) && !this.state.creatingCombinations) {
+      console.log('OMG OMG OMG');
+      this.setState({
+        creatingCombinations: true,
+      }, () => {
+        this.props.addCombinationComplete({ id, currentSearch });
+      });
+    }
+
+    if (this.state.creatingCombinations && !currentSearch.equals(search) && nextProps.combinationsReady) {
+      this.setState({
+        creatingCombinations: false,
+      });
+    }
 
 
       // if combinations is empty, then make combinations from currentSearch
 
     // make new combinations only if currentSearch keys aren't in combinations already
 
-    if (nextProps.options.size > 0
-      && combinations && combinations.size === 0) {
-      console.log('LETS MAKE NEW COMBINATIONS');
-      this.generateInitialCombinations();
-    }
+    // if (nextProps.options.size > 0
+    //   && combinations && combinations.size === 0) {
+    //   console.log('LETS MAKE NEW COMBINATIONS');
+    //   this.generateInitialCombinations();
+    // }
+    /*
+      1. if currentSearch
+        - check what's in combinations
+        - set combinations to new currentSearch
+
+      compare currentSearch with combination
+      if they are not the same, then replace
+
+    */
   }
 
   componentWillUnmount() {
@@ -122,6 +160,8 @@ const mapStateToProps = (state, ownProps) => ({
   globalIsEditing: state.searchFilter.getIn([ownProps.id, 'globalIsEditing']),
   combinations: state.searchFilter.getIn([ownProps.id, 'combinations']),
   options: state.searchFilter.getIn([ownProps.id, 'options']),
+  search: state.searchFilter.getIn([ownProps.id, 'search']),
+  combinationsReady: state.searchFilter.getIn([ownProps.id, 'combinationsReady']),
 });
 
 const mapDispatchToProps = {

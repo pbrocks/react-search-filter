@@ -8,4 +8,5 @@ export default {
   currentListOption: null,
 
   isBrowsingList: false,
+  search: {},
 };
