@@ -1,12 +1,25 @@
 // @flow
 import React, { Component } from 'react';
-import ListOptions from './ListOptions';
+import Immutable, { fromJS } from 'immutable';
 import classNames from 'classnames';
+import uuid from 'uuid';
 
+import ListOptions from './ListOptions';
+
+import type { Callback } from '../types';
+
+const defaultFilter = fromJS({
+  id: uuid.v4(),
+  display: 'Search',
+  value: 'search',
+});
 
 type CombinationProps = {
+  index: Number,
   data: Map,
   list: List,
+
+  saveCombination: Callback,
 };
 
 export class CombinationComponent extends Component {
@@ -14,21 +27,28 @@ export class CombinationComponent extends Component {
 
   constructor(props, context) {
     super(props, context);
+    const { data } = props;
     this.state = {
-      currentInput: '',
+      filter: data.get('filter'),
+      search: data.get('search'),
+      isEditing: data.get('isEditing'),
+
       isBrowsingList: false,
+      isListVisible: data.get('isListVisible'),
       listIndex: null,
     };
   }
 
   handleClickout = () => {
-    console.log('CLICKOUT');
+    this.setState({
+      isListVisible: false,
+    });
   }
 
   handleInputChange = (e) => {
     const { value } = e.target;
     this.setState({
-      currentInput: value,
+      search: value,
     });
   }
 
@@ -54,16 +74,37 @@ export class CombinationComponent extends Component {
     }
   }
 
+  handleSaveCombination = () => {
+    const { search } = this.state;
+    const { index } = this.props;
+    const filter = this.state.filter || defaultFilter;
+    const combo = Immutable.Map()
+      .set('filter', filter)
+      .set('search', search)
+      .set('isEditing', false)
+      .set('isListVisible', false);
+    console.log('🌶🌶🌶🌶🌶🌶🌶🌶🌶🌶🌶🌶🌶🌶🌶🌶🌶🌶');
+    console.log('combo:', combo);
+    this.props.saveCombination(index, combo);
+  }
+
   handleInputKeyDown = (e: Object) => {
     if (e.which === 40) { // DOWN
-      this.browseListDown();
+      this.setState({ isListVisible: true }, () => this.browseListDown());
     }
     if (e.which === 38) { // UP
-      this.browseListUp();
+      this.setState({ isListVisible: true }, () => this.browseListUp());
     }
 
     if (e.which === 13) { // ENTER
+      if (this.state.isBrowsingList) {
 
+      }
+      this.handleSaveCombination();
+
+      this.setState({
+        isListVisible: false,
+      });
     }
   }
 
@@ -77,18 +118,21 @@ export class CombinationComponent extends Component {
 
   render() {
     const { data, list } = this.props;
-    const { currentInput } = this.state;
+    const { filter, search, isEditing, isListVisible } = this.state;
+    console.log('🌶🌶🌶🌶🌶🌶🌶🌶🌶🌶🌶🌶🌶🌶🌶🌶🌶🌶');
+    console.log('filter:', filter);
+    console.log('isEditing:', isEditing);
 
     return (
       <div className="rsf__combination-container">
 
-        {data.getIn(['filter', 'display'])
+        {filter && filter.get('display')
         ?
           <span
             className="rsf__combination-filter"
             onClick={this.handleCombinationFilterClick}
           >
-            {`${data.getIn(['filter', 'display'])} :`}
+            {`${filter.get('display')} :`}
             <span
               className="om-icon-descending rsf__icon-down"
             />
@@ -96,18 +140,18 @@ export class CombinationComponent extends Component {
         : null
         }
 
-        {data.get('search')
+        {search && !isEditing
         ?
           <span
             className="rsf__combination-search"
             onClick={this.handleCombinationSearchClick}
           >
-            {data.get('search')}
+            {search}
           </span>
         : null
         }
 
-        {data.get('search')
+        {search && !isEditing
         ?
           <span
             className="rsf__combination-delete"
@@ -116,7 +160,7 @@ export class CombinationComponent extends Component {
         : null
         }
 
-        {data.get('isEditing')
+        {isEditing
         ?
           <input
             ref={(r) => { this.input = r; }}
@@ -125,13 +169,13 @@ export class CombinationComponent extends Component {
             onChange={this.handleInputChange}
             onKeyDown={this.handleInputKeyDown}
             onClick={this.handleInputClick}
-            value={currentInput}
+            value={search}
             autoFocus
           />
         : null }
 
 
-        {data.get('isListVisible')
+        {isListVisible
         ?
           <ListOptions
             list={list}

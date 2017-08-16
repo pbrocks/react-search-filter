@@ -87,7 +87,7 @@ export class SearchFilterComponent extends Component {
     this.props.setListVisibility({ id: this.props.id, isListVisible: false });
   }
 
-  addCombination = () => {
+  addNewCombination = () => {
     const { id, globalIsEditing } = this.props;
     if (globalIsEditing) return;
 
@@ -101,9 +101,20 @@ export class SearchFilterComponent extends Component {
     this.setState({ combinations: updated });
   }
 
+  saveCombination = (index, combo) => {
+    console.log('🌳🌳🌳🌳🌳🌳🌳🌳🌳🌳🌳🌳🌳🌳🌳🌳🌳🌳🌳🌳🌳🌳🌳🌳🌳🌳🌳');
+    console.log('index, combo:', index, combo);
+    const { combinations } = this.state;
+    const updated = combinations.set(index, combo);
+    this.setState({
+      combinations: updated,
+    });
+  }
+
   render() {
-    // const { id, combinations } = this.props;
     const { combinations, list } = this.state;
+    console.log('🌳🌳🌳🌳🌳🌳🌳🌳🌳🌳🌳🌳🌳🌳🌳🌳🌳🌳🌳🌳🌳🌳🌳🌳🌳🌳🌳');
+    console.log('combinations:', combinations);
 
 
     return (
@@ -118,12 +129,13 @@ export class SearchFilterComponent extends Component {
               data={c}
               className="rsf__combination-item"
               list={list}
+              saveCombination={this.saveCombination}
             />
           ))}
 
           <div
             className="rsf__add"
-            onClick={this.addCombination}
+            onClick={this.addNewCombination}
           />
 
         </div>
