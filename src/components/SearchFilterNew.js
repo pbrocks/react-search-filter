@@ -102,10 +102,14 @@ export class SearchFilterComponent extends Component {
   saveCombination = (index, combo) => {
     const { combinations } = this.state;
     const updated = combinations.set(index, combo);
+    console.log('combo:', combo);
+    console.log('updated:', updated);
     this.setState({
       combinations: updated,
     }, () => {
-      const { combinations } = this.state;
+      console.log('🌶🌶🌶🌶🌶🌶🌶🌶🌶🌶🌶🌶🌶🌶🌶🌶🌶🌶');
+      console.log('combinations:', combinations);
+      console.log('this.state.combinations:', this.state.combinations);
       // generate search object
       // pass to parent
     });

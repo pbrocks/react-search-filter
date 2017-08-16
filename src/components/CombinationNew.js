@@ -89,19 +89,38 @@ export class CombinationComponent extends Component {
     this.props.saveCombination(index, combo);
   }
 
+  handleListClick = () => {
+
+  }
+
   handleInputKeyDown = (e: Object) => {
     if (e.which === 40) { // DOWN
-      this.setState({ isListVisible: true }, () => this.browseListDown());
+      this.setState({
+        isListVisible: true,
+        isBrowsingList: true,
+      }, () => this.browseListDown());
     }
     if (e.which === 38) { // UP
-      this.setState({ isListVisible: true }, () => this.browseListUp());
+      this.setState({
+        isListVisible: true,
+        isBrowsingList: true,
+      }, () => this.browseListUp());
     }
 
     if (e.which === 13) { // ENTER
       if (this.state.isBrowsingList) {
+        const { listIndex } = this.state;
+        const { list } = this.props;
+        const filter = list.get(listIndex);
+        this.setState({
+          filter,
+          isBrowsingList: false,
+        });
+        this.input.focus();
+      } else {
+        this.handleSaveCombination();
 
       }
-      this.handleSaveCombination();
 
       this.setState({
         isListVisible: false,
