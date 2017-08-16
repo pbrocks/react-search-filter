@@ -97,7 +97,6 @@ export class CombinationComponent extends Component {
 
   handleListItemClick = filter => () => {
     const { search, id } = this.state;
-    console.log('search #1:', search);
     const { index } = this.props;
     const combo = Immutable.Map()
       .set('id', id)
@@ -110,7 +109,6 @@ export class CombinationComponent extends Component {
       isListVisible: false,
       listIndex: null,
     }, () => {
-      console.log('search #2:', search);
       if (!search) {
         this.input.focus();
       } else {
@@ -120,7 +118,9 @@ export class CombinationComponent extends Component {
   }
 
   handleClickCombinationFilter = () => {
-
+    this.setState({
+      isListVisible: true,
+    });
   }
 
   handleClickCombinationSearch = () => {
