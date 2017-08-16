@@ -20,7 +20,8 @@ import {
 type SearchFilterProps = {
   // data
   id: string,
-  data: Immutable.List,
+  data: List,
+  options: List,
   globalIsEditing: boolean,
   combinations: Immutable.List,
   currentSearch: Immutable.Map,
@@ -45,21 +46,19 @@ export class SearchFilterComponent extends Component {
   }
 
   componentDidMount() {
-    const { options, id } = this.props;
-    console.log('WE HAVE MOUNTED');
-    console.log('options:', options);
+    const { options } = this.props;
     const list = options.map(option => fromJS({
       id: uuid.v4(),
       display: option.get('display'),
       value: option.get('value'),
     }));
+
+    const combinations = this.generateInitialCombinations();
+
     this.state = {
       list,
-      combinations: fromJS([]),
+      combinations,
     };
-    console.log('list:', list);
-
-    // generate combinations from current search here
   }
 
 
@@ -71,15 +70,17 @@ export class SearchFilterComponent extends Component {
   }
 
   generateInitialCombinations = () => {
-    const { id, currentSearch, options } = this.props;
-
-    const keys = Object.keys(currentSearch);
-    for (const key of keys) {
-      console.log('🌳🌳🌳🌳🌳🌳🌳🌳🌳🌳🌳🌳🌳🌳🌳🌳🌳🌳🌳🌳🌳🌳🌳🌳🌳🌳🌳');
-      const filter = options && options.size && options.find(o => o.get('value') === key);
-      const search = currentSearch[key];
-      this.props.addCombinationComplete({ id, filter, search });
-    }
+    const { options, currentSearch } = this.props;
+    const filteredOptions = options.filter(option => currentSearch.has(option.get('value')));
+    const combos = filteredOptions.reduce((result, option, index, original) => {
+      const combo = Immutable.Map()
+        .set('filter', original.get(index))
+        .set('search', currentSearch.get(option.get('value')));
+      return result.push(combo);
+    }, fromJS([]));
+    console.log('🌳🌳🌳🌳🌳🌳🌳🌳🌳🌳🌳🌳🌳🌳🌳🌳🌳🌳🌳🌳🌳🌳🌳🌳🌳🌳🌳');
+    console.log('combos:', combos);
+    return combos;
   }
 
   handleClickout = () => {
@@ -103,7 +104,7 @@ export class SearchFilterComponent extends Component {
   render() {
     // const { id, combinations } = this.props;
     const { combinations, list } = this.state;
-    console.log('this.state.combinations:', this.state.combinations);
+
 
     return (
       <div className="rsf__wrapper">

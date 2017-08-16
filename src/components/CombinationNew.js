@@ -77,11 +77,44 @@ export class CombinationComponent extends Component {
 
   render() {
     const { data, list } = this.props;
-
     const { currentInput } = this.state;
 
     return (
       <div className="rsf__combination-container">
+
+        {data.getIn(['filter', 'display'])
+        ?
+          <span
+            className="rsf__combination-filter"
+            onClick={this.handleCombinationFilterClick}
+          >
+            {`${data.getIn(['filter', 'display'])} :`}
+            <span
+              className="om-icon-descending rsf__icon-down"
+            />
+          </span>
+        : null
+        }
+
+        {data.get('search')
+        ?
+          <span
+            className="rsf__combination-search"
+            onClick={this.handleCombinationSearchClick}
+          >
+            {data.get('search')}
+          </span>
+        : null
+        }
+
+        {data.get('search')
+        ?
+          <span
+            className="rsf__combination-delete"
+            onClick={this.handleCombinationDelete}
+          />
+        : null
+        }
 
         {data.get('isEditing')
         ?
