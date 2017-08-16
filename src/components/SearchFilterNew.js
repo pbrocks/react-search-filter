@@ -27,12 +27,7 @@ type SearchFilterProps = {
   currentSearch: Immutable.Map,
 
   // methods
-  addRSF: Callback,
-  removeRSF: Callback,
-  setListVisibility: Callback,
-  initializeList: Callback,
-  addCombination: Callback,
-  addCombinationComplete: Callback,
+  handleSearch: Callback,
 };
 
 export class SearchFilterComponent extends Component {
@@ -107,12 +102,18 @@ export class SearchFilterComponent extends Component {
     this.setState({
       combinations: updated,
     }, () => {
-      console.log('🌶🌶🌶🌶🌶🌶🌶🌶🌶🌶🌶🌶🌶🌶🌶🌶🌶🌶');
-      console.log('combinations:', combinations);
-      console.log('this.state.combinations:', this.state.combinations);
-      // generate search object
-      // pass to parent
+      const search = this.generateSearch(this.state.combinations).toJS();
+      this.props.handleSearch(search);
     });
+  }
+
+  generateSearch = (combinations) => {
+    const search = combinations.reduce((result, combo) => {
+      const key = combo.getIn(['filter', 'value']);
+      const value = combo.get('search');
+      return result.set([key], value);
+    }, fromJS({}));
+    return search;
   }
 
   render() {
