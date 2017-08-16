@@ -119,6 +119,16 @@ export class CombinationComponent extends Component {
     });
   }
 
+  handleClickCombinationFilter = () => {
+
+  }
+
+  handleClickCombinationSearch = () => {
+    this.setState({
+      isEditing: true,
+    });
+  }
+
   handleInputKeyDown = (e: Object) => {
     if (e.which === 40) { // DOWN
       this.setState({
@@ -157,7 +167,7 @@ export class CombinationComponent extends Component {
   generateInputStyle = () => {
     const styles = {
       'rsf__search-input': true,
-      'rsf__search-input--hidden': !this.props.data.get('isEditing'),
+      'rsf__search-input--hidden': !this.state.isEditing,
     };
     return classNames(styles);
   }
@@ -173,7 +183,7 @@ export class CombinationComponent extends Component {
         ?
           <span
             className="rsf__combination-filter"
-            onClick={this.handleCombinationFilterClick}
+            onClick={this.handleClickCombinationFilter}
           >
             {`${filter.get('display')} :`}
             <span
@@ -186,7 +196,7 @@ export class CombinationComponent extends Component {
         ?
           <span
             className="rsf__combination-search"
-            onClick={this.handleCombinationSearchClick}
+            onClick={this.handleClickCombinationSearch}
           >
             {search}
           </span>
