@@ -39,7 +39,7 @@ class ListOptionsComponent extends Component {
           <div
             key={item.get('id')}
             className={this.generateFilterStyle(i)}
-            onClick={handleListItemClick(item, i)}
+            onClick={handleListItemClick(item)}
           >
             {item.get('display')}
           </div>

@@ -20,6 +20,7 @@ type CombinationProps = {
   list: List,
 
   saveCombination: Callback,
+  deleteCombination: Callback,
 };
 
 export class CombinationComponent extends Component {
@@ -89,8 +90,33 @@ export class CombinationComponent extends Component {
     this.props.saveCombination(index, combo);
   }
 
-  handleListClick = () => {
+  handleDeleteCombination = () => {
+    const { index } = this.props;
+    this.props.deleteCombination(index);
+  }
 
+  handleListItemClick = filter => () => {
+    const { search, id } = this.state;
+    console.log('search #1:', search);
+    const { index } = this.props;
+    const combo = Immutable.Map()
+      .set('id', id)
+      .set('filter', filter)
+      .set('search', search)
+      .set('isEditing', false)
+      .set('isListVisible', false);
+    this.setState({
+      filter,
+      isListVisible: false,
+      listIndex: null,
+    }, () => {
+      console.log('search #2:', search);
+      if (!search) {
+        this.input.focus();
+      } else {
+        this.props.saveCombination(index, combo);
+      }
+    });
   }
 
   handleInputKeyDown = (e: Object) => {
@@ -119,7 +145,6 @@ export class CombinationComponent extends Component {
         this.input.focus();
       } else {
         this.handleSaveCombination();
-
       }
 
       this.setState({
@@ -127,6 +152,7 @@ export class CombinationComponent extends Component {
       });
     }
   }
+
 
   generateInputStyle = () => {
     const styles = {
@@ -170,7 +196,7 @@ export class CombinationComponent extends Component {
         ?
           <span
             className="rsf__combination-delete"
-            onClick={this.handleCombinationDelete}
+            onClick={this.handleDeleteCombination}
           />
         : null }
 
@@ -194,7 +220,7 @@ export class CombinationComponent extends Component {
           <ListOptions
             list={list}
             handleClickout={this.handleClickout}
-            handleListItemClick={() => {}}
+            handleListItemClick={this.handleListItemClick}
             currentListOption={this.state.listIndex}
           />
         : null }

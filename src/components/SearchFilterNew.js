@@ -107,6 +107,17 @@ export class SearchFilterComponent extends Component {
     });
   }
 
+  deleteCombination = (index) => {
+    const { combinations } = this.state;
+    const updated = combinations.delete(index);
+    this.setState({
+      combinations: updated,
+    }, () => {
+      const search = this.generateSearch(this.state.combinations).toJS();
+      this.props.handleSearch(search);
+    });
+  }
+
   generateSearch = (combinations) => {
     const search = combinations.reduce((result, combo) => {
       const key = combo.getIn(['filter', 'value']);
@@ -132,6 +143,7 @@ export class SearchFilterComponent extends Component {
               className="rsf__combination-item"
               list={list}
               saveCombination={this.saveCombination}
+              deleteCombination={this.deleteCombination}
             />
           ))}
 
