@@ -28,12 +28,13 @@ export class CombinationComponent extends Component {
 
   constructor(props, context) {
     super(props, context);
-    const { combination } = props;
+    const { combination, list } = props;
     this.state = {
       id: uuid.v4(),
       filter: combination.get('filter'),
       search: combination.get('search'),
       isEditing: combination.get('isEditing'),
+      list,
 
       isBrowsingList: false,
       isListVisible: combination.get('isListVisible'),
@@ -49,14 +50,61 @@ export class CombinationComponent extends Component {
 
   handleInputChange = (e) => {
     const { value } = e.target;
+    const { list } = this.state;
+    const filtered = list.filter(item => item.get('display').toLowerCase()
+      .includes(value.toLowerCase()));
+
     this.setState({
       search: value,
+      list: filtered,
     });
+  }
+
+  handleInputKeyDown = (e: Object) => {
+    if (e.which === 40) { // DOWN
+      this.setState({
+        isListVisible: true,
+        isBrowsingList: true,
+      }, () => this.browseListDown());
+    }
+    if (e.which === 38) { // UP
+      this.setState({
+        isListVisible: true,
+        isBrowsingList: true,
+      }, () => this.browseListUp());
+    }
+
+    if (e.which === 13) { // ENTER
+      if (this.state.isBrowsingList) {
+        const { listIndex, list } = this.state;
+        const filter = list.get(listIndex);
+        this.setState({
+          filter,
+          isBrowsingList: false,
+        }, () => {
+          this.input.focus();
+        });
+      } else {
+        this.handleSaveCombination();
+      }
+
+      this.setState({
+        isListVisible: false,
+      });
+    }
+
+    if (e.which === 8) { // BACKSPACE
+
+    }
+
+    if (e.which === 27) { // ESCAPE
+
+    }
   }
 
   browseListDown = () => {
     const currentIndex = this.state.listIndex;
-    const { list } = this.props;
+    const { list } = this.state;
 
     if (currentIndex !== null && currentIndex + 1 < list.size) {
       this.setState({ listIndex: currentIndex + 1 });
@@ -129,49 +177,6 @@ export class CombinationComponent extends Component {
     });
   }
 
-  handleInputKeyDown = (e: Object) => {
-    if (e.which === 40) { // DOWN
-      this.setState({
-        isListVisible: true,
-        isBrowsingList: true,
-      }, () => this.browseListDown());
-    }
-    if (e.which === 38) { // UP
-      this.setState({
-        isListVisible: true,
-        isBrowsingList: true,
-      }, () => this.browseListUp());
-    }
-
-    if (e.which === 13) { // ENTER
-      if (this.state.isBrowsingList) {
-        const { listIndex } = this.state;
-        const { list } = this.props;
-        const filter = list.get(listIndex);
-        this.setState({
-          filter,
-          isBrowsingList: false,
-        }, () => {
-          this.input.focus();
-        });
-      } else {
-        this.handleSaveCombination();
-      }
-
-      this.setState({
-        isListVisible: false,
-      });
-    }
-
-    if (e.which === 8) { // BACKSPACE
-
-    }
-
-    if (e.which === 27) { // ESCAPE
-
-    }
-  }
-
 
   generateInputStyle = () => {
     const styles = {
@@ -182,8 +187,7 @@ export class CombinationComponent extends Component {
   }
 
   render() {
-    const { list } = this.props;
-    const { filter, search, isEditing, isListVisible } = this.state;
+    const { filter, list, search, isEditing, listIndex, isListVisible } = this.state;
 
     return (
       <div className="rsf__combination-container">
@@ -240,7 +244,7 @@ export class CombinationComponent extends Component {
             list={list}
             handleClickout={this.handleClickout}
             handleListItemClick={this.handleListItemClick}
-            currentListOption={this.state.listIndex}
+            currentListOption={listIndex}
           />
         : null }
 
