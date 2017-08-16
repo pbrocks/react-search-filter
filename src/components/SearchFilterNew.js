@@ -78,8 +78,6 @@ export class SearchFilterComponent extends Component {
         .set('search', currentSearch.get(option.get('value')));
       return result.push(combo);
     }, fromJS([]));
-    console.log('🌳🌳🌳🌳🌳🌳🌳🌳🌳🌳🌳🌳🌳🌳🌳🌳🌳🌳🌳🌳🌳🌳🌳🌳🌳🌳🌳');
-    console.log('combos:', combos);
     return combos;
   }
 
@@ -102,20 +100,19 @@ export class SearchFilterComponent extends Component {
   }
 
   saveCombination = (index, combo) => {
-    console.log('🌳🌳🌳🌳🌳🌳🌳🌳🌳🌳🌳🌳🌳🌳🌳🌳🌳🌳🌳🌳🌳🌳🌳🌳🌳🌳🌳');
-    console.log('index, combo:', index, combo);
     const { combinations } = this.state;
     const updated = combinations.set(index, combo);
     this.setState({
       combinations: updated,
+    }, () => {
+      const { combinations } = this.state;
+      // generate search object
+      // pass to parent
     });
   }
 
   render() {
     const { combinations, list } = this.state;
-    console.log('🌳🌳🌳🌳🌳🌳🌳🌳🌳🌳🌳🌳🌳🌳🌳🌳🌳🌳🌳🌳🌳🌳🌳🌳🌳🌳🌳');
-    console.log('combinations:', combinations);
-
 
     return (
       <div className="rsf__wrapper">

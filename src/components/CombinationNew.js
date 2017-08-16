@@ -29,6 +29,7 @@ export class CombinationComponent extends Component {
     super(props, context);
     const { data } = props;
     this.state = {
+      id: uuid.v4(),
       filter: data.get('filter'),
       search: data.get('search'),
       isEditing: data.get('isEditing'),
@@ -75,16 +76,16 @@ export class CombinationComponent extends Component {
   }
 
   handleSaveCombination = () => {
-    const { search } = this.state;
+    const { search, id } = this.state;
     const { index } = this.props;
-    const filter = this.state.filter || defaultFilter;
+    const filter = this.state.filter || defaultFilter; // search
     const combo = Immutable.Map()
+      .set('id', id)
       .set('filter', filter)
       .set('search', search)
       .set('isEditing', false)
       .set('isListVisible', false);
-    console.log('🌶🌶🌶🌶🌶🌶🌶🌶🌶🌶🌶🌶🌶🌶🌶🌶🌶🌶');
-    console.log('combo:', combo);
+
     this.props.saveCombination(index, combo);
   }
 
@@ -117,11 +118,8 @@ export class CombinationComponent extends Component {
   }
 
   render() {
-    const { data, list } = this.props;
+    const { list } = this.props;
     const { filter, search, isEditing, isListVisible } = this.state;
-    console.log('🌶🌶🌶🌶🌶🌶🌶🌶🌶🌶🌶🌶🌶🌶🌶🌶🌶🌶');
-    console.log('filter:', filter);
-    console.log('isEditing:', isEditing);
 
     return (
       <div className="rsf__combination-container">
@@ -137,8 +135,7 @@ export class CombinationComponent extends Component {
               className="om-icon-descending rsf__icon-down"
             />
           </span>
-        : null
-        }
+        : null }
 
         {search && !isEditing
         ?
@@ -148,8 +145,7 @@ export class CombinationComponent extends Component {
           >
             {search}
           </span>
-        : null
-        }
+        : null }
 
         {search && !isEditing
         ?
@@ -157,8 +153,7 @@ export class CombinationComponent extends Component {
             className="rsf__combination-delete"
             onClick={this.handleCombinationDelete}
           />
-        : null
-        }
+        : null }
 
         {isEditing
         ?
@@ -183,8 +178,7 @@ export class CombinationComponent extends Component {
             handleListItemClick={() => {}}
             currentListOption={this.state.listIndex}
           />
-        : null
-        }
+        : null }
 
       </div>
     );
