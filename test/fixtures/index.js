@@ -19,7 +19,14 @@ const combination = {
   isListVisible: false,
 };
 
+const options = [
+  { display: 'Coffee', value: 'coffee' },
+  { display: 'Tea', value: 'tea' },
+  { display: 'Pokemon', value: 'pokemon' },
+];
+
 export {
   list,
   combination,
+  options,
 };

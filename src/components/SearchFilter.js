@@ -10,12 +10,8 @@ import type { Callback } from '../types';
 
 type SearchFilterProps = {
   // data
-  id: string,
-  data: List,
   options: List,
-  globalIsEditing: boolean,
-  combinations: Immutable.List,
-  currentSearch: Immutable.Map,
+  currentSearch: Map,
 
   // methods
   handleSearch: Callback,
@@ -23,16 +19,10 @@ type SearchFilterProps = {
 
 export class SearchFilterComponent extends Component {
   props: SearchFilterProps;
+
   constructor(props, context) {
     super(props, context);
-    this.state = {
-      creatingCombinations: false,
-      combinations: fromJS([]),
-    };
-  }
-
-  componentDidMount() {
-    const { options } = this.props;
+    const { options } = props;
     const list = options.map(option => fromJS({
       id: uuid.v4(),
       display: option.get('display'),
@@ -52,6 +42,7 @@ export class SearchFilterComponent extends Component {
     const filteredOptions = options.filter(option => currentSearch.has(option.get('value')));
     const combos = filteredOptions.reduce((result, option, index, original) => {
       const combo = Immutable.Map()
+        .set('id', uuid.v4())
         .set('filter', original.get(index))
         .set('search', currentSearch.get(option.get('value')));
       return result.push(combo);
@@ -73,8 +64,6 @@ export class SearchFilterComponent extends Component {
   saveCombination = (index, combo) => {
     const { combinations } = this.state;
     const updated = combinations.set(index, combo);
-    console.log('combo:', combo);
-    console.log('updated:', updated);
     this.setState({
       combinations: updated,
     }, () => {
