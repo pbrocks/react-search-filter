@@ -3,8 +3,9 @@ import React, { Component } from 'react';
 import Immutable, { fromJS } from 'immutable';
 import { connect } from 'react-redux';
 import wrapWithClickout from 'react-clickout';
+import uuid from 'uuid';
 
-import Combination from './Combination';
+import Combination from './CombinationNew';
 
 import type { Callback } from '../types';
 import {
@@ -39,68 +40,30 @@ export class SearchFilterComponent extends Component {
     super(props, context);
     this.state = {
       creatingCombinations: false,
-      combinations: [],
+      combinations: fromJS([]),
     };
   }
 
   componentDidMount() {
-    const { data, id } = this.props;
-    this.props.addRSF({ id });
-    this.props.initializeList({ id, data });
+    const { options, id } = this.props;
+    console.log('WE HAVE MOUNTED');
+    console.log('options:', options);
+    const list = options.map(option => fromJS({
+      id: uuid.v4(),
+      display: option.get('display'),
+      value: option.get('value'),
+    }));
+    this.state = {
+      list,
+      combinations: fromJS([]),
+    };
+    console.log('list:', list);
 
     // generate combinations from current search here
   }
 
 
-  componentWillReceiveProps(nextProps) {
-
-    // const search = nextProps.search;
-    // const { id, combinations } = this.props;
-    // const currentSearch = fromJS(nextProps.currentSearch);
-    // console.log('currentSearch:', currentSearch);
-    // console.log('search:', search);
-
-    // ensure that options have populated into application state first
-
-    // if (nextProps.location.pathname !== this.props.location.pathname) {
-    //   console.log('OMGOMGOMGOMGOMG');
-    //   console.log('OMGOMGOMGOMGOMG');
-    //   console.log('OMGOMGOMGOMGOMG');
-    // }
-    if (nextProps.options.size > 0 && !currentSearch.equals(search) && !this.state.creatingCombinations) {
-      console.log('OMG OMG OMG');
-      this.setState({
-        creatingCombinations: true,
-      }, () => {
-        this.props.addCombinationComplete({ id, currentSearch });
-      });
-    }
-
-    if (this.state.creatingCombinations && !currentSearch.equals(search) && nextProps.combinationsReady) {
-      this.setState({
-        creatingCombinations: false,
-      });
-    }
-
-
-      // if combinations is empty, then make combinations from currentSearch
-
-    // make new combinations only if currentSearch keys aren't in combinations already
-
-    // if (nextProps.options.size > 0
-    //   && combinations && combinations.size === 0) {
-    //   console.log('LETS MAKE NEW COMBINATIONS');
-    //   this.generateInitialCombinations();
-    // }
-    /*
-      1. if currentSearch
-        - check what's in combinations
-        - set combinations to new currentSearch
-
-      compare currentSearch with combination
-      if they are not the same, then replace
-
-    */
+  componentWillReceiveProps() {
   }
 
   componentWillUnmount() {
@@ -126,11 +89,21 @@ export class SearchFilterComponent extends Component {
   addCombination = () => {
     const { id, globalIsEditing } = this.props;
     if (globalIsEditing) return;
-    // this.props.addCombination({ id });
+
+    const { combinations } = this.state;
+    const newCombo = fromJS({
+      id: uuid.v4(),
+      isEditing: true,
+      isListVisible: true,
+    });
+    const updated = combinations.push(newCombo);
+    this.setState({ combinations: updated });
   }
 
   render() {
-    const { id, combinations } = this.props;
+    // const { id, combinations } = this.props;
+    const { combinations, list } = this.state;
+    console.log('this.state.combinations:', this.state.combinations);
 
     return (
       <div className="rsf__wrapper">
@@ -138,10 +111,12 @@ export class SearchFilterComponent extends Component {
 
           {combinations && combinations.map((c, index) => (
             <Combination
-              id={id}
-              key={index} // eslint-disable-line react/no-array-index-key
+              // id={id}
+              key={c.get('id')}
               index={index}
+              data={c}
               className="rsf__combination-item"
+              list={list}
             />
           ))}
 
@@ -160,7 +135,7 @@ export class SearchFilterComponent extends Component {
 const mapStateToProps = (state, ownProps) => ({
   globalIsEditing: state.searchFilter.getIn([ownProps.id, 'globalIsEditing']),
   combinations: state.searchFilter.getIn([ownProps.id, 'combinations']),
-  options: state.searchFilter.getIn([ownProps.id, 'options']),
+  // options: state.searchFilter.getIn([ownProps.id, 'options']),
   search: state.searchFilter.getIn([ownProps.id, 'search']),
   combinationsReady: state.searchFilter.getIn([ownProps.id, 'combinationsReady']),
 });

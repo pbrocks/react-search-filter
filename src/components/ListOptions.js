@@ -32,15 +32,16 @@ class ListOptionsComponent extends Component {
 
   render() {
     const { list, handleListItemClick } = this.props;
+
     return (
       <div className="rsf__filters-container">
-        {list.map((f, i) => (
+        {list.map((item, i) => (
           <div
-            key={f.get('id')}
+            key={item.get('id')}
             className={this.generateFilterStyle(i)}
-            onClick={handleListItemClick(f, i)}
+            onClick={handleListItemClick(item, i)}
           >
-            {f.get('display')}
+            {item.get('display')}
           </div>
         ))}
       </div>
