@@ -136,10 +136,9 @@ export class SearchFilterComponent extends Component {
 
           {combinations && combinations.map((c, index) => (
             <Combination
-              // id={id}
               key={c.get('id')}
               index={index}
-              data={c}
+              combination={c}
               className="rsf__combination-item"
               list={list}
               saveCombination={this.saveCombination}

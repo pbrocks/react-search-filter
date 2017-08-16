@@ -16,7 +16,7 @@ const defaultFilter = fromJS({
 
 type CombinationProps = {
   index: Number,
-  data: Map,
+  combination: Map,
   list: List,
 
   saveCombination: Callback,
@@ -28,15 +28,15 @@ export class CombinationComponent extends Component {
 
   constructor(props, context) {
     super(props, context);
-    const { data } = props;
+    const { combination } = props;
     this.state = {
       id: uuid.v4(),
-      filter: data.get('filter'),
-      search: data.get('search'),
-      isEditing: data.get('isEditing'),
+      filter: combination.get('filter'),
+      search: combination.get('search'),
+      isEditing: combination.get('isEditing'),
 
       isBrowsingList: false,
-      isListVisible: data.get('isListVisible'),
+      isListVisible: combination.get('isListVisible'),
       listIndex: null,
     };
   }
@@ -160,6 +160,14 @@ export class CombinationComponent extends Component {
       this.setState({
         isListVisible: false,
       });
+    }
+
+    if (e.which === 8) { // BACKSPACE
+
+    }
+
+    if (e.which === 27) { // ESCAPE
+
     }
   }
 

@@ -5,11 +5,11 @@
   "main": "lib/index.js",
   "scripts": {
     "test": "./node_modules/.bin/nyc yarn spec",
-    "spec": "./node_modules/.bin/_mocha ./test/test_helper.js --recursive test/**/*",
+    "spec": "./node_modules/.bin/jest test --coverage",
     "build": "./node_modules/.bin/babel src --out-dir lib",
     "prepublish": "npm run build",
     "coverage": "nyc yarn spec --check-coverage --lines 80 --functions 80 --branches 80",
-    "coveralls": "nyc npm test && nyc report --reporter=text-lcov | coveralls",
+    "coveralls": "yarn spec && cat ./coverage/lcov.info | ./node_modules/coveralls/bin/coveralls.js",
     "flow": "./node_modules/.bin/flow check",
     "lint": "./node_modules/.bin/eslint --quiet src test",
     "go": "watchexec -e js -w src -r yarn build"
@@ -26,12 +26,20 @@
     "redux": "^3.6.0",
     "uuid": "^3.1.0"
   },
+  "jest": {
+    "verbose": true,
+    "coverageDirectory": "./coverage",
+    "collectCoverageFrom": [
+      "**/src/**"
+    ]
+  },
   "devDependencies": {
     "babel": "^6.23.0",
     "babel-cli": "^6.23.0",
     "babel-core": "^6.23.1",
     "babel-eslint": "^7.1.1",
     "babel-istanbul": "^0.12.1",
+    "babel-jest": "^20.0.3",
     "babel-loader": "^6.3.1",
     "babel-plugin-istanbul": "^4.0.0",
     "babel-plugin-transform-async-to-generator": "^6.24.1",
@@ -49,14 +57,17 @@
     "eslint-config-airbnb": "^14.1.0",
     "eslint-plugin-flowtype": "^2.32.1",
     "eslint-plugin-import": "^2.2.0",
+    "eslint-plugin-jest": "^20.0.3",
     "eslint-plugin-jsx-a11y": "^4.0.0",
     "eslint-plugin-react": "^6.9.0",
     "flow-bin": "^0.44.0",
     "istanbul": "^0.4.5",
+    "jest": "^20.0.4",
     "jsdom": "^9.12.0",
     "mocha": "^3.2.0",
     "nyc": "^10.2.0",
     "react-addons-test-utils": "^15.4.2",
+    "react-test-renderer": "^15.6.1",
     "sinon": "^1.17.7",
     "webpack": "^2.2.1"
   },

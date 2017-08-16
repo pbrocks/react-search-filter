@@ -8,3 +8,6 @@ lib
 
 .notes
 dist
+
+# test
+coverage*
