@@ -4,7 +4,7 @@ import Immutable, { fromJS } from 'immutable';
 import classNames from 'classnames';
 import uuid from 'uuid';
 
-import ListOptions from './ListOptions';
+import List from './List';
 
 import type { Callback } from '../types';
 
@@ -131,7 +131,6 @@ export class CombinationComponent extends Component {
 
   handleInputKeyDown = (e: Object) => {
     if (e.which === 40) { // DOWN
-      console.log('HELLO');
       this.setState({
         isListVisible: true,
         isBrowsingList: true,
@@ -236,7 +235,7 @@ export class CombinationComponent extends Component {
 
         {isListVisible
         ?
-          <ListOptions
+          <List
             list={list}
             handleClickout={this.handleClickout}
             handleListItemClick={this.handleListItemClick}

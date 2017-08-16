@@ -8,7 +8,7 @@ import H from '../helpers';
 import { combination, list } from '../fixtures';
 
 
-describe.only('<Combination />', () => {
+describe('<Combination />', () => {
   it('renders', () => {
     const wrapper = shallow(
       <Combination
@@ -50,7 +50,6 @@ describe.only('<Combination />', () => {
     expect(wrapper.state('isEditing')).toEqual(false);
     wrapper.find('.rsf__combination-search').simulate('click');
     expect(wrapper.state('isEditing')).toEqual(true);
-    console.log('wrapper.debug():', wrapper.debug());
 
     const input = wrapper.find('.rsf__search-input');
     expect(wrapper.state('search')).toEqual('Lugia');

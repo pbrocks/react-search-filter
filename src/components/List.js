@@ -5,7 +5,6 @@ import wrapWithClickout from 'react-clickout';
 
 type ListOptionsProps = {
   // data
-  id: string,
   currentListOption: Number,
   list: List,
 
@@ -14,7 +13,7 @@ type ListOptionsProps = {
   handleListItemClick: Callback,
 };
 
-class ListOptionsComponent extends Component {
+export class ListComponent extends Component {
   props: ListOptionsProps;
 
   handleClickout = () => {
@@ -48,6 +47,6 @@ class ListOptionsComponent extends Component {
     );
   }
 }
-const Wrapped = wrapWithClickout(ListOptionsComponent);
+const Wrapped = wrapWithClickout(ListComponent);
 
 export default Wrapped;
