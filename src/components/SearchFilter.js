@@ -1,7 +1,6 @@
 // @flow
 import React, { Component } from 'react';
 import Immutable, { fromJS } from 'immutable';
-import { connect } from 'react-redux';
 import wrapWithClickout from 'react-clickout';
 import uuid from 'uuid';
 
@@ -48,14 +47,6 @@ export class SearchFilterComponent extends Component {
     };
   }
 
-
-  componentWillReceiveProps() {
-  }
-
-  componentWillUnmount() {
-    this.props.removeRSF({ id: this.props.id });
-  }
-
   generateInitialCombinations = () => {
     const { options, currentSearch } = this.props;
     const filteredOptions = options.filter(option => currentSearch.has(option.get('value')));
@@ -68,14 +59,7 @@ export class SearchFilterComponent extends Component {
     return combos;
   }
 
-  handleClickout = () => {
-    this.props.setListVisibility({ id: this.props.id, isListVisible: false });
-  }
-
   addNewCombination = () => {
-    const { id, globalIsEditing } = this.props;
-    if (globalIsEditing) return;
-
     const { combinations } = this.state;
     const newCombo = fromJS({
       id: uuid.v4(),
@@ -150,27 +134,9 @@ export class SearchFilterComponent extends Component {
   }
 }
 
-const mapStateToProps = (state, ownProps) => ({
-  globalIsEditing: state.searchFilter.getIn([ownProps.id, 'globalIsEditing']),
-  combinations: state.searchFilter.getIn([ownProps.id, 'combinations']),
-  // options: state.searchFilter.getIn([ownProps.id, 'options']),
-  search: state.searchFilter.getIn([ownProps.id, 'search']),
-  combinationsReady: state.searchFilter.getIn([ownProps.id, 'combinationsReady']),
-});
-
-const mapDispatchToProps = {
-  addRSF,
-  removeRSF,
-  setListVisibility,
-  initializeList,
-  addCombination,
-  addCombinationComplete,
-};
 
 const Wrapped = wrapWithClickout(SearchFilterComponent, {
   wrapperStyle: 'rsf__clickout-wrapper',
 });
 
-const connected = connect(mapStateToProps, mapDispatchToProps)(Wrapped);
-
-export default connected;
+export default Wrapped;

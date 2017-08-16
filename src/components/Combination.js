@@ -131,6 +131,7 @@ export class CombinationComponent extends Component {
 
   handleInputKeyDown = (e: Object) => {
     if (e.which === 40) { // DOWN
+      console.log('HELLO');
       this.setState({
         isListVisible: true,
         isBrowsingList: true,
