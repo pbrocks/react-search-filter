@@ -2,29 +2,9 @@ import React from 'react';
 import { shallow } from 'enzyme';
 import { fromJS } from 'immutable';
 
-import Combination from '../../src/components/CombinationNew';
+import Combination from '../../src/components/Combination';
 import H from '../helpers';
-
-const list = [{
-  id: 0,
-  display: 'Coffee',
-  value: 'coffee',
-}, {
-  id: 1,
-  display: 'Tea',
-  value: 'tea',
-}, {
-  id: 2,
-  display: 'Pokemon',
-  value: 'pokemon',
-}];
-
-const combination = {
-  filter: list[2],
-  search: 'Lugia',
-  isEditing: false,
-  isListVisible: false,
-};
+import { combination, list } from '../fixtures';
 
 
 describe('<CombinationComponent />', () => {

@@ -1,9 +1,5 @@
-import SearchFilter from './components/SearchFilterNew';
-import reducer from './redux/reducer';
-import actions from './redux/actions';
+import SearchFilter from './components/SearchFilter';
 
 module.exports = {
   SearchFilter,
-  reducer,
-  actions,
 };

@@ -1,212 +1,224 @@
 // @flow
 import React, { Component } from 'react';
-import { List } from 'immutable';
-import { connect } from 'react-redux';
+import Immutable, { fromJS } from 'immutable';
 import classNames from 'classnames';
+import uuid from 'uuid';
 
 import ListOptions from './ListOptions';
 
 import type { Callback } from '../types';
-import {
-  removeRSF,
-  browseListUp,
-  browseListDown,
-  setCombinationFilter,
-  setCombinationListVisibility,
-  setCombinationFilterOnClick,
-  setListBrowsing,
-  setCombinationSearch,
-  setCurrentInput,
-  incrementCurrentCombination,
-  filterList,
-  deleteCombination,
-  resetList,
-  setCurrentCombination,
-  setCombinationEditing,
-  setSearchReady,
-} from '../redux/actions';
 
-type SearchFilterProps = {
-  // data
-  id: string,
+const defaultFilter = fromJS({
+  id: uuid.v4(),
+  display: 'Search',
+  value: 'search',
+});
+
+type CombinationProps = {
   index: Number,
-  data: List,
-  isListVisible: boolean,
-  isBrowsingList: boolean,
-  currentInput: string,
-  currentListOption: Number,
-  currentCombination: Number,
-  list: List,
   combination: Map,
+  list: List,
 
-  // methods
-  removeRSF: Callback,
-
-  setCombinationFilter: Callback,
-  setCombinationFilterOnClick: Callback,
-  setCombinationSearch: Callback,
-  setCombinationListVisibility: Callback,
-  setCombinationEditing: Callback,
+  saveCombination: Callback,
   deleteCombination: Callback,
-
-  setListBrowsing: Callback,
-  browseListDown: Callback,
-  browseListUp: Callback,
-  filterList: Callback,
-  resetList: Callback,
-
-  setCurrentInput: Callback,
-  incrementCurrentCombination: Callback,
-  setCurrentCombination: Callback,
 };
 
 export class CombinationComponent extends Component {
-  props: SearchFilterProps;
+  props: CombinationProps;
+
+  constructor(props, context) {
+    super(props, context);
+    const { combination } = props;
+    this.state = {
+      id: uuid.v4(),
+      filter: combination.get('filter'),
+      search: combination.get('search'),
+      isEditing: combination.get('isEditing'),
+
+      isBrowsingList: false,
+      isListVisible: combination.get('isListVisible'),
+      listIndex: null,
+    };
+  }
 
   handleClickout = () => {
-    const { id, index } = this.props;
-    this.props.setCombinationListVisibility({ id, index, isListVisible: false });
+    this.setState({
+      isListVisible: false,
+    });
   }
 
-  handleInputChange = (e: Object) => {
-    this.props.setCurrentInput({ id: this.props.id, currentInput: e.target.value });
-    this.props.filterList({ id: this.props.id, currentInput: e.target.value });
+  handleInputChange = (e) => {
+    const { value } = e.target;
+    this.setState({
+      search: value,
+    });
   }
 
-  handleInputKeyDown = (e: Object) => {
-    const { id, index } = this.props;
+  browseListDown = () => {
+    const currentIndex = this.state.listIndex;
+    const { list } = this.props;
 
-    if (e.which === 40) { // DOWN
-      this.props.browseListDown({ id: this.props.id });
-      this.props.setListBrowsing({ id, isBrowsingList: true });
-    }
-    if (e.which === 38) { // UP
-      this.props.browseListUp({ id: this.props.id });
-      this.props.setListBrowsing({ id, isBrowsingList: true });
-    }
-    if (e.which === 13) { // ENTER
-      const { currentInput, isBrowsingList } = this.props;
-
-      this.props.setCurrentInput({ id, currentInput: '' });
-
-      if (isBrowsingList) {
-        this.props.setCombinationFilter({ id, index });
-        this.props.setListBrowsing({ id, isBrowsingList: false });
-        this.props.setCombinationListVisibility({ id, index, isListVisible: false });
-
-        this.input.focus();
-        return;
-      }
-
-      this.props.setCombinationSearch({ id, index, search: currentInput, isReady: true });
-      this.props.setCombinationEditing({ id, index, isEditing: false });
-      this.props.incrementCurrentCombination({ id });
-      this.props.setCombinationListVisibility({ id, index, isListVisible: false });
-
-      this.props.resetList({ id });
-    }
-
-    if (e.which === 8) { // BACKSPACE
-      if (this.props.currentInput === '') {
-        this.handleCombinationDelete();
-      }
-    }
-
-    if (e.which === 27) { // ESCAPE
-      this.props.setCurrentInput({ id, currentInput: '' });
-      this.props.setCombinationListVisibility({ id, index, isListVisible: false });
+    if (currentIndex !== null && currentIndex + 1 < list.size) {
+      this.setState({ listIndex: currentIndex + 1 });
+    } else {
+      this.setState({ listIndex: 0 });
     }
   }
 
-  handleInputClick = () => {
-    const { id, index } = this.props;
-    this.props.setCombinationListVisibility({ id, index, isListVisible: true });
+  browseListUp = () => {
+    const currentIndex = this.state.listIndex;
+    const { list } = this.props;
+
+    if (currentIndex !== null && currentIndex - 1 > -1) {
+      this.setState({ listIndex: currentIndex - 1 });
+    } else {
+      this.setState({ listIndex: list.size - 1 });
+    }
+  }
+
+  handleSaveCombination = () => {
+    const { search, id } = this.state;
+    const { index } = this.props;
+    const filter = this.state.filter || defaultFilter; // search
+    const combo = Immutable.Map()
+      .set('id', id)
+      .set('filter', filter)
+      .set('search', search)
+      .set('isEditing', false)
+      .set('isListVisible', false);
+
+    this.props.saveCombination(index, combo);
+  }
+
+  handleDeleteCombination = () => {
+    const { index } = this.props;
+    this.props.deleteCombination(index);
   }
 
   handleListItemClick = filter => () => {
-    const { id, combination, index } = this.props;
-    this.props.setCurrentCombination({ id, currentCombination: index });
-    this.props.setCombinationFilterOnClick({ id, filter, index });
-    this.props.setCombinationListVisibility({ id, index, isListVisible: false });
-    if (!combination.get('search')) {
-      this.input.focus();
+    const { search, id } = this.state;
+    const { index } = this.props;
+    const combo = Immutable.Map()
+      .set('id', id)
+      .set('filter', filter)
+      .set('search', search)
+      .set('isEditing', false)
+      .set('isListVisible', false);
+    this.setState({
+      filter,
+      isListVisible: false,
+      listIndex: null,
+    }, () => {
+      if (!search) {
+        this.input.focus();
+      } else {
+        this.props.saveCombination(index, combo);
+      }
+    });
+  }
+
+  handleClickCombinationFilter = () => {
+    this.setState({
+      isListVisible: true,
+    });
+  }
+
+  handleClickCombinationSearch = () => {
+    this.setState({
+      isEditing: true,
+    });
+  }
+
+  handleInputKeyDown = (e: Object) => {
+    if (e.which === 40) { // DOWN
+      this.setState({
+        isListVisible: true,
+        isBrowsingList: true,
+      }, () => this.browseListDown());
+    }
+    if (e.which === 38) { // UP
+      this.setState({
+        isListVisible: true,
+        isBrowsingList: true,
+      }, () => this.browseListUp());
+    }
+
+    if (e.which === 13) { // ENTER
+      if (this.state.isBrowsingList) {
+        const { listIndex } = this.state;
+        const { list } = this.props;
+        const filter = list.get(listIndex);
+        this.setState({
+          filter,
+          isBrowsingList: false,
+        });
+        this.input.focus();
+      } else {
+        this.handleSaveCombination();
+      }
+
+      this.setState({
+        isListVisible: false,
+      });
+    }
+
+    if (e.which === 8) { // BACKSPACE
+
+    }
+
+    if (e.which === 27) { // ESCAPE
+
     }
   }
 
-  handleCombinationFilterClick = () => {
-    const { id, index } = this.props;
-    this.props.setCurrentCombination({ id, currentCombination: index });
-    this.props.setCombinationListVisibility({ id, index, isListVisible: true });
-  }
-
-  handleCombinationSearchClick = () => {
-    const { id, index, combination } = this.props;
-    const search = combination.get('search');
-    this.props.setCurrentCombination({ id, currentCombination: index });
-    this.props.setCombinationSearch({ id, index, search: '' });
-    this.props.setCurrentInput({ id, currentInput: search });
-    this.props.setCombinationEditing({ id, index, isEditing: true });
-  }
-
-  handleCombinationDelete = () => {
-    const { id, index } = this.props;
-    this.props.deleteCombination({ id, index });
-    this.props.resetList({ id });
-
-    // figure out what resetList does
-    // trigger search again
-    // ensure that this (deleted) query is stripped from URL
-  }
 
   generateInputStyle = () => {
     const styles = {
       'rsf__search-input': true,
-      'rsf__search-input--hidden': !this.props.combination.get('isEditing'),
+      'rsf__search-input--hidden': !this.state.isEditing,
     };
     return classNames(styles);
   }
 
   render() {
-    const { list, combination, currentInput = '' } = this.props;
+    const { list } = this.props;
+    const { filter, search, isEditing, isListVisible } = this.state;
 
     return (
       <div className="rsf__combination-container">
 
-        {combination.getIn(['filter', 'display'])
+        {filter && filter.get('display')
         ?
           <span
             className="rsf__combination-filter"
-            onClick={this.handleCombinationFilterClick}
+            onClick={this.handleClickCombinationFilter}
           >
-            {`${combination.getIn(['filter', 'display'])} :`}
+            {`${filter.get('display')} :`}
             <span
               className="om-icon-descending rsf__icon-down"
             />
           </span>
-        : null
-        }
+        : null }
 
-        {combination.get('search')
+        {search && !isEditing
         ?
           <span
             className="rsf__combination-search"
-            onClick={this.handleCombinationSearchClick}
+            onClick={this.handleClickCombinationSearch}
           >
-            {combination.get('search')}
+            {search}
           </span>
-        : null
-      }
+        : null }
 
-        {combination.get('search')
+        {search && !isEditing
         ?
           <span
             className="rsf__combination-delete"
-            onClick={this.handleCombinationDelete}
+            onClick={this.handleDeleteCombination}
           />
-        : null
-        }
+        : null }
 
-        {combination.get('isEditing')
+        {isEditing
         ?
           <input
             ref={(r) => { this.input = r; }}
@@ -215,61 +227,25 @@ export class CombinationComponent extends Component {
             onChange={this.handleInputChange}
             onKeyDown={this.handleInputKeyDown}
             onClick={this.handleInputClick}
-            value={currentInput}
+            value={search}
             autoFocus
           />
         : null }
 
 
-        {combination.get('isListVisible')
+        {isListVisible
         ?
           <ListOptions
             list={list}
             handleClickout={this.handleClickout}
             handleListItemClick={this.handleListItemClick}
-            currentListOption={this.props.currentListOption}
+            currentListOption={this.state.listIndex}
           />
-        : null
-        }
+        : null }
 
       </div>
     );
   }
 }
 
-const mapStateToProps = (state, ownProps) => ({
-  isBrowsingList: state.searchFilter.getIn([ownProps.id, 'isBrowsingList']),
-  currentListOption: state.searchFilter.getIn([ownProps.id, 'currentListOption']),
-  list: state.searchFilter.getIn([ownProps.id, 'list']),
-  options: state.searchFilter.getIn([ownProps.id, 'options']),
-  combination: state.searchFilter.getIn([ownProps.id, 'combinations', ownProps.index]),
-  currentCombination: state.searchFilter.getIn([ownProps.id, 'currentCombination']),
-  currentInput: state.searchFilter.getIn([ownProps.id, 'currentInput']),
-});
-
-const mapDispatchToProps = {
-  removeRSF,
-
-  setCombinationFilter,
-  setCombinationListVisibility,
-  setCombinationFilterOnClick,
-  setCombinationSearch,
-  deleteCombination,
-  setCombinationEditing,
-
-  browseListUp,
-  browseListDown,
-  setListBrowsing,
-  filterList,
-  resetList,
-
-  setCurrentInput,
-  setCurrentCombination,
-  setSearchReady,
-  incrementCurrentCombination,
-};
-
-const connected = connect(mapStateToProps, mapDispatchToProps)(CombinationComponent);
-
-
-export default connected;
+export default CombinationComponent;
