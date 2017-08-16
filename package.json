@@ -31,7 +31,8 @@
     "coverageDirectory": "./coverage",
     "collectCoverageFrom": [
       "**/src/**"
-    ]
+    ],
+    "coveragePathIgnorePatterns": ["/node_modules/", "/src/index.js"]
   },
   "devDependencies": {
     "babel": "^6.23.0",

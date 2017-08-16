@@ -151,8 +151,9 @@ export class CombinationComponent extends Component {
         this.setState({
           filter,
           isBrowsingList: false,
+        }, () => {
+          this.input.focus();
         });
-        this.input.focus();
       } else {
         this.handleSaveCombination();
       }

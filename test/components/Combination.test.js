@@ -37,7 +37,7 @@ describe('<Combination />', () => {
     expect(deleteStub.callCount).toEqual(1);
   });
 
-  it('handles clicking on combination search', () => {
+  it('handles clicking on combination search, and sets filter and search', () => {
     const wrapper = shallow(
       <Combination
         index={0}
@@ -56,8 +56,15 @@ describe('<Combination />', () => {
     input.simulate('change', { target: { value: 'Cookie Monster' } });
     expect(wrapper.state('search')).toEqual('Cookie Monster');
 
-    input.simulate('keyDown', { which: 40 });
+    expect(wrapper.state('listIndex')).toEqual(null);
+
+    input.simulate('keyDown', { which: 40 }); // DOWN
     expect(wrapper.state('isListVisible')).toEqual(true);
+    expect(wrapper.state('listIndex')).toEqual(0);
+
+    input.simulate('keyDown', { which: 38 }); // UP
+    expect(wrapper.state('isListVisible')).toEqual(true);
+    expect(wrapper.state('listIndex')).toEqual(2);
   });
 
   it('handles clicking on combination filter', () => {
