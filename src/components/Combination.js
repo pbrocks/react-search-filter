@@ -32,7 +32,7 @@ export class CombinationComponent extends Component {
     this.state = {
       id: uuid.v4(),
       filter: combination.get('filter'),
-      search: combination.get('search'),
+      search: combination.get('search') || '',
       isEditing: combination.get('isEditing'),
       list,
 

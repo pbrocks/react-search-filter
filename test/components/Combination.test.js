@@ -1,5 +1,5 @@
 import React from 'react';
-import { shallow } from 'enzyme';
+import { shallow, mount } from 'enzyme';
 import { fromJS } from 'immutable';
 import { stub } from 'sinon';
 
@@ -81,5 +81,30 @@ describe('<Combination />', () => {
 
     wrapper.find('.rsf__combination-filter').simulate('click');
     expect(wrapper.state('isListVisible')).toEqual(true);
+  });
+
+  it('handles filtering list upon input change', () => {
+    const comboNew = {
+      id: 0,
+      isEditing: true,
+      isListVisible: true,
+    };
+    const wrapper = mount(
+      <Combination
+        index={0}
+        combination={fromJS(comboNew)}
+        list={fromJS(list)}
+        saveCombination={H.VOID}
+        deleteCombination={H.VOID}
+      />,
+    );
+
+    expect(wrapper.find('.rsf__filters-item').length).toEqual(3);
+    const input = wrapper.find('.rsf__search-input');
+
+    input.simulate('change', { target: { value: 'P' } });
+
+    expect(wrapper.find('.rsf__filters-item').length).toEqual(1);
+    expect(wrapper.find('.rsf__filters-item').text()).toEqual('Pokemon');
   });
 });
