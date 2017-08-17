@@ -107,7 +107,14 @@ export class CombinationComponent extends Component {
     }
 
     if (e.which === 27) { // ESCAPE
-
+      this.setState({
+        isEditing: false,
+        isListVisible: false,
+        listIndex: null,
+        isBrowsingList: false,
+      }, () => {
+        this.handleSaveCombination();
+      });
     }
   }
 
