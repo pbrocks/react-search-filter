@@ -94,7 +94,16 @@ export class CombinationComponent extends Component {
     }
 
     if (e.which === 8) { // BACKSPACE
-
+      if (this.state.search) {
+        this.setState({
+          search: '',
+        });
+      } else if (this.state.filter) {
+        this.setState({
+          filter: null,
+          isListVisible: true,
+        });
+      }
     }
 
     if (e.which === 27) { // ESCAPE
