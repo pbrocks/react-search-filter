@@ -107,4 +107,31 @@ describe('<Combination />', () => {
     expect(wrapper.find('.rsf__filters-item').length).toEqual(1);
     expect(wrapper.find('.rsf__filters-item').text()).toEqual('Pokemon');
   });
+
+  it('handles backspace key', () => {
+    const wrapper = mount(
+      <Combination
+        index={0}
+        combination={fromJS(combination)}
+        list={fromJS(list)}
+        saveCombination={H.VOID}
+        deleteCombination={H.VOID}
+      />,
+    );
+
+    expect(wrapper.find('.rsf__filters-item').length).toEqual(0);
+    expect(wrapper.state('search')).toEqual('Lugia');
+
+    const searchSegment = wrapper.find('.rsf__combination-search');
+    searchSegment.simulate('click');
+
+    const input = wrapper.find('.rsf__search-input');
+    input.simulate('keydown', { which: 8 });
+
+    expect(wrapper.state('search')).toEqual('');
+
+    input.simulate('keydown', { which: 8 });
+    expect(wrapper.state('filter')).toEqual(null);
+    expect(wrapper.state('isListVisible')).toEqual(true);
+  });
 });
