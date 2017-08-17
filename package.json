@@ -1,6 +1,6 @@
 {
   "name": "react-search-filter",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "description": "React Search Filter – Search and Filter component",
   "main": "lib/index.js",
   "scripts": {
@@ -32,9 +32,12 @@
     "collectCoverageFrom": [
       "**/src/**"
     ],
-    "coveragePathIgnorePatterns": ["/node_modules/", "/src/index.js"],
+    "coveragePathIgnorePatterns": [
+      "/node_modules/",
+      "/src/index.js"
+    ],
     "coverageThreshold": {
-      "global" :{
+      "global": {
         "branches": 70,
         "functions": 70,
         "lines": 70,
