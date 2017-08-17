@@ -112,8 +112,6 @@ export class CombinationComponent extends Component {
         isListVisible: false,
         listIndex: null,
         isBrowsingList: false,
-      }, () => {
-        this.handleSaveCombination();
       });
     }
   }

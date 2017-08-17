@@ -134,4 +134,37 @@ describe('<Combination />', () => {
     expect(wrapper.state('filter')).toEqual(null);
     expect(wrapper.state('isListVisible')).toEqual(true);
   });
+
+  it('handles escape key', () => {
+    const wrapper = mount(
+      <Combination
+        index={0}
+        combination={fromJS(combination)}
+        list={fromJS(list)}
+        saveCombination={H.VOID}
+        deleteCombination={H.VOID}
+      />,
+    );
+
+    expect(wrapper.find('.rsf__filters-item').length).toEqual(0);
+    expect(wrapper.state('search')).toEqual('Lugia');
+
+    const searchSegment = wrapper.find('.rsf__combination-search');
+    searchSegment.simulate('click');
+
+    const input = wrapper.find('.rsf__search-input');
+
+    // Type Flareon
+    input.simulate('change', { target: { value: 'Flareon' } });
+
+    expect(wrapper.state('search')).toEqual('Flareon');
+    expect(wrapper.state('isEditing')).toEqual(true);
+
+    // Escape key
+    input.simulate('keydown', { which: 27 });
+    expect(wrapper.state('isEditing')).toEqual(false);
+    expect(wrapper.state('isListVisible')).toEqual(false);
+    expect(wrapper.state('listIndex')).toEqual(null);
+    expect(wrapper.state('isBrowsingList')).toEqual(false);
+  });
 });
