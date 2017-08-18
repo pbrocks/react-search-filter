@@ -47,6 +47,8 @@ export class SearchFilterComponent extends Component {
         .set('search', currentSearch.get(option.get('value')));
       return result.push(combo);
     }, fromJS([]));
+
+    // FIXME: Generate a pill for search
     return combos;
   }
 

@@ -43,9 +43,19 @@ export class CombinationComponent extends Component {
   }
 
   handleClickout = () => {
-    this.setState({
-      isListVisible: false,
-    });
+    if (!this.state.filter) {
+      this.handleDeleteCombination();
+    } else {
+      this.setState({
+        isListVisible: false,
+      });
+    }
+  }
+
+  handleInputBlur = () => {
+    if (this.state.filter && !this.state.search) {
+      this.handleDeleteCombination();
+    }
   }
 
   handleInputChange = (e) => {
@@ -85,6 +95,8 @@ export class CombinationComponent extends Component {
         }, () => {
           this.input.focus();
         });
+      } else if (!this.state.filter || (this.state.search.trim() === '')) {
+        this.handleDeleteCombination();
       } else {
         this.handleSaveCombination();
       }
@@ -95,15 +107,9 @@ export class CombinationComponent extends Component {
     }
 
     if (e.which === 8) { // BACKSPACE
-      if (this.state.search) {
-        this.setState({
-          search: '',
-        });
-      } else if (this.state.filter) {
-        this.setState({
-          filter: null,
-          isListVisible: true,
-        });
+      // delete filter if search has been emptied by backspace
+      if (!this.state.search && this.state.filter) {
+        this.handleDeleteCombination();
       }
     }
 
@@ -247,6 +253,7 @@ export class CombinationComponent extends Component {
             onChange={this.handleInputChange}
             onKeyDown={this.handleInputKeyDown}
             onClick={this.handleInputClick}
+            onBlur={this.handleInputBlur}
             value={search}
             autoFocus
           />

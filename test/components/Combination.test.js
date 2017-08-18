@@ -9,6 +9,7 @@ import { combination, list } from '../fixtures';
 
 
 describe('<Combination />', () => {
+  /* --- BASIC RENDER ------------------------ */
   it('renders', () => {
     const wrapper = shallow(
       <Combination
@@ -22,6 +23,7 @@ describe('<Combination />', () => {
     expect(wrapper.find('.rsf__combination-container').length).toEqual(1);
   });
 
+  /* --- CLICK DELETE SEGMENT ------------------------ */
   it('handles deleting a combination', () => {
     const deleteStub = stub();
     const wrapper = shallow(
@@ -37,6 +39,7 @@ describe('<Combination />', () => {
     expect(deleteStub.callCount).toEqual(1);
   });
 
+  /* --- CLICK SEARCH SEGMENT ------------------------ */
   it('handles clicking on combination search, and sets filter and search', () => {
     const wrapper = shallow(
       <Combination
@@ -67,6 +70,7 @@ describe('<Combination />', () => {
     expect(wrapper.state('listIndex')).toEqual(2);
   });
 
+  /* --- CLICK FILTER SEGMENT ------------------------ */
   it('handles clicking on combination filter', () => {
     const wrapper = shallow(
       <Combination
@@ -83,6 +87,142 @@ describe('<Combination />', () => {
     expect(wrapper.state('isListVisible')).toEqual(true);
   });
 
+  /* --- CLICKOUT ------------------------ */
+  it('handles clicking away from list', () => {
+    const deleteStub = stub();
+    const wrapper = shallow(
+      <Combination
+        index={0}
+        combination={fromJS(combination)}
+        list={fromJS(list)}
+        saveCombination={H.VOID}
+        deleteCombination={deleteStub}
+      />,
+    );
+    const instance = wrapper.instance();
+
+    const filterSegment = wrapper.find('.rsf__combination-filter');
+
+    filterSegment.simulate('click');
+    expect(wrapper.state('isListVisible')).toEqual(true);
+    instance.handleClickout();
+    expect(wrapper.state('isListVisible')).toEqual(false);
+
+    wrapper.setState({ isListVisible: true });
+    wrapper.setState({ filter: null });
+    instance.handleClickout();
+    expect(deleteStub.callCount).toEqual(1);
+  });
+
+  /* --- BROWSE LIST ------------------------ */
+  it('handles browsing list DOWN', () => {
+    const comboNew = {
+      id: 0,
+      isEditing: true,
+      isListVisible: true,
+    };
+    const wrapper = mount(
+      <Combination
+        index={0}
+        combination={fromJS(comboNew)}
+        list={fromJS(list)}
+        saveCombination={H.VOID}
+        deleteCombination={H.VOID}
+      />,
+    );
+
+    expect(wrapper.state('listIndex')).toEqual(null);
+    const input = wrapper.find('.rsf__search-input');
+
+
+    input.simulate('keydown', { which: 40 });
+    expect(wrapper.state('isListVisible')).toEqual(true);
+    expect(wrapper.state('isBrowsingList')).toEqual(true);
+    expect(wrapper.state('listIndex')).toEqual(0);
+
+    input.simulate('keydown', { which: 40 });
+    expect(wrapper.state('listIndex')).toEqual(1);
+
+    input.simulate('keydown', { which: 40 });
+    expect(wrapper.state('listIndex')).toEqual(2);
+
+    input.simulate('keydown', { which: 40 });
+    expect(wrapper.state('listIndex')).toEqual(0);
+  });
+
+  it('handles browsing list UP', () => {
+    const comboNew = {
+      id: 0,
+      isEditing: true,
+      isListVisible: true,
+    };
+    const wrapper = mount(
+      <Combination
+        index={0}
+        combination={fromJS(comboNew)}
+        list={fromJS(list)}
+        saveCombination={H.VOID}
+        deleteCombination={H.VOID}
+      />,
+    );
+
+    expect(wrapper.state('listIndex')).toEqual(null);
+    const input = wrapper.find('.rsf__search-input');
+
+
+    input.simulate('keydown', { which: 38 });
+    expect(wrapper.state('isListVisible')).toEqual(true);
+    expect(wrapper.state('isBrowsingList')).toEqual(true);
+    expect(wrapper.state('listIndex')).toEqual(2);
+
+    input.simulate('keydown', { which: 38 });
+    expect(wrapper.state('listIndex')).toEqual(1);
+
+    input.simulate('keydown', { which: 38 });
+    expect(wrapper.state('listIndex')).toEqual(0);
+
+    input.simulate('keydown', { which: 38 });
+    expect(wrapper.state('listIndex')).toEqual(2);
+  });
+
+  it('handles ENTER when browsing list', () => {
+    const comboNew = {
+      id: 0,
+      isEditing: true,
+      isListVisible: true,
+    };
+    const wrapper = mount(
+      <Combination
+        index={0}
+        combination={fromJS(comboNew)}
+        list={fromJS(list)}
+        saveCombination={H.VOID}
+        deleteCombination={H.VOID}
+      />,
+    );
+
+    expect(wrapper.state('listIndex')).toEqual(null);
+    const input = wrapper.find('.rsf__search-input');
+
+
+    input.simulate('keydown', { which: 38 });
+    expect(wrapper.state('isListVisible')).toEqual(true);
+    expect(wrapper.state('isBrowsingList')).toEqual(true);
+    expect(wrapper.state('listIndex')).toEqual(2);
+
+    input.simulate('keydown', { which: 38 });
+    expect(wrapper.state('listIndex')).toEqual(1);
+    expect(wrapper.state('filter')).toEqual(undefined);
+
+    // hit Enter key
+    input.simulate('keydown', { which: 13 });
+    const { display } = list[1];
+    expect(wrapper.state('filter').get('display')).toEqual(display);
+    expect(wrapper.state('isBrowsingList')).toEqual(false);
+    expect(wrapper.state('search')).toEqual('');
+  });
+
+  /* --- INPUT ------------------------ */
   it('handles filtering list upon input change', () => {
     const comboNew = {
       id: 0,
@@ -109,30 +249,28 @@ describe('<Combination />', () => {
   });
 
   it('handles backspace key', () => {
+    const deleteStub = stub();
     const wrapper = mount(
       <Combination
         index={0}
         combination={fromJS(combination)}
         list={fromJS(list)}
         saveCombination={H.VOID}
-        deleteCombination={H.VOID}
+        deleteCombination={deleteStub}
       />,
     );
 
     expect(wrapper.find('.rsf__filters-item').length).toEqual(0);
     expect(wrapper.state('search')).toEqual('Lugia');
-
     const searchSegment = wrapper.find('.rsf__combination-search');
     searchSegment.simulate('click');
 
-    const input = wrapper.find('.rsf__search-input');
-    input.simulate('keydown', { which: 8 });
+    const inputSegment = wrapper.find('.rsf__search-input');
+    inputSegment.simulate('click');
 
-    expect(wrapper.state('search')).toEqual('');
-
-    input.simulate('keydown', { which: 8 });
-    expect(wrapper.state('filter')).toEqual(null);
-    expect(wrapper.state('isListVisible')).toEqual(true);
+    wrapper.setState({ search: '' });
+    inputSegment.simulate('keydown', { which: 8 });
+    expect(deleteStub.callCount).toEqual(1);
   });
 
   it('handles escape key', () => {
