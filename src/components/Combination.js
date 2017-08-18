@@ -95,10 +95,12 @@ export class CombinationComponent extends Component {
         }, () => {
           this.input.focus();
         });
-      } else if (!this.state.filter || (this.state.search.trim() === '')) {
+      } else if (!this.state.filter || (this.state.filter && (this.state.search.trim() === ''))) {
+        // 1. no filter > delete
+        // 2. filter but search is empty > delete
         this.handleDeleteCombination();
       } else {
-        this.handleSaveCombination();
+        this.handleUpdateCombination();
       }
 
       this.setState({
@@ -145,9 +147,10 @@ export class CombinationComponent extends Component {
     }
   }
 
-  handleSaveCombination = () => {
+  handleUpdateCombination = () => {
     const { search, id } = this.state;
     const { index } = this.props;
+    console.log('this.state:', this.state);
     const filter = this.state.filter || defaultFilter; // search
     const combo = Immutable.Map()
       .set('id', id)
