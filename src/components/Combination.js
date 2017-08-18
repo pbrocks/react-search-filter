@@ -81,6 +81,7 @@ export class CombinationComponent extends Component {
         this.setState({
           filter,
           isBrowsingList: false,
+          search: '', // clear search after selecting a filter
         }, () => {
           this.input.focus();
         });
