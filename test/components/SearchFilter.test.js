@@ -14,6 +14,11 @@ const currentSearch = {
   tea: 'Earl Gray',
 };
 
+const defaultOption = {
+  display: 'Search',
+  value: 'search',
+};
+
 describe('<SearchFilter />', () => {
   it('renders', () => {
     const wrapper = shallow(
@@ -21,6 +26,7 @@ describe('<SearchFilter />', () => {
         options={fromJS(options)}
         currentSearch={fromJS(currentSearch)}
         handleSearch={H.VOID}
+        defaultOption={fromJS(defaultOption)}
       />,
     );
     expect(wrapper.find('.rsf__wrapper').length).toEqual(1);
@@ -34,6 +40,7 @@ describe('<SearchFilter />', () => {
         options={fromJS(options)}
         currentSearch={fromJS(currentSearch)}
         handleSearch={handleSearchStub}
+        defaultOption={fromJS(defaultOption)}
       />,
     );
 
@@ -59,6 +66,7 @@ describe('<SearchFilter />', () => {
         options={fromJS(options)}
         currentSearch={fromJS(currentSearch)}
         handleSearch={H.VOID}
+        defaultOption={fromJS(defaultOption)}
       />,
     );
 
@@ -77,6 +85,7 @@ describe('<SearchFilter />', () => {
         options={fromJS(options)}
         currentSearch={fromJS(currentSearch)}
         handleSearch={handleSearchStub}
+        defaultOption={fromJS(defaultOption)}
       />,
     );
 
