@@ -69,4 +69,25 @@ describe('<SearchFilter />', () => {
     addSegment.simulate('click');
     expect(wrapper.state('combinations').size).toEqual(3);
   });
+
+  it('handles updating combination', () => {
+    const handleSearchStub = stub();
+    const wrapper = mount(
+      <SearchFilterComponent
+        options={fromJS(options)}
+        currentSearch={fromJS(currentSearch)}
+        handleSearch={handleSearchStub}
+      />,
+    );
+
+    const searchSegment1 = wrapper.find('.rsf__combination-search').at(1);
+    searchSegment1.simulate('click');
+
+    const inputSegment = wrapper.find('.rsf__search-input').at(0);
+    inputSegment.simulate('change', { target: { value: 'Lugia' } });
+    inputSegment.simulate('keydown', { which: 13 });
+
+    expect(wrapper.state('combinations').getIn([1, 'search'])).toEqual('Lugia');
+    expect(handleSearchStub.callCount).toEqual(1);
+  });
 });

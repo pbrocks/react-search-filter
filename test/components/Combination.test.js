@@ -16,7 +16,7 @@ describe('<Combination />', () => {
         index={0}
         combination={fromJS(combination)}
         list={fromJS(list)}
-        saveCombination={H.VOID}
+        updateCombination={H.VOID}
         deleteCombination={H.VOID}
       />,
     );
@@ -31,7 +31,7 @@ describe('<Combination />', () => {
         index={0}
         combination={fromJS(combination)}
         list={fromJS(list)}
-        saveCombination={H.VOID}
+        updateCombination={H.VOID}
         deleteCombination={deleteStub}
       />,
     );
@@ -46,7 +46,7 @@ describe('<Combination />', () => {
         index={0}
         combination={fromJS(combination)}
         list={fromJS(list)}
-        saveCombination={H.VOID}
+        updateCombination={H.VOID}
         deleteCombination={H.VOID}
       />,
     );
@@ -77,7 +77,7 @@ describe('<Combination />', () => {
         index={0}
         combination={fromJS(combination)}
         list={fromJS(list)}
-        saveCombination={H.VOID}
+        updateCombination={H.VOID}
         deleteCombination={H.VOID}
       />,
     );
@@ -95,7 +95,7 @@ describe('<Combination />', () => {
         index={0}
         combination={fromJS(combination)}
         list={fromJS(list)}
-        saveCombination={H.VOID}
+        updateCombination={H.VOID}
         deleteCombination={deleteStub}
       />,
     );
@@ -126,7 +126,7 @@ describe('<Combination />', () => {
         index={0}
         combination={fromJS(comboNew)}
         list={fromJS(list)}
-        saveCombination={H.VOID}
+        updateCombination={H.VOID}
         deleteCombination={H.VOID}
       />,
     );
@@ -161,7 +161,7 @@ describe('<Combination />', () => {
         index={0}
         combination={fromJS(comboNew)}
         list={fromJS(list)}
-        saveCombination={H.VOID}
+        updateCombination={H.VOID}
         deleteCombination={H.VOID}
       />,
     );
@@ -196,7 +196,7 @@ describe('<Combination />', () => {
         index={0}
         combination={fromJS(comboNew)}
         list={fromJS(list)}
-        saveCombination={H.VOID}
+        updateCombination={H.VOID}
         deleteCombination={H.VOID}
       />,
     );
@@ -234,7 +234,7 @@ describe('<Combination />', () => {
         index={0}
         combination={fromJS(comboNew)}
         list={fromJS(list)}
-        saveCombination={H.VOID}
+        updateCombination={H.VOID}
         deleteCombination={H.VOID}
       />,
     );
@@ -255,7 +255,7 @@ describe('<Combination />', () => {
         index={0}
         combination={fromJS(combination)}
         list={fromJS(list)}
-        saveCombination={H.VOID}
+        updateCombination={H.VOID}
         deleteCombination={deleteStub}
       />,
     );
@@ -279,7 +279,7 @@ describe('<Combination />', () => {
         index={0}
         combination={fromJS(combination)}
         list={fromJS(list)}
-        saveCombination={H.VOID}
+        updateCombination={H.VOID}
         deleteCombination={H.VOID}
       />,
     );

@@ -63,7 +63,7 @@ export class SearchFilterComponent extends Component {
     this.setState({ combinations: updated });
   }
 
-  saveCombination = (index, combo) => {
+  updateCombination = (index, combo) => {
     const { combinations } = this.state;
     const updated = combinations.set(index, combo);
     this.setState({
@@ -108,7 +108,7 @@ export class SearchFilterComponent extends Component {
               combination={c}
               className="rsf__combination-item"
               list={list}
-              saveCombination={this.saveCombination}
+              updateCombination={this.updateCombination}
               deleteCombination={this.deleteCombination}
             />
           ))}

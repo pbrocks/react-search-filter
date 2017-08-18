@@ -19,7 +19,7 @@ type CombinationProps = {
   combination: Map,
   list: List,
 
-  saveCombination: Callback,
+  updateCombination: Callback,
   deleteCombination: Callback,
 };
 
@@ -156,7 +156,7 @@ export class CombinationComponent extends Component {
       .set('isEditing', false)
       .set('isListVisible', false);
 
-    this.props.saveCombination(index, combo);
+    this.props.updateCombination(index, combo);
   }
 
   handleDeleteCombination = () => {
@@ -181,7 +181,7 @@ export class CombinationComponent extends Component {
       if (!search) {
         this.input.focus();
       } else {
-        this.props.saveCombination(index, combo);
+        this.props.updateCombination(index, combo);
       }
     });
   }
