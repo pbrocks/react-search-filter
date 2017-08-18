@@ -1,6 +1,6 @@
 {
   "name": "react-search-filter",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "description": "React Search Filter – Search and Filter component",
   "main": "lib/index.js",
   "scripts": {
