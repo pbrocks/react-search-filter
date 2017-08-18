@@ -11,6 +11,7 @@ import type { Callback } from '../types';
 type CombinationProps = {
   index: Number,
   combination: Map,
+  defaultFilter: Map,
   list: List,
 
   updateCombination: Callback,
@@ -89,9 +90,7 @@ export class CombinationComponent extends Component {
         }, () => {
           this.input.focus();
         });
-      } else if (!this.state.filter || (this.state.filter && (this.state.search.trim() === ''))) {
-        // 1. no filter > delete
-        // 2. filter but search is empty > delete
+      } else if (this.state.search.trim() === '') {
         this.handleDeleteCombination();
       } else {
         this.handleUpdateCombination();
@@ -144,7 +143,6 @@ export class CombinationComponent extends Component {
   handleUpdateCombination = () => {
     const { search, id } = this.state;
     const { index, defaultFilter } = this.props;
-    console.log('this.state:', this.state);
     const filter = this.state.filter || defaultFilter; // search
     const combo = Immutable.Map()
       .set('id', id)
