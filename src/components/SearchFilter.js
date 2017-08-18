@@ -96,6 +96,16 @@ export class SearchFilterComponent extends Component {
     return search;
   }
 
+  generateDefaultFilter = () => {
+    const { defaultOption } = this.props;
+    const defaultFilter = fromJS({
+      id: uuid.v4(),
+      display: defaultOption.get('display'),
+      value: defaultOption.get('value'),
+    });
+    return defaultFilter;
+  }
+
   render() {
     const { combinations, list } = this.state;
 
@@ -110,6 +120,7 @@ export class SearchFilterComponent extends Component {
               combination={c}
               className="rsf__combination-item"
               list={list}
+              defaultFilter={this.generateDefaultFilter()}
               updateCombination={this.updateCombination}
               deleteCombination={this.deleteCombination}
             />

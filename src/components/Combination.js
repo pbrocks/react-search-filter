@@ -1,18 +1,12 @@
 // @flow
 import React, { Component } from 'react';
-import Immutable, { fromJS } from 'immutable';
+import Immutable from 'immutable';
 import classNames from 'classnames';
 import uuid from 'uuid';
 
 import List from './List';
 
 import type { Callback } from '../types';
-
-const defaultFilter = fromJS({
-  id: uuid.v4(),
-  display: 'Search',
-  value: 'search',
-});
 
 type CombinationProps = {
   index: Number,
@@ -149,7 +143,7 @@ export class CombinationComponent extends Component {
 
   handleUpdateCombination = () => {
     const { search, id } = this.state;
-    const { index } = this.props;
+    const { index, defaultFilter } = this.props;
     console.log('this.state:', this.state);
     const filter = this.state.filter || defaultFilter; // search
     const combo = Immutable.Map()
