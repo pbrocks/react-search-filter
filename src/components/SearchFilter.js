@@ -12,6 +12,7 @@ type SearchFilterProps = {
   // data
   options: List,
   currentSearch: Map,
+  defaultOption: Map,
 
   // methods
   handleSearch: Callback,
@@ -38,9 +39,10 @@ export class SearchFilterComponent extends Component {
   }
 
   generateInitialCombinations = () => {
-    const { options, currentSearch } = this.props;
-    const filteredOptions = options.filter(option => currentSearch.has(option.get('value')));
-    const combos = filteredOptions.reduce((result, option, index, original) => {
+    const { options, currentSearch, defaultOption } = this.props;
+    const optionsWithDefault = options.push(defaultOption);
+    const currentOptions = optionsWithDefault.filter(option => currentSearch.has(option.get('value')));
+    const combos = currentOptions.reduce((result, option, index, original) => {
       const combo = Immutable.Map()
         .set('id', uuid.v4())
         .set('filter', original.get(index))
