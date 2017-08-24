@@ -22,8 +22,8 @@ export class ListComponent extends Component {
 
   generateFilterStyle = (index: Number) => {
     const filterStyles = {
-      'rsf__filters-item': true,
-      'rsf__filters-item--active': index === this.props.currentListOption,
+      'rsf__list-item': true,
+      'rsf__list-item--active': index === this.props.currentListOption,
     };
     const styles = classNames(filterStyles);
     return styles;
@@ -33,7 +33,7 @@ export class ListComponent extends Component {
     const { list, handleListItemClick } = this.props;
 
     return (
-      <div className="rsf__filters-container">
+      <div className="rsf__list-container">
         {list.map((item, i) => (
           <div
             key={item.get('id')}

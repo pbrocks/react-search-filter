@@ -196,8 +196,8 @@ export class CombinationComponent extends Component {
 
   generateInputStyle = () => {
     const styles = {
-      'rsf__search-input': true,
-      'rsf__search-input--hidden': !this.state.isEditing,
+      'rsf__combination-search__input': true,
+      'rsf__combination-search__input--hidden': !this.state.isEditing,
     };
     return classNames(styles);
   }
@@ -221,39 +221,40 @@ export class CombinationComponent extends Component {
           </span>
         : null }
 
-        {search && !isEditing
-        ?
-          <span
-            className="rsf__combination-search"
-            onClick={this.handleClickCombinationSearch}
-          >
-            {search}
-          </span>
-        : null }
+        <div className="rsf__combination-search__container">
+          {search && !isEditing
+          ?
+            <span
+              className="rsf__combination-search__display"
+              onClick={this.handleClickCombinationSearch}
+            >
+              {search}
+            </span>
+          : null }
 
-        {search && !isEditing
-        ?
-          <span
-            className="rsf__combination-delete"
-            onClick={this.handleDeleteCombination}
-          />
-        : null }
+          {search && !isEditing
+          ?
+            <span
+              className="rsf__combination-delete"
+              onClick={this.handleDeleteCombination}
+            />
+          : null }
 
-        {isEditing
-        ?
-          <input
-            ref={(r) => { this.input = r; }}
-            className={this.generateInputStyle()}
-            type="text"
-            onChange={this.handleInputChange}
-            onKeyDown={this.handleInputKeyDown}
-            onClick={this.handleInputClick}
-            onBlur={this.handleInputBlur}
-            value={search}
-            autoFocus
-          />
-        : null }
-
+          {isEditing
+          ?
+            <input
+              ref={(r) => { this.input = r; }}
+              className={this.generateInputStyle()}
+              type="text"
+              onChange={this.handleInputChange}
+              onKeyDown={this.handleInputKeyDown}
+              onClick={this.handleInputClick}
+              onBlur={this.handleInputBlur}
+              value={search}
+              autoFocus
+            />
+          : null }
+        </div>
 
         {isListVisible
         ?

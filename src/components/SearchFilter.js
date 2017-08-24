@@ -50,7 +50,6 @@ export class SearchFilterComponent extends Component {
       return result.push(combo);
     }, fromJS([]));
 
-    // FIXME: Generate a pill for search
     return combos;
   }
 
