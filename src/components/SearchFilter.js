@@ -1,6 +1,6 @@
 // @flow
 import React, { Component } from 'react';
-import Immutable, { fromJS } from 'immutable';
+import Immutable, { List, fromJS } from 'immutable';
 import wrapWithClickout from 'react-clickout';
 import uuid from 'uuid';
 
@@ -19,49 +19,44 @@ type SearchFilterProps = {
   handleSearch: Callback,
 };
 
-// const addId = (raw) => {
-//   let result;
-//   if (Array.isArray(raw)) {
-//     result = raw.map(r => {
-//       console.log('r:', );
-//     });
-//   }
+const addId = (raw) => {
+  let result;
 
-// }
+  if (List.isList(raw)) {
+    result = raw.map(r => r.set('id', uuid.v4()));
+  }
+
+  return result;
+};
+
+const generateInitialCombinations = (list, currentSearch, defaultFilter) => {
+  const optionsWithDefault = list.push(defaultFilter);
+  const currentOptions = optionsWithDefault.filter(option => currentSearch.has(option.get('value')));
+  const combos = currentOptions.reduce((result, option, index, original) => {
+    const combo = Immutable.Map()
+      .set('id', uuid.v4())
+      .set('filter', original.get(index))
+      .set('search', currentSearch.get(option.get('value')));
+    return result.push(combo);
+  }, fromJS([]));
+
+  return combos;
+};
 
 export class SearchFilterComponent extends Component {
   props: SearchFilterProps;
 
   constructor(props, context) {
     super(props, context);
-    const { filterOptions } = props;
-    const list = filterOptions.map(option => fromJS({
-      id: uuid.v4(),
-      display: option.get('display'),
-      value: option.get('value'),
-    }));
+    const { filterOptions, defaultFilter, currentSearch } = props;
+    const list = addId(fromJS(filterOptions));
 
-    const combinations = this.generateInitialCombinations();
+    const combinations = generateInitialCombinations(list, currentSearch, defaultFilter);
 
     this.state = {
-      list,
+      filterOptions: list,
       combinations,
     };
-  }
-
-  generateInitialCombinations = () => {
-    const { filterOptions, currentSearch, defaultFilter } = this.props;
-    const optionsWithDefault = filterOptions.push(defaultFilter);
-    const currentOptions = optionsWithDefault.filter(option => currentSearch.has(option.get('value')));
-    const combos = currentOptions.reduce((result, option, index, original) => {
-      const combo = Immutable.Map()
-        .set('id', uuid.v4())
-        .set('filter', original.get(index))
-        .set('search', currentSearch.get(option.get('value')));
-      return result.push(combo);
-    }, fromJS([]));
-
-    return combos;
   }
 
   addNewCombination = () => {
@@ -117,7 +112,7 @@ export class SearchFilterComponent extends Component {
   }
 
   render() {
-    const { combinations, list } = this.state;
+    const { combinations, filterOptions } = this.state;
     const { autocomplete } = this.props;
 
     return (
@@ -129,7 +124,7 @@ export class SearchFilterComponent extends Component {
             index={index}
             combination={c}
             className="rsf__combination-item"
-            list={list}
+            filterOptions={filterOptions}
             defaultFilter={this.generateDefaultFilter()}
             updateCombination={this.updateCombination}
             deleteCombination={this.deleteCombination}

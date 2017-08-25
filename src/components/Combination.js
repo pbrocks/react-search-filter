@@ -12,7 +12,7 @@ type CombinationProps = {
   index: Number,
   combination: Map,
   defaultFilter: Map,
-  list: List,
+  filterOptions: List,
   autocomplete: Array,
 
   updateCombination: Callback,
@@ -24,13 +24,13 @@ export class CombinationComponent extends Component {
 
   constructor(props, context) {
     super(props, context);
-    const { combination, list } = props;
+    const { combination, filterOptions } = props;
     this.state = {
       id: uuid.v4(),
       filter: combination.get('filter'),
       search: combination.get('search') || '',
       isEditing: combination.get('isEditing'),
-      list,
+      filterOptions,
 
       isBrowsingList: false,
       isListVisible: combination.get('isListVisible'),
@@ -128,9 +128,9 @@ export class CombinationComponent extends Component {
 
   browseListDown = () => {
     const currentIndex = this.state.listIndex;
-    const { list } = this.state;
+    const { filterOptions } = this.state;
 
-    if (currentIndex !== null && currentIndex + 1 < list.size) {
+    if (currentIndex !== null && currentIndex + 1 < filterOptions.size) {
       this.setState({ listIndex: currentIndex + 1 });
     } else {
       this.setState({ listIndex: 0 });
@@ -139,12 +139,12 @@ export class CombinationComponent extends Component {
 
   browseListUp = () => {
     const currentIndex = this.state.listIndex;
-    const { list } = this.props;
+    const { filterOptions } = this.props;
 
     if (currentIndex !== null && currentIndex - 1 > -1) {
       this.setState({ listIndex: currentIndex - 1 });
     } else {
-      this.setState({ listIndex: list.size - 1 });
+      this.setState({ listIndex: filterOptions.size - 1 });
     }
   }
 
@@ -211,7 +211,7 @@ export class CombinationComponent extends Component {
   }
 
   render() {
-    const { filter, list, search, isEditing, listIndex, isListVisible } = this.state;
+    const { filter, filterOptions, search, isEditing, listIndex, isListVisible } = this.state;
 
     return (
       <div className="rsf__combination-container">
@@ -266,7 +266,7 @@ export class CombinationComponent extends Component {
           {isEditing
           ?
             <List
-              list={list}
+              list={filterOptions}
               type="search"
               handleClickout={this.handleClickout}
               handleListItemClick={this.handleListItemClick}
@@ -278,7 +278,7 @@ export class CombinationComponent extends Component {
         {isListVisible
         ?
           <List
-            list={list}
+            options={filterOptions}
             type="filter"
             handleClickout={this.handleClickout}
             handleListItemClick={this.handleListItemClick}

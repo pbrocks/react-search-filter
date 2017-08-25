@@ -6,7 +6,7 @@ import wrapWithClickout from 'react-clickout';
 type ListOptionsProps = {
   // data
   currentListOption: Number,
-  list: List,
+  options: List,
   type: string,
 
   // methods
@@ -31,7 +31,7 @@ export class ListComponent extends Component {
   };
 
   render() {
-    const { list, handleListItemClick, type } = this.props;
+    const { options, handleListItemClick, type } = this.props;
 
     const containerStyles = {
       'rsf__list-container': true,
@@ -40,7 +40,7 @@ export class ListComponent extends Component {
 
     return (
       <div className={classNames(containerStyles)}>
-        {list.map((item, i) => (
+        {options.map((item, i) => (
           <div
             key={item.get('id')}
             className={this.generateItemStyles(i)}
