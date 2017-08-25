@@ -7,6 +7,7 @@ type ListOptionsProps = {
   // data
   currentListOption: Number,
   list: List,
+  type: string,
 
   // methods
   handleClickout: Callback,
@@ -20,24 +21,29 @@ export class ListComponent extends Component {
     this.props.handleClickout();
   }
 
-  generateFilterStyle = (index: Number) => {
-    const filterStyles = {
+  generateItemStyles = (index: Number) => {
+    const itemStyles = {
       'rsf__list-item': true,
       'rsf__list-item--active': index === this.props.currentListOption,
     };
-    const styles = classNames(filterStyles);
+    const styles = classNames(itemStyles);
     return styles;
   };
 
   render() {
-    const { list, handleListItemClick } = this.props;
+    const { list, handleListItemClick, type } = this.props;
+
+    const containerStyles = {
+      'rsf__list-container': true,
+      [`rsf__list-container--${type}`]: true,
+    };
 
     return (
-      <div className="rsf__list-container">
+      <div className={classNames(containerStyles)}>
         {list.map((item, i) => (
           <div
             key={item.get('id')}
-            className={this.generateFilterStyle(i)}
+            className={this.generateItemStyles(i)}
             onClick={handleListItemClick(item)}
           >
             {item.get('display')}

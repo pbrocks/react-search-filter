@@ -10,21 +10,32 @@ import type { Callback } from '../types';
 
 type SearchFilterProps = {
   // data
-  options: List,
+  filterOptions: List,
   currentSearch: Map,
-  defaultOption: Map,
+  defaultFilter: Map,
+  autocomplete: Array,
 
   // methods
   handleSearch: Callback,
 };
+
+// const addId = (raw) => {
+//   let result;
+//   if (Array.isArray(raw)) {
+//     result = raw.map(r => {
+//       console.log('r:', );
+//     });
+//   }
+
+// }
 
 export class SearchFilterComponent extends Component {
   props: SearchFilterProps;
 
   constructor(props, context) {
     super(props, context);
-    const { options } = props;
-    const list = options.map(option => fromJS({
+    const { filterOptions } = props;
+    const list = filterOptions.map(option => fromJS({
       id: uuid.v4(),
       display: option.get('display'),
       value: option.get('value'),
@@ -39,8 +50,8 @@ export class SearchFilterComponent extends Component {
   }
 
   generateInitialCombinations = () => {
-    const { options, currentSearch, defaultOption } = this.props;
-    const optionsWithDefault = options.push(defaultOption);
+    const { filterOptions, currentSearch, defaultFilter } = this.props;
+    const optionsWithDefault = filterOptions.push(defaultFilter);
     const currentOptions = optionsWithDefault.filter(option => currentSearch.has(option.get('value')));
     const combos = currentOptions.reduce((result, option, index, original) => {
       const combo = Immutable.Map()
@@ -96,41 +107,40 @@ export class SearchFilterComponent extends Component {
   }
 
   generateDefaultFilter = () => {
-    const { defaultOption } = this.props;
-    const defaultFilter = fromJS({
+    const { defaultFilter } = this.props;
+    const result = fromJS({
       id: uuid.v4(),
-      display: defaultOption.get('display'),
-      value: defaultOption.get('value'),
+      display: defaultFilter.get('display'),
+      value: defaultFilter.get('value'),
     });
-    return defaultFilter;
+    return result;
   }
 
   render() {
     const { combinations, list } = this.state;
+    const { autocomplete } = this.props;
 
     return (
       <div className="rsf__wrapper">
-        <div className="rsf__search-container">
 
-          {combinations && combinations.map((c, index) => (
-            <Combination
-              key={c.get('id')}
-              index={index}
-              combination={c}
-              className="rsf__combination-item"
-              list={list}
-              defaultFilter={this.generateDefaultFilter()}
-              updateCombination={this.updateCombination}
-              deleteCombination={this.deleteCombination}
-            />
-          ))}
-
-          <div
-            className="rsf__add"
-            onClick={this.addNewCombination}
+        {combinations && combinations.map((c, index) => (
+          <Combination
+            key={c.get('id')}
+            index={index}
+            combination={c}
+            className="rsf__combination-item"
+            list={list}
+            defaultFilter={this.generateDefaultFilter()}
+            updateCombination={this.updateCombination}
+            deleteCombination={this.deleteCombination}
+            autocomplete={autocomplete}
           />
+        ))}
 
-        </div>
+        <div
+          className="rsf__add"
+          onClick={this.addNewCombination}
+        />
 
       </div>
     );

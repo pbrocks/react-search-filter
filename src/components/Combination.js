@@ -13,6 +13,7 @@ type CombinationProps = {
   combination: Map,
   defaultFilter: Map,
   list: List,
+  autocomplete: Array,
 
   updateCombination: Callback,
   deleteCombination: Callback,
@@ -116,6 +117,13 @@ export class CombinationComponent extends Component {
         isBrowsingList: false,
       });
     }
+
+    // const currentFilter = this.state.filter.get('value');
+    // const { autocomplete } = this.props;
+    // if (autocomplete[currentFilter]) {
+    //   console.log('OMG');
+    // }
+
   }
 
   browseListDown = () => {
@@ -254,12 +262,24 @@ export class CombinationComponent extends Component {
               autoFocus
             />
           : null }
+
+          {isEditing
+          ?
+            <List
+              list={list}
+              type="search"
+              handleClickout={this.handleClickout}
+              handleListItemClick={this.handleListItemClick}
+              currentListOption={listIndex}
+            />
+          : null }
         </div>
 
         {isListVisible
         ?
           <List
             list={list}
+            type="filter"
             handleClickout={this.handleClickout}
             handleListItemClick={this.handleListItemClick}
             currentListOption={listIndex}
