@@ -14,9 +14,11 @@ type SearchFilterProps = {
   currentSearch: Map,
   defaultFilter: Map,
   autocomplete: Array,
+  autocompleteOptions: Array,
 
   // methods
   handleSearch: Callback,
+  handleAutocomplete: Callback,
 };
 
 const addId = (raw) => {
@@ -101,6 +103,10 @@ export class SearchFilterComponent extends Component {
     return search;
   }
 
+  handleAutocomplete = (filter, search) => {
+    this.props.handleAutocomplete(filter, search);
+  }
+
   generateDefaultFilter = () => {
     const { defaultFilter } = this.props;
     const result = fromJS({
@@ -113,7 +119,7 @@ export class SearchFilterComponent extends Component {
 
   render() {
     const { combinations, filterOptions } = this.state;
-    const { autocomplete } = this.props;
+    const { autocomplete, autocompleteOptions } = this.props;
 
     return (
       <div className="rsf__wrapper">
@@ -125,10 +131,14 @@ export class SearchFilterComponent extends Component {
             combination={c}
             className="rsf__combination-item"
             filterOptions={filterOptions}
+            searchOptions={autocompleteOptions}
             defaultFilter={this.generateDefaultFilter()}
             updateCombination={this.updateCombination}
             deleteCombination={this.deleteCombination}
+            // rename this array to something reflecting it is an array
             autocomplete={autocomplete}
+            autocompleteOptions={autocompleteOptions}
+            handleAutocomplete={this.handleAutocomplete}
           />
         ))}
 

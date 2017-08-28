@@ -40,13 +40,15 @@ export class ListComponent extends Component {
 
     return (
       <div className={classNames(containerStyles)}>
-        {options.map((item, i) => (
+        {options.size > 0 && options.map((item, i) => (
           <div
             key={item.get('id')}
             className={this.generateItemStyles(i)}
             onClick={handleListItemClick(item)}
           >
-            {item.get('display')}
+            <div className="rsf__list-item-display">
+              {item.get('display')}
+            </div>
           </div>
         ))}
       </div>

@@ -1,6 +1,6 @@
 // @flow
 import React, { Component } from 'react';
-import Immutable from 'immutable';
+import Immutable, { fromJS } from 'immutable';
 import classNames from 'classnames';
 import uuid from 'uuid';
 
@@ -14,9 +14,11 @@ type CombinationProps = {
   defaultFilter: Map,
   filterOptions: List,
   autocomplete: Array,
+  autocompleteOptions: Array,
 
   updateCombination: Callback,
   deleteCombination: Callback,
+  handleAutocomplete: Callback,
 };
 
 export class CombinationComponent extends Component {
@@ -29,11 +31,12 @@ export class CombinationComponent extends Component {
       id: uuid.v4(),
       filter: combination.get('filter'),
       search: combination.get('search') || '',
-      isEditing: combination.get('isEditing'),
-      filterOptions,
+      isEditing: combination.get('isEditing'), // same, can this be false?
+      // set list to filterOptions initially, set to searchOptions later
+      list: filterOptions,
 
       isBrowsingList: false,
-      isListVisible: combination.get('isListVisible'),
+      isListVisible: combination.get('isListVisible'), // can this be false and not set in combo?
       listIndex: null,
     };
   }
@@ -118,19 +121,25 @@ export class CombinationComponent extends Component {
       });
     }
 
-    // const currentFilter = this.state.filter.get('value');
-    // const { autocomplete } = this.props;
-    // if (autocomplete[currentFilter]) {
-    //   console.log('OMG');
-    // }
+    // handle all other keyDowns here
+    const regex = /^[a-zA-Z\-?]$/;
 
+    // if keyDown is alphanumeric, and the current filter is autocomplete-able
+    if (regex.test(String.fromCharCode(e.which))) {
+      const currentFilter = this.state.filter.get('value');
+      const { autocomplete } = this.props;
+      if (autocomplete.includes(currentFilter)) {
+        const { search } = this.state;
+        this.props.handleAutocomplete(currentFilter, search);
+      }
+    }
   }
 
   browseListDown = () => {
     const currentIndex = this.state.listIndex;
-    const { filterOptions } = this.state;
+    const { list } = this.state;
 
-    if (currentIndex !== null && currentIndex + 1 < filterOptions.size) {
+    if (currentIndex !== null && currentIndex + 1 < list.size) {
       this.setState({ listIndex: currentIndex + 1 });
     } else {
       this.setState({ listIndex: 0 });
@@ -139,12 +148,12 @@ export class CombinationComponent extends Component {
 
   browseListUp = () => {
     const currentIndex = this.state.listIndex;
-    const { filterOptions } = this.props;
+    const { list } = this.state;
 
     if (currentIndex !== null && currentIndex - 1 > -1) {
       this.setState({ listIndex: currentIndex - 1 });
     } else {
-      this.setState({ listIndex: filterOptions.size - 1 });
+      this.setState({ listIndex: list.size - 1 });
     }
   }
 
@@ -189,6 +198,23 @@ export class CombinationComponent extends Component {
     });
   }
 
+  handleSearchListItemClick = item => () => {
+    const search = item.get('value');
+    const { filter, id } = this.state;
+    const { index } = this.props;
+    const combo = Immutable.Map()
+    .set('id', id)
+    .set('filter', filter)
+    .set('search', search);
+    this.setState({
+      search,
+      isListVisible: false,
+      listIndex: null,
+    }, () => {
+      this.props.updateCombination(index, combo);
+    });
+  }
+
   handleClickCombinationFilter = () => {
     this.setState({
       isListVisible: true,
@@ -211,7 +237,9 @@ export class CombinationComponent extends Component {
   }
 
   render() {
-    const { filter, filterOptions, search, isEditing, listIndex, isListVisible } = this.state;
+    const { filter, list, search, isEditing, listIndex, isListVisible } = this.state;
+
+    const autocompleteOptions = fromJS(this.props.autocompleteOptions);
 
     return (
       <div className="rsf__combination-container">
@@ -250,6 +278,7 @@ export class CombinationComponent extends Component {
 
           {isEditing
           ?
+
             <input
               ref={(r) => { this.input = r; }}
               className={this.generateInputStyle()}
@@ -266,19 +295,20 @@ export class CombinationComponent extends Component {
           {isEditing
           ?
             <List
-              list={filterOptions}
+              options={autocompleteOptions}
               type="search"
               handleClickout={this.handleClickout}
-              handleListItemClick={this.handleListItemClick}
+              handleListItemClick={this.handleSearchListItemClick}
               currentListOption={listIndex}
             />
           : null }
+
         </div>
 
         {isListVisible
         ?
           <List
-            options={filterOptions}
+            options={list}
             type="filter"
             handleClickout={this.handleClickout}
             handleListItemClick={this.handleListItemClick}
