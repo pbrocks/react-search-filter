@@ -11,10 +11,10 @@ import type { Callback } from '../types';
 type SearchFilterProps = {
   // data
   filterOptions: List,
+  searchOptions: Array,
   currentSearch: Map,
   defaultFilter: Map,
   autocomplete: Array,
-  autocompleteOptions: Array,
 
   // methods
   handleSearch: Callback,
@@ -140,7 +140,6 @@ export class SearchFilterComponent extends Component {
             deleteCombination={this.deleteCombination}
             // rename this array to something reflecting it is an array
             autocomplete={autocomplete}
-            autocompleteOptions={autocompleteOptions}
             handleAutocomplete={this.handleAutocomplete}
           />
         ))}

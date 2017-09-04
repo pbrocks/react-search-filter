@@ -13,8 +13,8 @@ type CombinationProps = {
   combination: Map,
   defaultFilter: Map,
   filterOptions: List,
+  searchOptions: Array,
   autocomplete: Array,
-  autocompleteOptions: Array,
 
   updateCombination: Callback,
   deleteCombination: Callback,
