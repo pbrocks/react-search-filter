@@ -134,7 +134,7 @@ export class SearchFilterComponent extends Component {
             combination={c}
             className="rsf__combination-item"
             filterOptions={filterOptions}
-            searchOptions={autocompleteOptions}
+            searchOptions={fromJS(autocompleteOptions)}
             defaultFilter={this.generateDefaultFilter()}
             updateCombination={this.updateCombination}
             deleteCombination={this.deleteCombination}

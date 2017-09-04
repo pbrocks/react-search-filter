@@ -39,6 +39,7 @@ export class CombinationComponent extends Component {
 
       isBrowsingList: false,
       listIndex: null,
+      currentList: 'filter',
 
       list: filterOptions,
     };
@@ -100,17 +101,41 @@ export class CombinationComponent extends Component {
     }
 
     if (e.which === 13) { // ENTER
-      if (this.state.isBrowsingList) {
-        console.log('IN BROWSING LIST');
+      const { currentList, isBrowsingList } = this.state;
+      if (isBrowsingList && currentList === 'filter') {
+        console.log('IN BROWSING LIST – FILTER');
         const { listIndex, list } = this.state;
         const filter = list.get(listIndex);
         this.setState({
           filter,
           isBrowsingList: false,
           listIndex: null,
+          currentList: 'search',
           search: '', // clear search after selecting a filter
         }, () => {
-          this.input.focus();
+          if (currentList === 'filter') {
+            console.log('CURRENT LIST IS FILTER, GOING TO FOCUS INPUT NOW');
+            this.input.focus();
+          }
+        });
+      } else if (isBrowsingList && currentList === 'search') {
+        console.log('🌳🌳🌳🌳🌳🌳🌳🌳🌳🌳🌳🌳🌳🌳🌳🌳🌳🌳🌳🌳🌳🌳🌳🌳🌳🌳🌳');
+        console.log('WE ARE BROWSING LIST – SEARCH');
+        const { listIndex } = this.state;
+        const { searchOptions } = this.props;
+        console.log('listIndex:', listIndex);
+        console.log('searchOptions:', searchOptions);
+        const search = searchOptions.getIn([listIndex, 'value']);
+        console.log('🍩🍩🍩🍩🍩🍩🍩🍩🍩🍩🍩🍩🍩🍩🍩🍩🍩🍩🍩');
+        console.log('search:', search);
+        this.setState({
+          isBrowsingList: false,
+          listIndex: null,
+          currentList: null,
+          isEditing: false,
+          search,
+        }, () => {
+          this.handleUpdateCombination();
         });
       } else if (this.state.search.trim() === '') {
         console.log('EMPTY STATE SEARCH, ABOUT TO DELETE');
@@ -267,7 +292,9 @@ export class CombinationComponent extends Component {
   render() {
     const { filter, list, search, isEditing, listIndex, isListVisible } = this.state;
 
-    const autocompleteOptions = fromJS(this.props.autocompleteOptions);
+    // const autocompleteOptions = fromJS(this.props.autocompleteOptions);
+    const { searchOptions } = this.props;
+
     return (
       <div className="rsf__combination-container">
 
@@ -316,7 +343,7 @@ export class CombinationComponent extends Component {
 
           {isEditing && !isListVisible &&
             <List
-              options={autocompleteOptions}
+              options={searchOptions}
               type="search"
               handleClickout={this.handleClickoutSearch}
               handleListItemClick={this.handleSearchListItemClick}
