@@ -27,21 +27,34 @@ export class CombinationComponent extends Component {
   constructor(props, context) {
     super(props, context);
     const { combination, filterOptions } = props;
+    console.log('COMB: construct', combination.toArray(), filterOptions.toArray());
     this.state = {
       id: uuid.v4(),
       filter: combination.get('filter'),
       search: combination.get('search') || '',
       isEditing: combination.get('isEditing'), // same, can this be false?
-      // set list to filterOptions initially, set to searchOptions later
       list: filterOptions,
 
       isBrowsingList: false,
-      isListVisible: combination.get('isListVisible'), // can this be false and not set in combo?
+      isListVisible: combination.get('isListVisible'), // this is the filter options list e.g Number, Cust, Status
       listIndex: null,
     };
+    console.log('curr state: ', this.state);
   }
 
-  handleClickout = () => {
+  handleClickoutFilter = () => {
+    console.log('COMB: handleClickoutFilter');
+    if (!this.state.filter) {
+      this.handleDeleteCombination();
+    } else {
+      this.setState({
+        isListVisible: false,
+      });
+    }
+  }
+
+  handleClickoutSearch = () => {
+    console.log('COMB: handleClickoutSearch');
     if (!this.state.filter) {
       this.handleDeleteCombination();
     } else {
@@ -52,6 +65,7 @@ export class CombinationComponent extends Component {
   }
 
   handleInputBlur = () => {
+    console.log('COMB: handleInputBlur');
     if (this.state.filter && !this.state.search) {
       this.handleDeleteCombination();
     }
@@ -60,9 +74,10 @@ export class CombinationComponent extends Component {
   handleInputChange = (e) => {
     const { value } = e.target;
     const { list } = this.state;
+
     const filtered = list.filter(item => item.get('display').toLowerCase()
       .includes(value.toLowerCase()));
-
+    console.log('COMB: handleInputChange', value, list, filtered);
     this.setState({
       search: value,
       list: filtered,
@@ -70,15 +85,16 @@ export class CombinationComponent extends Component {
   }
 
   handleInputKeyDown = (e: Object) => {
+    console.log('COMB: handleInputKeyDown', e.which);
     if (e.which === 40) { // DOWN
       this.setState({
-        isListVisible: true,
+        //isListVisible: true,
         isBrowsingList: true,
       }, () => this.browseListDown());
     }
     if (e.which === 38) { // UP
       this.setState({
-        isListVisible: true,
+        //isListVisible: true,
         isBrowsingList: true,
       }, () => this.browseListUp());
     }
@@ -138,7 +154,7 @@ export class CombinationComponent extends Component {
   browseListDown = () => {
     const currentIndex = this.state.listIndex;
     const { list } = this.state;
-
+    console.log('COMB: browseListDown', currentIndex, list);
     if (currentIndex !== null && currentIndex + 1 < list.size) {
       this.setState({ listIndex: currentIndex + 1 });
     } else {
@@ -149,7 +165,7 @@ export class CombinationComponent extends Component {
   browseListUp = () => {
     const currentIndex = this.state.listIndex;
     const { list } = this.state;
-
+    console.log('COMB: browseListUp', currentIndex, list);
     if (currentIndex !== null && currentIndex - 1 > -1) {
       this.setState({ listIndex: currentIndex - 1 });
     } else {
@@ -161,6 +177,7 @@ export class CombinationComponent extends Component {
     const { search, id } = this.state;
     const { index, defaultFilter } = this.props;
     const filter = this.state.filter || defaultFilter; // search
+    console.log('COMB: handleUpdateCombination', search, id, index, defaultFilter);
     const combo = Immutable.Map()
       .set('id', id)
       .set('filter', filter)
@@ -172,6 +189,7 @@ export class CombinationComponent extends Component {
   }
 
   handleDeleteCombination = () => {
+    console.log('COMB: handleDeleteCombination', index);
     const { index } = this.props;
     this.props.deleteCombination(index);
   }
@@ -179,6 +197,7 @@ export class CombinationComponent extends Component {
   handleListItemClick = filter => () => {
     const { search, id } = this.state;
     const { index } = this.props;
+    console.log('COMB: handleListItemClick', search, id, index);
     const combo = Immutable.Map()
       .set('id', id)
       .set('filter', filter)
@@ -202,6 +221,7 @@ export class CombinationComponent extends Component {
     const search = item.get('value');
     const { filter, id } = this.state;
     const { index } = this.props;
+    console.log('COMB: handleSearchListItemClick', filter, id, index);
     const combo = Immutable.Map()
     .set('id', id)
     .set('filter', filter)
@@ -216,19 +236,21 @@ export class CombinationComponent extends Component {
   }
 
   handleClickCombinationFilter = () => {
+    console.log('COMB: handleClickCombinationFilter');
     this.setState({
       isListVisible: true,
     });
   }
 
   handleClickCombinationSearch = () => {
+    console.log('COMB: handleClickCombinationSearch');
     this.setState({
       isEditing: true,
     });
   }
 
-
   generateInputStyle = () => {
+    console.log('COMB: generateInputStyle');
     const styles = {
       'rsf__combination-search__input': true,
       'rsf__combination-search__input--hidden': !this.state.isEditing,
@@ -240,12 +262,11 @@ export class CombinationComponent extends Component {
     const { filter, list, search, isEditing, listIndex, isListVisible } = this.state;
 
     const autocompleteOptions = fromJS(this.props.autocompleteOptions);
-
+    console.log('COMB: render: ', filter, search, isEditing);
     return (
       <div className="rsf__combination-container">
 
-        {filter && filter.get('display')
-        ?
+        {filter && filter.get('display') &&
           <span
             className="rsf__combination-filter"
             onClick={this.handleClickCombinationFilter}
@@ -255,30 +276,26 @@ export class CombinationComponent extends Component {
               className="om-icon-descending rsf__icon-down"
             />
           </span>
-        : null }
+        }
 
         <div className="rsf__combination-search__container">
-          {search && !isEditing
-          ?
+          {search && !isEditing &&
             <span
               className="rsf__combination-search__display"
               onClick={this.handleClickCombinationSearch}
             >
               {search}
             </span>
-          : null }
+          }
 
-          {search && !isEditing
-          ?
+          {search && !isEditing &&
             <span
               className="rsf__combination-delete"
               onClick={this.handleDeleteCombination}
             />
-          : null }
+          }
 
-          {isEditing
-          ?
-
+          {isEditing &&
             <input
               ref={(r) => { this.input = r; }}
               className={this.generateInputStyle()}
@@ -290,31 +307,29 @@ export class CombinationComponent extends Component {
               value={search}
               autoFocus
             />
-          : null }
+          }
 
-          {isEditing
-          ?
+          {isEditing && !isListVisible &&
             <List
               options={autocompleteOptions}
               type="search"
-              handleClickout={this.handleClickout}
+              handleClickout={this.handleClickoutSearch}
               handleListItemClick={this.handleSearchListItemClick}
               currentListOption={listIndex}
             />
-          : null }
+          }
 
         </div>
 
-        {isListVisible
-        ?
+        {isListVisible && isEditing &&
           <List
             options={list}
             type="filter"
-            handleClickout={this.handleClickout}
+            handleClickout={this.handleClickoutFilter}
             handleListItemClick={this.handleListItemClick}
             currentListOption={listIndex}
           />
-        : null }
+        }
 
       </div>
     );

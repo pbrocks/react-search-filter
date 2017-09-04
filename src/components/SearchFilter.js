@@ -23,15 +23,14 @@ type SearchFilterProps = {
 
 const addId = (raw) => {
   let result;
-
   if (List.isList(raw)) {
     result = raw.map(r => r.set('id', uuid.v4()));
   }
-
   return result;
 };
 
 const generateInitialCombinations = (list, currentSearch, defaultFilter) => {
+  console.log('SF: (outside class) generateInitialCombinations:', list, currentSearch.toArray(), defaultFilter.toArray());
   const optionsWithDefault = list.push(defaultFilter);
   const currentOptions = optionsWithDefault.filter(option => currentSearch.has(option.get('value')));
   const combos = currentOptions.reduce((result, option, index, original) => {
@@ -52,7 +51,7 @@ export class SearchFilterComponent extends Component {
     super(props, context);
     const { filterOptions, defaultFilter, currentSearch } = props;
     const list = addId(fromJS(filterOptions));
-
+    console.log('SF: construct combs', filterOptions, defaultFilter, currentSearch)
     const combinations = generateInitialCombinations(list, currentSearch, defaultFilter);
 
     this.state = {
@@ -63,6 +62,9 @@ export class SearchFilterComponent extends Component {
 
   addNewCombination = () => {
     const { combinations } = this.state;
+    console.log('SF: addNewCombination:', combinations);
+
+    // if no combinations exist then do not render
     const newCombo = fromJS({
       id: uuid.v4(),
       isEditing: true,
@@ -73,17 +75,19 @@ export class SearchFilterComponent extends Component {
   }
 
   updateCombination = (index, combo) => {
+    console.log('SF: updateCombination:', index, combo);
     const { combinations } = this.state;
     const updated = combinations.set(index, combo);
     this.setState({
       combinations: updated,
     }, () => {
       const search = this.generateSearch(this.state.combinations).toJS();
-      this.props.handleSearch(search);
+      this.props.handleSearch(search); // from parent (OrdersListCard)
     });
   }
 
   deleteCombination = (index) => {
+    console.log('SF: deleteCombination:', index);
     const { combinations } = this.state;
     const updated = combinations.delete(index);
     this.setState({
@@ -95,6 +99,7 @@ export class SearchFilterComponent extends Component {
   }
 
   generateSearch = (combinations) => {
+    console.log('SF: generateSearch:', combinations);
     const search = combinations.reduce((result, combo) => {
       const key = combo.getIn(['filter', 'value']);
       const value = combo.get('search');
@@ -104,11 +109,13 @@ export class SearchFilterComponent extends Component {
   }
 
   handleAutocomplete = (filter, search) => {
+    console.log('SF: handleAutocomplete:', filter, search);
     this.props.handleAutocomplete(filter, search);
   }
 
   generateDefaultFilter = () => {
     const { defaultFilter } = this.props;
+    console.log('SF: generateDefaultFilter:', defaultFilter);
     const result = fromJS({
       id: uuid.v4(),
       display: defaultFilter.get('display'),
@@ -120,7 +127,7 @@ export class SearchFilterComponent extends Component {
   render() {
     const { combinations, filterOptions } = this.state;
     const { autocomplete, autocompleteOptions } = this.props;
-
+    console.log('SF: render all combs: ', combinations);
     return (
       <div className="rsf__wrapper">
 

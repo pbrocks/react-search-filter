@@ -15,10 +15,16 @@ type ListOptionsProps = {
 };
 
 export class ListComponent extends Component {
-  props: ListOptionsProps;
+  props: ListOptionsProps;ListComponent
 
   handleClickout = () => {
+    console.log('LIST: click outside');
     this.props.handleClickout();
+  }
+
+  handleListItemClick = (item) => {
+    console.log('LIST: click outside', item);
+    this.props.handleListItemClick(item);
   }
 
   generateItemStyles = (index: Number) => {
@@ -32,7 +38,7 @@ export class ListComponent extends Component {
 
   render() {
     const { options, handleListItemClick, type } = this.props;
-
+    console.log('LIST: render', options.toArray(), type)
     const containerStyles = {
       'rsf__list-container': true,
       [`rsf__list-container--${type}`]: true,
@@ -55,6 +61,6 @@ export class ListComponent extends Component {
     );
   }
 }
-const Wrapped = wrapWithClickout(ListComponent);
+// const Wrapped = wrapWithClickout(ListComponent);
 
-export default Wrapped;
+export default ListComponent;
