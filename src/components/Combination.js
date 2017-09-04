@@ -32,12 +32,15 @@ export class CombinationComponent extends Component {
       id: uuid.v4(),
       filter: combination.get('filter'),
       search: combination.get('search') || '',
+
+      // we use (and set to true) isEditing/isListVisible from parent, when adding a new combination
       isEditing: combination.get('isEditing'), // same, can this be false?
-      list: filterOptions,
+      isListVisible: combination.get('isListVisible'), // this is the filter options list e.g Number, Cust, Status
 
       isBrowsingList: false,
-      isListVisible: combination.get('isListVisible'), // this is the filter options list e.g Number, Cust, Status
       listIndex: null,
+
+      list: filterOptions,
     };
     console.log('curr state: ', this.state);
   }
@@ -105,6 +108,7 @@ export class CombinationComponent extends Component {
         const filter = list.get(listIndex);
         this.setState({
           filter,
+          isListVisible: false,
           isBrowsingList: false,
           search: '', // clear search after selecting a filter
         }, () => {
