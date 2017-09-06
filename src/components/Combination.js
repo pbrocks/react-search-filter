@@ -87,6 +87,9 @@ export class CombinationComponent extends Component {
   }
 
   handleInputKeyDown = (e: Object) => {
+    console.log('🌶🌶🌶🌶🌶🌶🌶🌶🌶handleInputKeyDown🌶🌶🌶🌶🌶🌶🌶🌶🌶');
+    console.log('this.state.isListVisible:', this.state.isListVisible);
+    console.log('this.state.isBrowsingList:', this.state.isBrowsingList);
     if (e.which === 40) { // DOWN
       this.setState({
         // isListVisible: true,
@@ -102,6 +105,7 @@ export class CombinationComponent extends Component {
 
     if (e.which === 13) { // ENTER
       const { currentList, isBrowsingList } = this.state;
+      console.log("ENTER: ", currentList, isBrowsingList)
       if (isBrowsingList && currentList === 'filter') {
         console.log('IN BROWSING LIST – FILTER');
         const { listIndex, list } = this.state;
@@ -114,7 +118,7 @@ export class CombinationComponent extends Component {
           search: '', // clear search after selecting a filter
         }, () => {
           if (currentList === 'filter') {
-            console.log('CURRENT LIST IS FILTER, GOING TO FOCUS INPUT NOW');
+            console.log('CURRENT LIST IS FILTER, GOING TO FOCUS INPUT NOW', currentList);
             this.input.focus();
           }
         });
@@ -182,9 +186,11 @@ export class CombinationComponent extends Component {
 
   browseListDown = () => {
     const currentIndex = this.state.listIndex;
-    const { list } = this.state;
-    // console.log('COMB: browseListDown', currentIndex, list);
-    if (currentIndex !== null && currentIndex + 1 < list.size) {
+    const { list, isListVisible } = this.state;
+    const { searchOptions } = this.props;
+    const currentList = isListVisible ? list : searchOptions;
+    console.log('COMB: browseListDown', currentIndex, list, searchOptions, currentList.toArray());
+    if (currentIndex !== null && currentIndex + 1 < currentList.size) {
       this.setState({ listIndex: currentIndex + 1 });
     } else {
       this.setState({ listIndex: 0 });
@@ -193,12 +199,14 @@ export class CombinationComponent extends Component {
 
   browseListUp = () => {
     const currentIndex = this.state.listIndex;
-    const { list } = this.state;
-    // console.log('COMB: browseListUp', currentIndex, list);
+    const { list, isListVisible } = this.state;
+    const { searchOptions } = this.props;
+    const currentList = isListVisible ? list : searchOptions;
+    console.log('COMB: browseListUp', currentIndex, list, searchOptions, currentList.toArray());
     if (currentIndex !== null && currentIndex - 1 > -1) {
       this.setState({ listIndex: currentIndex - 1 });
     } else {
-      this.setState({ listIndex: list.size - 1 });
+      this.setState({ listIndex: currentList.size - 1 });
     }
   }
 
@@ -220,7 +228,7 @@ export class CombinationComponent extends Component {
   }
 
   handleDeleteCombination = () => {
-    // console.log('COMB: handleDeleteCombination', index);
+    console.log('COMB: handleDeleteCombination', index);
     const { index } = this.props;
     this.props.deleteCombination(index);
   }
@@ -267,21 +275,21 @@ export class CombinationComponent extends Component {
   }
 
   handleClickCombinationFilter = () => {
-    // console.log('COMB: handleClickCombinationFilter');
+    console.log('COMB: handleClickCombinationFilter');
     this.setState({
       isListVisible: true,
     });
   }
 
   handleClickCombinationSearch = () => {
-    // console.log('COMB: handleClickCombinationSearch');
+    console.log('COMB: handleClickCombinationSearch');
     this.setState({
       isEditing: true,
     });
   }
 
   generateInputStyle = () => {
-    // console.log('COMB: generateInputStyle');
+    console.log('COMB: generateInputStyle');
     const styles = {
       'rsf__combination-search__input': true,
       'rsf__combination-search__input--hidden': !this.state.isEditing,
@@ -291,10 +299,11 @@ export class CombinationComponent extends Component {
 
   render() {
     const { filter, list, search, isEditing, listIndex, isListVisible } = this.state;
-
     // const autocompleteOptions = fromJS(this.props.autocompleteOptions);
     const { searchOptions } = this.props;
-
+    console.log('🌶🌶🌶🌶🌶🌶🌶🌶🌶🌶🌶🌶🌶🌶🌶🌶🌶🌶');
+    console.log('Render Comb list:', list.toArray(), searchOptions.toArray());
+    console.log('Render Comb:', isEditing, isListVisible);
     return (
       <div className="rsf__combination-container">
 
