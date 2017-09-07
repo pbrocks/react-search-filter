@@ -17,11 +17,9 @@ export class ListComponent extends Component {
   props: ListOptionsProps;ListComponent
 
   handleClickout = () => {
+    console.log('🌶🌶🌶🌶🌶🌶🌶🌶🌶🌶🌶🌶🌶🌶🌶🌶🌶🌶');
+    console.log('handleClickout List type:', this.props.type);
     this.props.handleClickout();
-  }
-
-  handleListItemClick = (item) => {
-    this.props.handleListItemClick(item);
   }
 
   generateItemStyles = (index: Number) => {
@@ -40,7 +38,8 @@ export class ListComponent extends Component {
       'rsf__list-container': true,
       [`rsf__list-container--${type}`]: true,
     };
-
+    console.log('🌶🌶🌶🌶🌶🌶🌶🌶🌶🌶🌶🌶🌶🌶🌶🌶🌶🌶');
+    console.log('re render list:', type);
     return (
       <div className={classNames(containerStyles)}>
         {options.size > 0 && options.map((item, i) => (

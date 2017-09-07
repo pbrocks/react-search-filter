@@ -62,7 +62,8 @@ export class SearchFilterComponent extends Component {
 
   addNewCombination = () => {
     const { combinations } = this.state;
-
+    console.log('🌶🌶🌶🌶🌶🌶🌶🌶🌶🌶🌶🌶🌶🌶🌶🌶🌶🌶');
+    console.log('a new combo:', combinations.toArray());
     // if no combinations exist then do not render
     const newCombo = fromJS({
       id: uuid.v4(),
@@ -74,6 +75,8 @@ export class SearchFilterComponent extends Component {
   }
 
   updateCombination = (index, combo) => {
+    console.log('🌶🌶🌶🌶🌶🌶🌶🌶🌶🌶🌶🌶🌶🌶🌶🌶🌶🌶');
+    console.log('updateCombination:', index, combo);
     const { combinations } = this.state;
     const updated = combinations.set(index, combo);
     this.setState({
@@ -96,6 +99,7 @@ export class SearchFilterComponent extends Component {
   }
 
   generateSearch = (combinations) => {
+    console.log('generateSearch: ', combinations);
     const search = combinations.reduce((result, combo) => {
       const key = combo.getIn(['filter', 'value']);
       const value = combo.get('search');
@@ -105,13 +109,13 @@ export class SearchFilterComponent extends Component {
   }
 
   handleAutocomplete = (filter, search) => {
-    // console.log('SF: handleAutocomplete:', filter, search);
+    console.log('SF: handleAutocomplete:', filter, search);
     this.props.handleAutocomplete(filter, search);
   }
 
   generateDefaultFilter = () => {
     const { defaultFilter } = this.props;
-    // console.log('SF: generateDefaultFilter:', defaultFilter);
+    console.log('SF: generateDefaultFilter:', defaultFilter);
     const result = fromJS({
       id: uuid.v4(),
       display: defaultFilter.get('display'),
@@ -123,7 +127,7 @@ export class SearchFilterComponent extends Component {
   render() {
     const { combinations, filterOptions } = this.state;
     const { autocomplete, autocompleteOptions } = this.props;
-    // console.log('SF: render all combs: ', combinations);
+    console.log('SF: render all combs: ', combinations.toArray(), autocomplete, autocompleteOptions);
     return (
       <div className="rsf__wrapper">
 

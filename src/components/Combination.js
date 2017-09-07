@@ -53,21 +53,26 @@ export class CombinationComponent extends Component {
     } else {
       this.setState({
         isListVisible: false,
+        isEditing: false,
       });
     }
   }
 
   handleClickoutSearch = () => {
+    console.log('COMB: handleClickoutSearch');
     if (!this.state.filter) {
       this.handleDeleteCombination();
     } else {
       this.setState({
         isListVisible: false,
+        isEditing: false,
       });
     }
   }
 
   handleInputBlur = () => {
+    console.log('🌶🌶🌶🌶🌶🌶🌶🌶🌶🌶🌶🌶🌶🌶🌶🌶🌶🌶');
+    console.log('handleblur:');
     if (this.state.filter && !this.state.search) {
       this.handleDeleteCombination();
     }
@@ -76,7 +81,8 @@ export class CombinationComponent extends Component {
   handleInputChange = (e) => {
     const { value } = e.target;
     const { list } = this.state;
-
+    console.log('🌶🌶🌶🌶🌶🌶🌶🌶🌶🌶🌶🌶🌶🌶🌶🌶🌶🌶');
+    console.log('handleInputChange:', value, list.toArray());
     const filtered = list.filter(item => item.get('display').toLowerCase()
       .includes(value.toLowerCase()));
 
@@ -115,6 +121,7 @@ export class CombinationComponent extends Component {
           isBrowsingList: false,
           listIndex: null,
           currentList: 'search',
+          isEditing: true,
           search: '', // clear search after selecting a filter
         }, () => {
           if (currentList === 'filter') {
@@ -177,6 +184,8 @@ export class CombinationComponent extends Component {
     if (regex.test(String.fromCharCode(e.which))) {
       const currentFilter = this.state.filter.get('value');
       const { autocomplete } = this.props;
+      console.log('🌶🌶🌶🌶🌶🌶🌶🌶🌶🌶🌶🌶🌶🌶🌶🌶🌶🌶');
+      console.log('autocompleteable:', currentFilter, autocomplete);
       if (autocomplete.includes(currentFilter)) {
         const { search } = this.state;
         this.props.handleAutocomplete(currentFilter, search);
@@ -241,12 +250,19 @@ export class CombinationComponent extends Component {
       .set('id', id)
       .set('filter', filter)
       .set('search', search)
-      .set('isEditing', false)
-      .set('isListVisible', false);
+      .set('isListVisible', false)
+      .set('listIndex', null)
+      .set('isBrowsingList', false)
+      .set('currentList', 'search')
+      .set('isEditing', true);
     this.setState({
       filter,
+      search: '',
       isListVisible: false,
       listIndex: null,
+      isBrowsingList: false,
+      currentList: 'search',
+      isEditing: true,
     }, () => {
       if (!search) {
         this.input.focus();
@@ -262,13 +278,21 @@ export class CombinationComponent extends Component {
     const { index } = this.props;
     console.log('COMB: handleSearchListItemClick', filter, id, index);
     const combo = Immutable.Map()
-    .set('id', id)
-    .set('filter', filter)
-    .set('search', search);
+      .set('id', id)
+      .set('filter', filter)
+      .set('search', search)
+      .set('isListVisible', false)
+      .set('listIndex', null)
+      .set('isBrowsingList', false)
+      .set('currentList', null)
+      .set('isEditing', false);
     this.setState({
       search,
       isListVisible: false,
       listIndex: null,
+      isBrowsingList: false,
+      currentList: null,
+      isEditing: false,
     }, () => {
       this.props.updateCombination(index, combo);
     });
