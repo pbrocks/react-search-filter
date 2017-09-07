@@ -374,7 +374,7 @@ export class CombinationComponent extends Component {
             />
           }
 
-          {isEditing && !isListVisible &&
+          {isEditing && !isListVisible && searchOptions.size > 0 &&
             <List
               options={searchOptions}
               type="search"
@@ -386,7 +386,7 @@ export class CombinationComponent extends Component {
 
         </div>
 
-        {isListVisible && isEditing &&
+        {isListVisible && isEditing && list.size > 0 &&
           <List
             options={list}
             type="filter"
