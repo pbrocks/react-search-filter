@@ -302,6 +302,8 @@ export class CombinationComponent extends Component {
     console.log('COMB: handleClickCombinationFilter');
     this.setState({
       isListVisible: true,
+      isEditing: true,
+      currentList: 'filter',
     });
   }
 
@@ -309,6 +311,8 @@ export class CombinationComponent extends Component {
     console.log('COMB: handleClickCombinationSearch');
     this.setState({
       isEditing: true,
+      currentList: 'search',
+      isListVisible: false,
     });
   }
 
