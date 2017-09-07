@@ -6,15 +6,15 @@ import uuid from 'uuid';
 
 import Combination from './Combination';
 
-import type { Callback } from '../types';
+import type { Callback, AutocompleteOption } from '../types';
 
 type SearchFilterProps = {
   // data
   filterOptions: List,
-  searchOptions: Array,
-  currentSearch: Map,
-  defaultFilter: Map,
-  autocomplete: Array,
+  autocompleteOptions: Array<AutocompleteOption>,
+  currentSearch: Immutable.Map,
+  defaultFilter: Immutable.Map,
+  autocomplete: Array<string>,
 
   // methods
   handleSearch: Callback,
