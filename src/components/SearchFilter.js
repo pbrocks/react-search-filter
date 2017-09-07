@@ -163,7 +163,7 @@ export class SearchFilterComponent extends Component {
         {!this.state.isEditing && <div
           className="rsf__add"
           onClick={this.addNewCombination}
-        >[+]</div>}
+        ></div>}
 
       </div>
     );

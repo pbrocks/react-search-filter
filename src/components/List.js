@@ -35,14 +35,19 @@ export class ListComponent extends Component {
     console.log('🌶🌶🌶🌶🌶🌶🌶🌶🌶🌶🌶🌶🌶🌶🌶🌶🌶🌶');
     console.log('re render list:', type);
     return (
-      <div className={classNames(containerStyles)}>
+      <div
+        className={classNames(containerStyles)}
+      >
         {options.size > 0 && options.map((item, i) => (
           <div
             key={item.get('id')}
             className={this.generateItemStyles(i)}
             onClick={handleListItemClick(item)}
           >
-            <div className="rsf__list-item-display">
+            <div
+              className="rsf__list-item-display"
+              data-react-clickout="exclude"
+            >
               {item.get('display')}
             </div>
           </div>

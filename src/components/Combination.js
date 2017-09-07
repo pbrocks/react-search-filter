@@ -5,6 +5,7 @@ import classNames from 'classnames';
 import uuid from 'uuid';
 
 import List from './List';
+import Input from './Input';
 
 import type { Callback } from '../types';
 
@@ -75,7 +76,7 @@ export class CombinationComponent extends Component {
   }
 
   handleInputBlur = (e) => {
-    return;
+    // return;
     console.log('🌶🌶🌶🌶🌶🌶🌶🌶🌶🌶🌶🌶🌶🌶🌶🌶🌶🌶');
     console.log('🌶🌶🌶🌶🌶🌶🌶🌶🌶🌶🌶🌶🌶🌶🌶🌶🌶🌶');
     console.log('e:', e);
@@ -88,18 +89,24 @@ export class CombinationComponent extends Component {
     //   console.log('Lets get out:');
     //   return;
     // }
-    // if (filter && !search) {
-    //   this.handleDeleteCombination();
-    // }
-    if (filter && search && !isListVisible) {
-      this.setState({
-        isListVisible: false,
-        listIndex: null,
-        isBrowsingList: false,
-        isEditing: false,
-      });
-      this.handleUpdateCombination();
+    if (filter && !search) {
+      this.handleDeleteCombination();
     }
+
+    // if (filter && search && !isListVisible) {
+    //   console.log('🍩🍩🍩🍩🍩🍩🍩🍩🍩🍩🍩🍩🍩🍩🍩🍩🍩🍩🍩');
+    //   console.log('🍩🍩🍩🍩🍩🍩🍩🍩🍩🍩🍩🍩🍩🍩🍩🍩🍩🍩🍩');
+    //   console.log('OH WE IS HERE');
+    //   console.log('🍩🍩🍩🍩🍩🍩🍩🍩🍩🍩🍩🍩🍩🍩🍩🍩🍩🍩🍩');
+
+    //   this.setState({
+    //     isListVisible: false,
+    //     listIndex: null,
+    //     isBrowsingList: false,
+    //     isEditing: false,
+    //   });
+    //   this.handleUpdateCombination();
+    // }
   }
 
   handleInputChange = (e) => {
@@ -352,6 +359,8 @@ export class CombinationComponent extends Component {
 
   handleClickCombinationSearch = () => {
     console.log('COMB: handleClickCombinationSearch');
+    console.log('🌳🌳🌳🌳🌳🌳🌳🌳🌳🌳🌳🌳🌳🌳🌳🌳🌳🌳🌳🌳🌳🌳🌳🌳🌳🌳🌳');
+    console.log('this.state:', this.state);
     this.setState({
       isEditing: true,
       currentList: 'search',
@@ -410,16 +419,15 @@ export class CombinationComponent extends Component {
           }
 
           {isEditing &&
-            <input
-              ref={(r) => { this.input = r; }}
+            <Input
+              inputRef={(r) => { this.input = r; }}
+              handleClickout={this.handleUpdateCombination}
               className={this.generateInputStyle()}
-              type="text"
               onChange={this.handleInputChange}
               onKeyDown={this.handleInputKeyDown}
               onClick={this.handleInputClick}
               onBlur={this.handleInputBlur}
               value={search}
-              autoFocus
             />
           }
 
@@ -437,6 +445,7 @@ export class CombinationComponent extends Component {
 
         {isListVisible && isEditing && list.size > 0 &&
           <List
+            data-react-clickout="exclude"
             options={list}
             type="filter"
             handleClickout={this.handleClickoutFilter}
