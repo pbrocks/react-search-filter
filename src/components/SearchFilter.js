@@ -57,6 +57,7 @@ export class SearchFilterComponent extends Component {
     this.state = {
       filterOptions: list,
       combinations,
+      isEditing: false,
     };
   }
 
@@ -64,14 +65,23 @@ export class SearchFilterComponent extends Component {
     const { combinations } = this.state;
     console.log('🌶🌶🌶🌶🌶🌶🌶🌶🌶🌶🌶🌶🌶🌶🌶🌶🌶🌶');
     console.log('a new combo:', combinations.toArray());
-    // if no combinations exist then do not render
+    // do not create a new combo if a combo is in progress
     const newCombo = fromJS({
       id: uuid.v4(),
       isEditing: true,
       isListVisible: true,
     });
     const updated = combinations.push(newCombo);
-    this.setState({ combinations: updated });
+    this.setState({
+      combinations: updated,
+      isEditing: true,
+    });
+  }
+
+  updateEditing = (editStatus) => {
+    this.setState({
+      isEditing: editStatus,
+    });
   }
 
   updateCombination = (index, combo) => {
@@ -92,6 +102,7 @@ export class SearchFilterComponent extends Component {
     const updated = combinations.delete(index);
     this.setState({
       combinations: updated,
+      isEditing: false,
     }, () => {
       const search = this.generateSearch(this.state.combinations).toJS();
       this.props.handleSearch(search);
@@ -145,13 +156,14 @@ export class SearchFilterComponent extends Component {
             // rename this array to something reflecting it is an array
             autocomplete={autocomplete}
             handleAutocomplete={this.handleAutocomplete}
+            updateEditing={this.updateEditing}
           />
         ))}
 
-        <div
+        {!this.state.isEditing && <div
           className="rsf__add"
           onClick={this.addNewCombination}
-        />
+        >[+]</div>}
 
       </div>
     );

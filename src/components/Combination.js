@@ -19,6 +19,7 @@ type CombinationProps = {
   updateCombination: Callback,
   deleteCombination: Callback,
   handleAutocomplete: Callback,
+  updateEditing: Callback,
 };
 
 export class CombinationComponent extends Component {
@@ -27,7 +28,7 @@ export class CombinationComponent extends Component {
   constructor(props, context) {
     super(props, context);
     const { combination, filterOptions } = props;
-    console.log('COMB: construct', combination.toArray(), filterOptions.toArray());
+    // console.log('COMB: construct', combination.toArray(), filterOptions.toArray());
     this.state = {
       id: uuid.v4(),
       filter: combination.get('filter'),
@@ -40,10 +41,11 @@ export class CombinationComponent extends Component {
       isBrowsingList: false,
       listIndex: null,
       currentList: 'filter',
+      inProgress: true,
 
       list: filterOptions,
     };
-    console.log('curr state: ', this.state);
+    // console.log('curr state: ', this.state);
   }
 
   handleClickoutFilter = () => {
@@ -55,6 +57,7 @@ export class CombinationComponent extends Component {
         isListVisible: false,
         isEditing: false,
       });
+      this.props.updateEditing(false);
     }
   }
 
@@ -67,22 +70,43 @@ export class CombinationComponent extends Component {
         isListVisible: false,
         isEditing: false,
       });
+      this.props.updateEditing(false);
     }
   }
 
-  handleInputBlur = () => {
+  handleInputBlur = (e) => {
+    return;
     console.log('🌶🌶🌶🌶🌶🌶🌶🌶🌶🌶🌶🌶🌶🌶🌶🌶🌶🌶');
-    console.log('handleblur:');
-    if (this.state.filter && !this.state.search) {
-      this.handleDeleteCombination();
+    console.log('🌶🌶🌶🌶🌶🌶🌶🌶🌶🌶🌶🌶🌶🌶🌶🌶🌶🌶');
+    console.log('e:', e);
+    console.log('e.relatedTarget:', e.relatedTarget);
+    const { isListVisible, filter, search, isEditing, isBrowsingList } = this.state;
+    console.log('🌶🌶🌶🌶🌶🌶🌶🌶🌶🌶🌶🌶🌶🌶🌶🌶🌶🌶');
+    console.log('handleblur:', filter, search, isListVisible, isBrowsingList, isEditing);
+    // if (isListVisible) {
+    //   console.log('🌶🌶🌶🌶🌶🌶🌶🌶🌶🌶🌶🌶🌶🌶🌶🌶🌶🌶');
+    //   console.log('Lets get out:');
+    //   return;
+    // }
+    // if (filter && !search) {
+    //   this.handleDeleteCombination();
+    // }
+    if (filter && search && !isListVisible) {
+      this.setState({
+        isListVisible: false,
+        listIndex: null,
+        isBrowsingList: false,
+        isEditing: false,
+      });
+      this.handleUpdateCombination();
     }
   }
 
   handleInputChange = (e) => {
     const { value } = e.target;
     const { list } = this.state;
-    console.log('🌶🌶🌶🌶🌶🌶🌶🌶🌶🌶🌶🌶🌶🌶🌶🌶🌶🌶');
-    console.log('handleInputChange:', value, list.toArray());
+    // console.log('🌶🌶🌶🌶🌶🌶🌶🌶🌶🌶🌶🌶🌶🌶🌶🌶🌶🌶');
+    // console.log('handleInputChange:', value, list.toArray());
     const filtered = list.filter(item => item.get('display').toLowerCase()
       .includes(value.toLowerCase()));
 
@@ -93,9 +117,9 @@ export class CombinationComponent extends Component {
   }
 
   handleInputKeyDown = (e: Object) => {
-    console.log('🌶🌶🌶🌶🌶🌶🌶🌶🌶handleInputKeyDown🌶🌶🌶🌶🌶🌶🌶🌶🌶');
-    console.log('this.state.isListVisible:', this.state.isListVisible);
-    console.log('this.state.isBrowsingList:', this.state.isBrowsingList);
+    // console.log('🌶🌶🌶🌶🌶🌶🌶🌶🌶handleInputKeyDown🌶🌶🌶🌶🌶🌶🌶🌶🌶');
+    // console.log('this.state.isListVisible:', this.state.isListVisible);
+    // console.log('this.state.isBrowsingList:', this.state.isBrowsingList);
     if (e.which === 40) { // DOWN
       this.setState({
         // isListVisible: true,
@@ -111,9 +135,9 @@ export class CombinationComponent extends Component {
 
     if (e.which === 13) { // ENTER
       const { currentList, isBrowsingList } = this.state;
-      console.log("ENTER: ", currentList, isBrowsingList)
+      // console.log("ENTER: ", currentList, isBrowsingList)
       if (isBrowsingList && currentList === 'filter') {
-        console.log('IN BROWSING LIST – FILTER');
+        // console.log('IN BROWSING LIST – FILTER');
         const { listIndex, list } = this.state;
         const filter = list.get(listIndex);
         this.setState({
@@ -125,34 +149,36 @@ export class CombinationComponent extends Component {
           search: '', // clear search after selecting a filter
         }, () => {
           if (currentList === 'filter') {
-            console.log('CURRENT LIST IS FILTER, GOING TO FOCUS INPUT NOW', currentList);
+            // console.log('CURRENT LIST IS FILTER, GOING TO FOCUS INPUT NOW', currentList);
             this.input.focus();
           }
+          this.props.updateEditing(true);
         });
       } else if (isBrowsingList && currentList === 'search') {
-        console.log('🌳🌳🌳🌳🌳🌳🌳🌳🌳🌳🌳🌳🌳🌳🌳🌳🌳🌳🌳🌳🌳🌳🌳🌳🌳🌳🌳');
-        console.log('WE ARE BROWSING LIST – SEARCH');
+        // console.log('🌳🌳🌳🌳🌳🌳🌳🌳🌳🌳🌳🌳🌳🌳🌳🌳🌳🌳🌳🌳🌳🌳🌳🌳🌳🌳🌳');
+        // console.log('WE ARE BROWSING LIST – SEARCH');
         const { listIndex } = this.state;
         const { searchOptions } = this.props;
-        console.log('listIndex:', listIndex);
-        console.log('searchOptions:', searchOptions);
+        // console.log('listIndex:', listIndex);
+        // console.log('searchOptions:', searchOptions);
         const search = searchOptions.getIn([listIndex, 'value']);
-        console.log('🍩🍩🍩🍩🍩🍩🍩🍩🍩🍩🍩🍩🍩🍩🍩🍩🍩🍩🍩');
-        console.log('search:', search);
+        // console.log('🍩🍩🍩🍩🍩🍩🍩🍩🍩🍩🍩🍩🍩🍩🍩🍩🍩🍩🍩');
+        // console.log('search:', search);
         this.setState({
           isBrowsingList: false,
           listIndex: null,
           currentList: null,
           isEditing: false,
           search,
+          inProgress: false,
         }, () => {
           this.handleUpdateCombination();
         });
       } else if (this.state.search.trim() === '') {
-        console.log('EMPTY STATE SEARCH, ABOUT TO DELETE');
+        // console.log('EMPTY STATE SEARCH, ABOUT TO DELETE');
         this.handleDeleteCombination();
       } else {
-        console.log('FALL BACK, UPDATING COMBINATION');
+        // console.log('FALL BACK, UPDATING COMBINATION');
         this.handleUpdateCombination();
       }
 
@@ -175,6 +201,7 @@ export class CombinationComponent extends Component {
         listIndex: null,
         isBrowsingList: false,
       });
+      this.props.updateEditing(false);
     }
 
     // handle all other keyDowns here
@@ -184,8 +211,8 @@ export class CombinationComponent extends Component {
     if (regex.test(String.fromCharCode(e.which))) {
       const currentFilter = this.state.filter.get('value');
       const { autocomplete } = this.props;
-      console.log('🌶🌶🌶🌶🌶🌶🌶🌶🌶🌶🌶🌶🌶🌶🌶🌶🌶🌶');
-      console.log('autocompleteable:', currentFilter, autocomplete);
+      // console.log('🌶🌶🌶🌶🌶🌶🌶🌶🌶🌶🌶🌶🌶🌶🌶🌶🌶🌶');
+      // console.log('autocompleteable:', currentFilter, autocomplete);
       if (autocomplete.includes(currentFilter)) {
         const { search } = this.state;
         this.props.handleAutocomplete(currentFilter, search);
@@ -198,7 +225,7 @@ export class CombinationComponent extends Component {
     const { list, isListVisible } = this.state;
     const { searchOptions } = this.props;
     const currentList = isListVisible ? list : searchOptions;
-    console.log('COMB: browseListDown', currentIndex, list, searchOptions, currentList.toArray());
+// console.log('COMB: browseListDown', currentIndex, list, searchOptions, currentList.toArray());
     if (currentIndex !== null && currentIndex + 1 < currentList.size) {
       this.setState({ listIndex: currentIndex + 1 });
     } else {
@@ -211,7 +238,7 @@ export class CombinationComponent extends Component {
     const { list, isListVisible } = this.state;
     const { searchOptions } = this.props;
     const currentList = isListVisible ? list : searchOptions;
-    console.log('COMB: browseListUp', currentIndex, list, searchOptions, currentList.toArray());
+    // console.log('COMB: browseListUp', currentIndex, list, searchOptions, currentList.toArray());
     if (currentIndex !== null && currentIndex - 1 > -1) {
       this.setState({ listIndex: currentIndex - 1 });
     } else {
@@ -221,8 +248,8 @@ export class CombinationComponent extends Component {
 
   handleUpdateCombination = () => {
     const { search, id } = this.state;
-    console.log('🌶🌶🌶🌶🌶🌶🌶🌶🌶🌶🌶🌶🌶🌶🌶🌶🌶🌶');
-    console.log('search:', search);
+    // console.log('🌶🌶🌶🌶🌶🌶🌶🌶🌶🌶🌶🌶🌶🌶🌶🌶🌶🌶');
+    // console.log('search:', search);
     const { index, defaultFilter } = this.props;
     const filter = this.state.filter || defaultFilter; // search
 
@@ -234,12 +261,14 @@ export class CombinationComponent extends Component {
       .set('isListVisible', false);
 
     this.props.updateCombination(index, combo);
+    this.props.updateEditing(false);
   }
 
   handleDeleteCombination = () => {
-    console.log('COMB: handleDeleteCombination', index);
+    // console.log('COMB: handleDeleteCombination', index);
     const { index } = this.props;
     this.props.deleteCombination(index);
+    this.props.updateEditing(false);
   }
 
   handleListItemClick = filter => () => {
@@ -269,6 +298,7 @@ export class CombinationComponent extends Component {
       } else {
         this.props.updateCombination(index, combo);
       }
+      this.props.updateEditing(true);
     });
   }
 
@@ -276,6 +306,11 @@ export class CombinationComponent extends Component {
     const search = item.get('value');
     const { filter, id } = this.state;
     const { index } = this.props;
+    console.log('🌶🌶🌶🌶🌶🌶🌶🌶🌶🌶🌶🌶🌶🌶🌶🌶🌶🌶');
+    console.log('🌶🌶🌶🌶🌶🌶🌶🌶🌶🌶🌶🌶🌶🌶🌶🌶🌶🌶');
+    console.log('🌶🌶🌶🌶🌶🌶🌶🌶🌶🌶🌶🌶🌶🌶🌶🌶🌶🌶');
+    console.log('🌶🌶🌶🌶🌶🌶🌶🌶🌶🌶🌶🌶🌶🌶🌶🌶🌶🌶');
+    console.log('LIST ITEM CLICKED!!!!!!!!!!!!!!!!!!:');
     console.log('COMB: handleSearchListItemClick', filter, id, index);
     const combo = Immutable.Map()
       .set('id', id)
@@ -287,6 +322,7 @@ export class CombinationComponent extends Component {
       .set('currentList', null)
       .set('isEditing', false);
     this.setState({
+      filter,
       search,
       isListVisible: false,
       listIndex: null,
@@ -294,7 +330,12 @@ export class CombinationComponent extends Component {
       currentList: null,
       isEditing: false,
     }, () => {
-      this.props.updateCombination(index, combo);
+      if (filter && search) {
+        this.props.updateCombination(index, combo);
+      } else {
+        this.props.deleteCombination(index);
+      }
+      this.props.updateEditing(false);
     });
   }
 
@@ -304,7 +345,9 @@ export class CombinationComponent extends Component {
       isListVisible: true,
       isEditing: true,
       currentList: 'filter',
+      isBrowsingList: true,
     });
+    this.props.updateEditing(true);
   }
 
   handleClickCombinationSearch = () => {
@@ -313,11 +356,13 @@ export class CombinationComponent extends Component {
       isEditing: true,
       currentList: 'search',
       isListVisible: false,
+      isBrowsingList: true,
     });
+    this.props.updateEditing(true);
   }
 
   generateInputStyle = () => {
-    console.log('COMB: generateInputStyle');
+    // console.log('COMB: generateInputStyle');
     const styles = {
       'rsf__combination-search__input': true,
       'rsf__combination-search__input--hidden': !this.state.isEditing,
@@ -329,9 +374,9 @@ export class CombinationComponent extends Component {
     const { filter, list, search, isEditing, listIndex, isListVisible } = this.state;
     // const autocompleteOptions = fromJS(this.props.autocompleteOptions);
     const { searchOptions } = this.props;
-    console.log('🌶🌶🌶🌶🌶🌶🌶🌶🌶🌶🌶🌶🌶🌶🌶🌶🌶🌶');
-    console.log('Render Comb list:', list.toArray(), searchOptions.toArray());
-    console.log('Render Comb:', isEditing, isListVisible);
+    // console.log('🌶🌶🌶🌶🌶🌶🌶🌶🌶🌶🌶🌶🌶🌶🌶🌶🌶🌶');
+    // console.log('Render Comb list:', list.toArray(), searchOptions.toArray());
+    // console.log('Render Comb:', isEditing, isListVisible);
     return (
       <div className="rsf__combination-container">
 

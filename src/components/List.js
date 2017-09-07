@@ -16,12 +16,6 @@ type ListOptionsProps = {
 export class ListComponent extends Component {
   props: ListOptionsProps;ListComponent
 
-  handleClickout = () => {
-    console.log('🌶🌶🌶🌶🌶🌶🌶🌶🌶🌶🌶🌶🌶🌶🌶🌶🌶🌶');
-    console.log('handleClickout List type:', this.props.type);
-    this.props.handleClickout();
-  }
-
   generateItemStyles = (index: Number) => {
     const itemStyles = {
       'rsf__list-item': true,
